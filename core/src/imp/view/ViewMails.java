@@ -13,11 +13,11 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -42,14 +42,12 @@ public class ViewMails extends View {
 	Table				bgDialog;
 	private JsonValue	dataResponse	= null;
 	private JsonValue	responseSeen	= null;
-	private ItemMessage	itemMessage;
 	Color				colorBg			= new Color(255 / 255f, 255 / 255f,
 												255 / 255f, 1f);
 
 	public void buildComponent() {
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, colorBg)));
-		setTransform(true);
 		root = new Table();
 		root.setSize(getWidth(), getHeight());
 		root.defaults().expandX().fillX().height(80).align(Align.left);
@@ -150,22 +148,10 @@ public class ViewMails extends View {
 
 	@Override
 	public void back() {
-		if (itemMessage != null) {
-			itemMessage.hide(new OnCompleteListener() {
-
-				@Override
-				public void onError() {
-
-				}
-
-				@Override
-				public void done() {
-					itemMessage = null;
-				}
-			});
-			return;
-		}
 		super.back();
+		getViewController().removeView(getName());
+		((TopBarView) getViewController().getView(StringSystem.VIEW_ACTION_BAR))
+				.setTopName("8B8 Gift Code");
 	}
 
 	public boolean isDoneAction() {
@@ -179,8 +165,6 @@ public class ViewMails extends View {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		invalidateHierarchy();
-		layout();
 	}
 
 	void addLine(Table table, float height) {
@@ -216,16 +200,17 @@ public class ViewMails extends View {
 		label.setAlignment(Align.center);
 		bgDialog.add(label).expand().fill().center();
 		addActor(bgDialog);
-		bgDialog.toFront();
 		bgDialog.setVisible(false);
 
 	}
 
 	public void showNoMessage(OnCompleteListener onCompleteListeners) {
+		bgDialog.toFront();
 		bgDialog.setVisible(true);
 	}
 
 	public void hideNoMessage(OnCompleteListener onCompleteListeners) {
+		bgDialog.toBack();
 		bgDialog.setVisible(false);
 	}
 
@@ -239,7 +224,7 @@ public class ViewMails extends View {
 		public int		index;
 		private boolean	isRead;
 
-		public ItemMail(final int index, String title,
+		public ItemMail(final int index, final String title,
 				final String description, boolean isRead, long time,
 				final float width, float height) {
 			this.setSize(width, height);
@@ -276,11 +261,10 @@ public class ViewMails extends View {
 			icon.setColor(Color.GRAY);
 			icon.setTouchable(Touchable.disabled);
 
-			setRead(isRead);
 			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch4, 6,
 					6, 6, 6));
+			setRead(isRead);
 			bg.setColor(bgColor);
-
 			bg.addListener(new ClickListener() {
 				boolean	isTouch	= false;
 				Vector2	touch	= new Vector2();
@@ -307,11 +291,16 @@ public class ViewMails extends View {
 						requestSeen();
 					}
 					bg.setColor(bgColor);
-					itemMessage = new ItemMessage((Group) root, description,
-							index, width, Constants.HEIGHT_SCREEN
-									- Constants.HEIGHT_ACTIONBAR);
-					itemMessage.show(null);
-
+					ViewMessage viewMessage = new ViewMessage(title,
+							description, index);
+					viewMessage.build(getStage(), getViewController(),
+							"view_message", new Rectangle(0, 0,
+									Constants.WIDTH_SCREEN,
+									Constants.HEIGHT_SCREEN
+											- Constants.HEIGHT_ACTIONBAR));
+					viewMessage.buildComponent();
+					viewMessage.show(null);
+					setRead(true);
 				}
 
 				@Override
@@ -336,9 +325,10 @@ public class ViewMails extends View {
 		private void setRead(boolean isRead) {
 			this.isRead = isRead;
 			if (isRead)
-				bgColor = new Color(60 / 255f, 249 / 255f, 40 / 255f, 0.4f);
+				bgColor = new Color(64 / 255f, 229 / 255f, 47 / 255f, 0.2f);
 			else
-				bg.setColor(new Color(64 / 255f, 229 / 255f, 47 / 255f, 0.2f));
+				bgColor = new Color(60 / 255f, 249 / 255f, 40 / 255f, 0.4f);
+
 		}
 
 		boolean getIsRead() {
@@ -368,7 +358,6 @@ public class ViewMails extends View {
 						public void handleHttpResponse(HttpResponse httpResponse) {
 							String dataRespone = httpResponse
 									.getResultAsString();
-							setRead(true);
 							responseSeen = new JsonReader().parse(dataRespone);
 						}
 
@@ -385,65 +374,8 @@ public class ViewMails extends View {
 		}
 	}
 
-	class ItemMessage extends Group {
-		Image		bg;
-		Table		tbContent;
-		ScrollPane	scroll;
-		Label		lbShortDescription;
-		int			id;
-
-		public ItemMessage(Group parent, String content, int id, float width,
-				float height) {
-			LabelStyle style = new LabelStyle();
-			style.font = Assets.instance.fontFactory.getFont(20,
-					fontType.Medium);
-			style.fontColor = new Color(Color.BLACK);
-
-			lbShortDescription = new Label(content, style);
-			lbShortDescription.setAlignment(Align.top, Align.left);
-			lbShortDescription.setTouchable(Touchable.disabled);
-			lbShortDescription.setWidth(width - 40);
-			lbShortDescription.setWrap(true);
-
-			tbContent = new Table();
-			tbContent.setSize(width, height);
-			tbContent.setBackground(new NinePatchDrawable(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, Color.WHITE)));
-			tbContent.top();
-			tbContent.add(lbShortDescription).expand().fill().align(Align.top)
-					.padLeft(20).padTop(20).padRight(20);
-			scroll = new ScrollPane(tbContent);
-			scroll.setScrollingDisabled(true, false);
-			scroll.setBounds(0, 0, width, height);
-			addActor(scroll);
-			parent.addActor(this);
-			this.id = id;
-		}
-
-		public void setData(String text, int id) {
-			lbShortDescription.setText(text);
-			this.id = id;
-		}
-
-		public void show(final OnCompleteListener onCompleteListener) {
-			addAction(Actions.alpha(1f, .2f));
-			this.setTouchable(Touchable.enabled);
-
-		}
-
-		public void hide(final OnCompleteListener onCompleteListener) {
-			this.setTouchable(Touchable.disabled);
-			addAction(Actions.sequence(Actions.alpha(0f, 0.1f),
-					Actions.run(new Runnable() {
-
-						@Override
-						public void run() {
-							if (onCompleteListener != null)
-								onCompleteListener.done();
-
-						}
-					})));
-		}
+	@Override
+	public String getLabel() {
+		return "Hòm Thư";
 	}
-
 }

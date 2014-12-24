@@ -1,8 +1,8 @@
 package imp.view;
 
 import utils.factory.AppPreference;
-import utils.factory.FontFactory.fontType;
 import utils.factory.Factory;
+import utils.factory.FontFactory.fontType;
 import utils.factory.Log;
 import utils.factory.StringSystem;
 import utils.factory.Style;
@@ -35,6 +35,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
@@ -43,7 +44,7 @@ public class ViewLogin extends View {
 
 	private CustomTextField	tfName;
 	private CustomTextField	tfPass;
-	private JsonValue		respone, responeInfoDaily;
+	private JsonValue		respone;
 	Label					btnRegister, btnActive;
 
 	public View buildComponent() {
@@ -134,6 +135,7 @@ public class ViewLogin extends View {
 		btOk.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				MainMenuView.isLoadUserData = false;
 				String username = tfName.getText();
 				String pass = tfPass.getText();
 				AppPreference.instance.setName(tfName.getText(), false);
@@ -150,8 +152,6 @@ public class ViewLogin extends View {
 					AbstractGameScreen.keyboard.show(false);
 					Request.getInstance().login(tfName.getText(),
 							tfPass.getText(), new LoginListener());
-					// Request.getInstance().login("841257523333", "123456",
-					// new LoginListener());
 					setTouchable(Touchable.disabled);
 					Loading.ins.show(ViewLogin.this);
 				}
@@ -185,7 +185,19 @@ public class ViewLogin extends View {
 		btnRegister.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getViewController().getView("view_register").show(null);
+				if (getViewController().isContainView(
+						StringSystem.VIEW_REGISTER)) {
+					getViewController().getView(StringSystem.VIEW_REGISTER)
+							.show(null);
+				} else {
+					ViewRegister viewRegister = new ViewRegister();
+					viewRegister.build(getStage(), getViewController(),
+							StringSystem.VIEW_REGISTER, new Rectangle(0, 0,
+									Constants.WIDTH_SCREEN,
+									Constants.HEIGHT_SCREEN));
+					viewRegister.buildComponent();
+					viewRegister.show(null);
+				}
 			}
 
 			@Override
@@ -217,8 +229,20 @@ public class ViewLogin extends View {
 		btnActive.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getViewController().getView(ViewWaitAccept.class.getName())
-						.show(null);
+				if (getViewController().isContainView(
+						StringSystem.VIEW_WAIT_ACCEPT)) {
+					getViewController().getView(StringSystem.VIEW_WAIT_ACCEPT)
+							.show(null);
+				} else {
+					ViewWaitAccept viewWaitAccept = new ViewWaitAccept();
+					viewWaitAccept.build(getStage(), getViewController(),
+							StringSystem.VIEW_WAIT_ACCEPT, new Rectangle(0, 0,
+									Constants.WIDTH_SCREEN,
+									Constants.HEIGHT_SCREEN));
+					viewWaitAccept.buildComponent();
+					viewWaitAccept.show(null);
+				}
+
 			}
 
 			@Override
@@ -236,11 +260,11 @@ public class ViewLogin extends View {
 			}
 		});
 
-		this.addActor(tfName);
-		this.addActor(tfPass);
+		addActor(tfName);
+		addActor(tfPass);
 		addActor(iconUser);
 		addActor(iconLock);
-		this.addActor(btOk);
+		addActor(btOk);
 		addActor(btnRegister);
 		addActor(btnActive);
 		addActor(btnForgotPass);
@@ -262,8 +286,14 @@ public class ViewLogin extends View {
 			if (isSuccess) {
 				int role_id = respone.getInt(ExtParamsKey.ROLE_ID);
 				UserInfo.getInstance().setRoleId(role_id);
+				HomeView homeView = new HomeView();
+				homeView.build(getStage(), getViewController(),
+						StringSystem.VIEW_HOME, new Rectangle(0, 0,
+								Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
+										- Constants.HEIGHT_ACTIONBAR));
+				homeView.buildComponent();
 				TopBarView topBarView = new TopBarView();
-				topBarView.build(getStage(), _viewController,
+				topBarView.build(getStage(), getViewController(),
 						StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
 								Constants.HEIGHT_SCREEN
 										- Constants.HEIGHT_ACTIONBAR,
@@ -272,96 +302,33 @@ public class ViewLogin extends View {
 				topBarView.buildComponent();
 
 				MainMenuView mainMenu = new MainMenuView();
-				mainMenu.build(getStage(), _viewController,
+				mainMenu.build(getStage(), getViewController(),
 						StringSystem.VIEW_MAIN_MENU,
 						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
 								Constants.HEIGHT_SCREEN));
 				mainMenu.buildComponent();
 
-				ViewAdminLock viewAdminLock = new ViewAdminLock();
-				viewAdminLock.build(getStage(), _viewController,
-						"view_admin_lock", new Rectangle(0, 0,
-								Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
-										- Constants.HEIGHT_ACTIONBAR));
-				viewAdminLock.buildComponent();
-
-				ViewAdminRequest viewAdminRequest = new ViewAdminRequest();
-				viewAdminRequest.build(getStage(), _viewController,
-						"view_admin_request", new Rectangle(0, 0,
-								Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
-										- Constants.HEIGHT_ACTIONBAR));
-				viewAdminRequest.buildComponent();
-
-				ViewInfoDaiLySmall viewInfo = new ViewInfoDaiLySmall();
-				viewInfo.build(getStage(), getViewController(),
-						ViewInfoDaiLySmall.class.getName(), new Rectangle(0, 0,
-								400, 600));
-
-				getViewController().getView("view_login").destroyComponent();
-				getViewController().getView("view_register").destroyComponent();
-				getViewController().getView(StringSystem.VIEW_WAIT_ACCEPT)
-						.destroyComponent();
-
 				int id = respone.getInt(ExtParamsKey.ROLE_ID);
 				AppPreference.instance.type = id;
 				AppPreference.instance.save();
-				AppPreference.instance.setPass(tfPass.getText(),false);
-				// Log.d("Data resonse is caught");
-				// _viewController.getView("view_admin_acive").show(null);
-				// getViewController().getView(StringSystem.VIEW_ACTION_BAR).show(
-				// null);
-				// getViewController().getView(StringSystem.VIEW_MAIN_MENU).show(
-				// null);
+				AppPreference.instance.setPass(tfPass.getText(), false);
+				homeView.show(new OnCompleteListener() {
+					@Override
+					public void onError() {
+					}
 
-				Request.getInstance().getInfoDaily(AppPreference.instance.getName(),
-						new GetInfoDaily());
+					@Override
+					public void done() {
+						getViewController()
+								.getView(StringSystem.VIEW_MAIN_MENU)
+								.show(null);
+					}
+				});
+
 			} else {
 				setTouchable(Touchable.enabled);
 			}
 			respone = null;
-
-		}
-
-		if (responeInfoDaily != null) {
-			Loading.ins.hide();
-			boolean result = responeInfoDaily.getBoolean(ExtParamsKey.RESULT);
-			if (result) {
-				UserInfo.fullName = responeInfoDaily
-						.getString(ExtParamsKey.FULL_NAME);
-				UserInfo.address = responeInfoDaily
-						.getString(ExtParamsKey.ADDRESS);
-				UserInfo.level = responeInfoDaily
-						.getString(ExtParamsKey.ROLE_NAME);
-				UserInfo.phone = tfName.getText();
-				UserInfo.phoneNGT = responeInfoDaily
-						.getString(ExtParamsKey.REF_CODE);
-				UserInfo.money = responeInfoDaily.getInt(ExtParamsKey.AMOUNT);
-				UserInfo.currency = responeInfoDaily
-						.getString(ExtParamsKey.CURRENCY);
-				UserInfo.email = responeInfoDaily.getString(ExtParamsKey.EMAIL);
-				UserInfo.imeiDevice = responeInfoDaily
-						.getString(ExtParamsKey.DEVICE_ID);
-				UserInfo.nameDevice = responeInfoDaily
-						.getString(ExtParamsKey.DEVICE_NAME);
-				UserInfo.state = responeInfoDaily.getInt(ExtParamsKey.STATE);
-
-				ViewAdminActive viewAdminActive = new ViewAdminActive();
-				viewAdminActive.build(getStage(), getViewController(),
-						"view_admin_acive", new Rectangle(0, 0,
-								Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
-										- Constants.HEIGHT_ACTIONBAR));
-				viewAdminActive.buildComponent();
-				if (getViewController().isContainView("view_admin_active")) {
-					Log.d("contain View");
-				} else {
-					Log.d("Aaaaaaaaaaaaaaaaaaaa");
-				}
-				viewAdminActive.show(null);
-			} else {
-				String mess = responeInfoDaily.getString(ExtParamsKey.MESSAGE);
-				Toast.makeText(_stage, mess, Toast.LENGTH_SHORT);
-			}
-			responeInfoDaily = null;
 		}
 	}
 
@@ -386,24 +353,8 @@ public class ViewLogin extends View {
 
 	}
 
-	class GetInfoDaily implements HttpResponseListener {
-
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			responeInfoDaily = (new JsonReader()).parse(httpResponse
-					.getResultAsString());
-		}
-
-		@Override
-		public void failed(Throwable t) {
-
-		}
-
-		@Override
-		public void cancelled() {
-
-		}
-
+	@Override
+	public void hide(OnCompleteListener listener) {
+		setVisible(false);
 	}
-
 }

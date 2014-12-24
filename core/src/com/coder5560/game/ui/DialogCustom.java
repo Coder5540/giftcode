@@ -1,6 +1,7 @@
 package com.coder5560.game.ui;
 
 
+import utils.factory.Log;
 import utils.factory.Style;
 
 import com.badlogic.gdx.graphics.Color;
@@ -84,11 +85,11 @@ public class DialogCustom extends MyDialog {
 
 	@Override
 	protected void result(Object object) {
-		try {
+//		try {
 			runMap.get(object).run();
 			runMap.remove(object);
-		} catch (Exception e) {
-
-		}
+//		} catch (Exception e) {
+//			Log.d(e.toString());
+//		}
 	}
 }

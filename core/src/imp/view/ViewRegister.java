@@ -34,19 +34,20 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
 public class ViewRegister extends View {
 
-	private CustomTextField tfPhone, tfphoneIntro, tfFullName, tfAddress,
+	private CustomTextField	tfPhone, tfphoneIntro, tfFullName, tfAddress,
 			tfEmail;
-	private CustomTextField tfPass, tfRePass;
-	private JsonValue respone;
-	Table content = new Table();
-	ScrollPane scrTextField;
-	Label btnRegister;
+	private CustomTextField	tfPass, tfRePass;
+	private JsonValue		respone;
+	Table					content	= new Table();
+	ScrollPane				scrTextField;
+	Label					btnRegister;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -275,8 +276,6 @@ public class ViewRegister extends View {
 					scrTextField.setScrollY(Constants.HEIGHT_SCREEN / 2 + 50
 							- yDef);
 				}
-				// utils.Debug.d("y in scr=" + yDef + " keyboard height="
-				// + AbstractGameScreen.keyboard.getHeight() + 100);
 				AbstractGameScreen.keyboard.registerTextField(tf, config,
 						KeyboardConfig.SINGLE_LINE);
 				return true;
@@ -327,4 +326,14 @@ public class ViewRegister extends View {
 
 	}
 
+	@Override
+	public void hide(OnCompleteListener listener) {
+		setVisible(false);
+	}
+
+	@Override
+	public void back() {
+		super.back();
+		getViewController().removeView(getName());
+	}
 }

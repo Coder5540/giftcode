@@ -4,11 +4,13 @@ import utils.factory.Style;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 
@@ -28,6 +30,13 @@ public class ItemAdminRequest extends ItemTable {
 			lb[i].setWrap(true);
 			lb[i].setAlignment(Align.center);
 			lb[i].setWidth(table.widthCol[i]);
+
+			lb[i].addListener(new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					click();
+				}
+			});
 		}
 		for (int i = 0; i < lb.length - 1; i++) {
 			lb[i].setText(strings[i]);
@@ -50,6 +59,10 @@ public class ItemAdminRequest extends ItemTable {
 		componentItem[lb.length] = action;
 		setComponentItem(componentItem);
 		init();
+	}
+
+	public void click() {
+
 	}
 
 }

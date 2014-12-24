@@ -1007,6 +1007,7 @@ public class VirtualKeyboard implements OnscreenKeyboard, InputProcessor {
 	public void registerTextField(TextField textField, String nameTextField,
 			int type, int mode) {
 		if (!_nameTextField.equals(nameTextField)) {
+			System.out.println("register keyboard");
 			_nameTextField = nameTextField;
 			setType(type);
 			setMode(mode);

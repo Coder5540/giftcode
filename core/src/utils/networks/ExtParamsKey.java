@@ -75,5 +75,6 @@ public class ExtParamsKey {
 	public final static String VND_VALUE = "vnd_value";
 	public final static String MONEY_IN_GAME = "money_in_game";
 	public final static String AGENCY_RECEIVE = "agency_receive";
+	public final static String TIME_EXPIRE = "time_expire";
 	
 }

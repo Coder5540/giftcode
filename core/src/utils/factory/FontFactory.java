@@ -29,7 +29,7 @@ public class FontFactory {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(fontFile);
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.size = (int) (size * SCALE);
-		parameter.characters = "faáàảãạăắẳằẵặâấẩầẫậbcdđeéẻèẽẹêếểềễệghiíỉìĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvxyýỳỹỷỵwz AÁÀẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬBCDĐEÉÈẺẼẸÊẾỀỂỄỆGHIÍÌỈĨỊJKLMNOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢPQRSTUÚÙỦŨỤƯỨỪỬỮỰVXYÝỲỶỸỴWZ1234567890\"!`?'.,;:()[]{}<>|/@\\^$-%+=#_&~*";
+		parameter.characters = "Ffaáàảãạăắẳằẵặâấẩầẫậbcdđeéẻèẽẹêếểềễệghiíỉìĩịjklmnoóòỏõọôốồổỗộơớờởỡợpqrstuúùủũụưứừửữựvxyýỳỹỷỵwz AÁÀẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬBCDĐEÉÈẺẼẸÊẾỀỂỄỆGHIÍÌỈĨỊJKLMNOÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢPQRSTUÚÙỦŨỤƯỨỪỬỮỰVXYÝỲỶỸỴWZ1234567890\"!`?'.,;:()[]{}<>|/@\\^$-%+=#_&~*";
 		parameter.flip = flip;
 		parameter.genMipMaps = true;
 		generator.generateData(parameter);

@@ -51,43 +51,44 @@ import com.coder5560.game.views.View;
 
 public class ViewLog extends View {
 
-	AbstractTable content;
-	Page pages;
-	boolean isLoad = true;
-	DatePicker dateFrom;
-	DatePicker dateTo;
-	CustomTextField tfSearch;
-	PartnerPicker partner;
-	PartnerPicker partnerFun;
-	LabelButton btnXem;
-	Group gExtendDate;
-	boolean isExtend = false;
-	Image iconsortby;
+	AbstractTable		content;
+	Page				pages;
+	boolean				isLoad					= true;
+	DatePicker			dateFrom;
+	DatePicker			dateTo;
+	CustomTextField		tfSearch;
+	PartnerPicker		partner;
+	PartnerPicker		partnerFun;
+	LabelButton			btnXem;
+	Group				gExtendDate;
+	boolean				isExtend				= false;
+	Image				iconsortby;
 
-	Actor colHoten;
-	Actor colThoigian;
-	int sortby;
-	int sorttype;
-	static final int HOTEN = 1;
-	static final int THOIGIAN = 2;
-	static final int TOPDOWN = 1;
-	static final int BOTTOMUP = 2;
+	Actor				colHoten;
+	Actor				colThoigian;
+	int					sortby;
+	int					sorttype;
+	static final int	HOTEN					= 1;
+	static final int	THOIGIAN				= 2;
+	static final int	TOPDOWN					= 1;
+	static final int	BOTTOMUP				= 2;
 
-	float widthCol[] = { 50, 150, 200, 200, 220, 220, 220, 150, 200, 270, 300,
-			150 };
-	String title[] = { "STT", "Số điện thoại", "Họ tên", "Loại giao dịch",
-			"Số tiền trước giao dịch", "Số tiền sau giao dịch",
-			"Số tiền giao dịch", "Đơn vị", "Người giao dịch",
-			"Số điện thoại người giao dịch", "Nội dung", "Thời gian" };
+	float				widthCol[]				= { 50, 150, 200, 200, 220,
+			220, 220, 150, 200, 270, 300, 150	};
+	String				title[]					= { "STT", "Số điện thoại",
+			"Họ tên", "Loại giao dịch", "Số tiền trước giao dịch",
+			"Số tiền sau giao dịch", "Số tiền giao dịch", "Đơn vị",
+			"Người giao dịch", "Số điện thoại người giao dịch", "Nội dung",
+			"Thời gian"						};
 
-	boolean isLoadByName;
-	String responseByName;
-	boolean isLoadByRoleId;
-	String reponseByRoleId;
+	boolean				isLoadByName;
+	String				responseByName;
+	boolean				isLoadByRoleId;
+	String				reponseByRoleId;
 
-	boolean isChange;
-	String stateofpartnerFun = "0";
-	String laststateofpartnerFun = "0";
+	boolean				isChange;
+	String				stateofpartnerFun		= "0";
+	String				laststateofpartnerFun	= "0";
 
 	public ViewLog buildComponent() {
 		top();
@@ -633,12 +634,10 @@ public class ViewLog extends View {
 					.getLogByName(AppPreference.instance.name,
 							dateFrom.getDate(), dateTo.getDate(),
 							new getListByRoleId());
-			Loading.ins.show(this);
 		} else {
 			Request.getInstance().getLogByRole(AppPreference.instance.name,
 					dateFrom.getDate(), dateTo.getDate(),
 					partner.getPartnerId(), new getListByRoleId());
-			Loading.ins.show(this);
 		}
 		super.show(listener);
 	}
@@ -686,5 +685,16 @@ public class ViewLog extends View {
 		public void cancelled() {
 			// TODO Auto-generated method stub
 		}
+	}
+
+	@Override
+	public String getLabel() {
+		return "Lịch sử giao dịch";
+	}
+
+	@Override
+	public void back() {
+		super.back();
+		getViewController().removeView(getName());
 	}
 }

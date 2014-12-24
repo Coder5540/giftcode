@@ -1,5 +1,7 @@
 package utils.factory;
 
+import java.util.regex.Pattern;
+
 public class StringUtil {
 
 	public static String getStrMoney(int money) {
@@ -58,4 +60,9 @@ public class StringUtil {
 		return number;
 	}
 
+	public static boolean isContainSpecialChar(String content) {
+		String special = "!@#$%^&*()_";
+		String pattern = ".*[" + Pattern.quote(special) + "].*";
+		return content.matches(pattern);
+	}
 }

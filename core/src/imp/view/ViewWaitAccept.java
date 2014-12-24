@@ -31,16 +31,17 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
 public class ViewWaitAccept extends View {
 
-	private CustomTextField tfPhone;
-	private CustomTextField tfActiveCode;
-	private JsonValue respone;
-	Label btnRegister, btnLogin;
+	private CustomTextField	tfPhone;
+	private CustomTextField	tfActiveCode;
+	private JsonValue		respone;
+	Label					btnRegister, btnLogin;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -257,14 +258,17 @@ public class ViewWaitAccept extends View {
 
 		@Override
 		public void failed(Throwable t) {
-
 		}
 
 		@Override
 		public void cancelled() {
 
 		}
-
 	}
 
+	@Override
+	public void hide(OnCompleteListener listener) {
+		super.hide(listener);
+		getViewController().removeView(getName());
+	}
 }

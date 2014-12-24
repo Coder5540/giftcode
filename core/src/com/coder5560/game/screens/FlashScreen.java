@@ -89,8 +89,8 @@ public class FlashScreen extends AbstractGameScreen {
 					public void run() {
 						switchScreen();
 						checkedNetwork = true;
-					}
-				})));
+				 }
+				 })));
 			}
 		} else {
 			imgFlash.addAction(Actions.forever(Actions.sequence(
@@ -106,7 +106,7 @@ public class FlashScreen extends AbstractGameScreen {
 						public void run() {
 							if (parent.getNetworkManager().isNetworkEnable()) {
 								if (!checkedNetwork) {
-									Request.getInstance().loadConfig();
+//									Request.getInstance().loadConfig();
 									imgFlash.addAction(Actions.sequence(
 											Actions.alpha(0f, .2f),
 											Actions.run(new Runnable() {

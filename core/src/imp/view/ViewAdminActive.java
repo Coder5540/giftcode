@@ -11,11 +11,15 @@ import com.aia.appsreport.component.table.AbstractTable;
 import com.aia.appsreport.component.table.ItemAdminActive;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
@@ -27,9 +31,9 @@ import com.coder5560.game.views.View;
 
 public class ViewAdminActive extends View {
 
-	private JsonValue		respone;
-	Table					content	= new Table();
-	private AbstractTable	tableContent;
+	private JsonValue respone;
+	Table content = new Table();
+	private AbstractTable tableContent;
 
 	@Override
 	public String getLabel() {
@@ -71,13 +75,34 @@ public class ViewAdminActive extends View {
 						final JsonValue infoUser = content.get(i);
 						final String phone = infoUser
 								.getString(ExtParamsKey.AGENCY_NAME);
-						ItemAdminActive newItem = new ItemAdminActive(
+
+						final DialogCustom dia = new DialogCustom("");
+						dia.text("Bạn có chắc chắn khóa tài khoản " + phone
+								+ " không?");
+						dia.button("Ok", new Runnable() {
+							@Override
+							public void run() {
+								getViewController().getView(
+										ViewInfoDaiLySmall.class.getName())
+										.hide(null);
+								Loading.ins.show(ViewAdminActive.this);
+								Request.getInstance().chaneStateAdmin(phone,
+										AppPreference.instance.name,
+										AppPreference.instance.pass,
+										Constants.agency_type_lock,
+										new LockListener());
+							}
+						});
+						dia.button("Hủy");
+
+						final ItemAdminActive newItem = new ItemAdminActive(
 								tableContent,
 								new String[] {
 										infoUser.getString(ExtParamsKey.AGENCY_NAME),
 										infoUser.getString(ExtParamsKey.FULL_NAME),
 										Factory.getStrMoney(infoUser
 												.getInt(ExtParamsKey.AMOUNT))
+												+ " "
 												+ infoUser
 														.getString(ExtParamsKey.CURRENCY),
 										infoUser.getString(ExtParamsKey.REF_CODE),
@@ -89,7 +114,7 @@ public class ViewAdminActive extends View {
 										infoUser.getString(ExtParamsKey.STATE) }) {
 							@Override
 							public void click() {
-								((ViewInfoDaiLySmall) getViewController()
+								View view = ((ViewInfoDaiLySmall) getViewController()
 										.getView(
 												ViewInfoDaiLySmall.class
 														.getName()))
@@ -104,6 +129,18 @@ public class ViewAdminActive extends View {
 												infoUser.getString(ExtParamsKey.DEVICE_ID),
 												infoUser.getString(ExtParamsKey.DEVICE_NAME),
 												infoUser.getString(ExtParamsKey.STATE));
+								TextButton btnLock = new TextButton("Khóa",
+										this.btLock.getStyle());
+								btnLock.addListener(new ClickListener() {
+									@Override
+									public void clicked(InputEvent event,
+											float x, float y) {
+										dia.show(getStage());
+									}
+								});
+								view.add(btnLock).colspan(2).width(160)
+										.height(50).pad(30);
+
 							}
 						};
 						tableContent.addItem(newItem);
@@ -112,22 +149,6 @@ public class ViewAdminActive extends View {
 							@Override
 							public void clicked(InputEvent event, float x,
 									float y) {
-								DialogCustom dia = new DialogCustom("");
-								dia.text("Bạn có chắc chắn khóa tài khoản "
-										+ phone + " không?");
-								dia.button("Ok", new Runnable() {
-									@Override
-									public void run() {
-										Loading.ins.show(ViewAdminActive.this);
-										Request.getInstance().chaneStateAdmin(
-												phone,
-												AppPreference.instance.name,
-												AppPreference.instance.pass,
-												Constants.agency_type_lock,
-												new LockListener());
-									}
-								});
-								dia.button("Hủy");
 								dia.show(getStage());
 							}
 						});
@@ -200,19 +221,21 @@ public class ViewAdminActive extends View {
 		Loading.ins.show(this);
 	}
 
-	@Override
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-		if (visible == true) {
-			Loading.ins.show(this);
-			Request.getInstance().getListAgency(AppPreference.instance.name,
-					AppPreference.instance.pass, Constants.agency_type_active,
-					new Listener());
-		}
-	}
+	// @Override
+	// public void setVisible(boolean visible) {
+	// super.setVisible(visible);
+	// if (visible == true) {
+	// Loading.ins.show(this);
+	// Request.getInstance().getListAgency(AppPreference.instance.name,
+	// AppPreference.instance.pass, Constants.agency_type_active,
+	// new Listener());
+	// }
+	// }
 
 	@Override
 	public void hide(OnCompleteListener listener) {
 		super.hide(listener);
+		toBack();
 	}
+
 }

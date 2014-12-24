@@ -1,12 +1,6 @@
 package com.coder5560.game.views;
 
-import imp.view.HomeView;
-import imp.view.ViewAdminActive;
-import imp.view.ViewCapTienDaiLy;
 import imp.view.ViewLogin;
-import imp.view.ViewMails;
-import imp.view.ViewRegister;
-import imp.view.ViewWaitAccept;
 import utils.factory.AppPreference;
 import utils.factory.PlatformResolver;
 import utils.factory.StringSystem;
@@ -36,55 +30,26 @@ public class ViewController implements IViewController {
 		super();
 		this._gameParent = _gameParent;
 		this._gameScreen = gameScreen;
+		AppPreference.instance.load();
 	}
 
 	public void build(Stage stage) {
 		this.stage = stage;
 		views = new Array<IViews>();
-		HomeView homeView = new HomeView();
-		homeView.build(getStage(), this, StringSystem.VIEW_HOME, new Rectangle(
-				0, 0, Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
-						- Constants.HEIGHT_ACTIONBAR));
-		homeView.buildComponent();
-
-		
-		ViewRegister viewRegister = new ViewRegister();
-		viewRegister.build(getStage(), this, "view_register", new Rectangle(0,
-				0, Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
-		viewRegister.buildComponent();
-
-		ViewMails viewMail = new ViewMails();
-		viewMail.build(getStage(), this, StringSystem.VIEW_MAIL, new Rectangle(0,
-				0, Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
-		viewMail.buildComponent();
-		
-		ViewWaitAccept viewWaitAccept = new ViewWaitAccept();
-		viewWaitAccept.build(getStage(), this,StringSystem.VIEW_WAIT_ACCEPT,
-				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
-						Constants.HEIGHT_SCREEN));
-		viewWaitAccept.buildComponent();
-
 		ViewLogin viewLogin = new ViewLogin();
-		viewLogin.build(stage, this, "view_login", new Rectangle(0, 0,
-				Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
+		viewLogin.build(stage, this, StringSystem.VIEW_LOGIN, new Rectangle(0,
+				0, Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
 		viewLogin.buildComponent();
 		viewLogin.show(new OnCompleteListener() {
 
 			@Override
 			public void onError() {
-
 			}
 
 			@Override
 			public void done() {
-
 			}
 		});
-
-		AppPreference.instance.load();
-		if (AppPreference.instance.isWaitActiveCode) {
-			viewWaitAccept.show(null);
-		}
 	}
 
 	@Override

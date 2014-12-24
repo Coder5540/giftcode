@@ -2,6 +2,7 @@ package utils.elements;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
@@ -76,6 +77,11 @@ public class Img extends Image {
 	public Img(TextureRegion region, float width, float height) {
 		super(region);
 		setSize(width, height);
+		setOriginCenter();
+	}
+
+	public Img(NinePatch ninePatch) {
+		super(ninePatch);
 		setOriginCenter();
 	}
 

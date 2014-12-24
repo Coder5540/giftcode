@@ -25,6 +25,8 @@ public class ViewInfoDaiLySmall extends View {
 	TextfieldStatic lbTfTitle[];
 	TextfieldStatic lbTfInfo[];
 	Image bg;
+	Image btnClose;
+	Label lbTitle;
 
 	public ViewInfoDaiLySmall() {
 		this.top();
@@ -41,7 +43,26 @@ public class ViewInfoDaiLySmall extends View {
 		});
 		setBackground(new NinePatchDrawable(new NinePatch(Style.ins.np2,
 				new Color(0.8f, 0.8f, 0.8f, 1))));
-		addActor(bg);
+
+		btnClose = new Image(Assets.instance.getRegion("close"));
+		btnClose.setSize(50, 50);
+		btnClose.setOrigin(Align.center);
+		btnClose.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				hide(null);
+			}
+
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y,
+					int pointer, int button) {
+				btnClose.addAction(Actions.scaleTo(1.2f, 1.2f, 0.3f));
+				return super.touchDown(event, x, y, pointer, button);
+			}
+		});
+
+		addActor(btnClose);
+
 		lbTfTitle = new TextfieldStatic[10];
 		lbTfInfo = new TextfieldStatic[10];
 
@@ -72,7 +93,7 @@ public class ViewInfoDaiLySmall extends View {
 
 		lbTfInfo[4].setHeight(lbTfTitle[4].getHeight());
 
-		Label lbTitle = new Label("Thông tin đại lý", new LabelStyle(
+		lbTitle = new Label("Thông tin đại lý", new LabelStyle(
 				Assets.instance.fontFactory.getFont(30, fontType.Medium),
 				Color.BLUE));
 		this.add(lbTitle).padTop(10).padBottom(10).colspan(2).row();
@@ -83,12 +104,23 @@ public class ViewInfoDaiLySmall extends View {
 		setTransform(true);
 	}
 
-	public void show(String... info) {
+	public View show(String... info) {
+		clear();
+		addActor(btnClose);
+		this.add(lbTitle).padTop(10).padBottom(10).colspan(2).row();
+		for (int i = 0; i < 10; i++) {
+			this.add(lbTfTitle[i]).padTop(5);
+			this.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
+		}
+
 		setOrigin(Align.center);
 		getStage().addActor(bg);
 		bg.setVisible(true);
+		btnClose.setPosition(getWidth() - btnClose.getWidth() - 10, getHeight()
+				- btnClose.getHeight() - 10);
 		toFront();
 		setVisible(true);
+		btnClose.setScale(1);
 		setPosition(Constants.WIDTH_SCREEN / 2, Constants.HEIGHT_SCREEN / 2,
 				Align.center);
 		for (int i = 0; i < 10; i++)
@@ -105,8 +137,9 @@ public class ViewInfoDaiLySmall extends View {
 		clearActions();
 		setScale(0.8f);
 		getColor().a = 0.8f;
-		addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.bounce));
-		addAction(Actions.fadeIn(0.2f, Interpolation.bounce));
+		addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.fade));
+		addAction(Actions.fadeIn(0.2f, Interpolation.fade));
+		return this;
 	}
 
 	@Override
@@ -114,11 +147,12 @@ public class ViewInfoDaiLySmall extends View {
 		super.show(listener);
 		bg.setVisible(true);
 		setVisible(true);
+		btnClose.setScale(1);
 		clearActions();
 		setScale(0.8f);
 		getColor().a = 0.8f;
-		addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.bounce));
-		addAction(Actions.fadeIn(0.2f, Interpolation.bounce));
+		addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.fade));
+		addAction(Actions.fadeIn(0.2f, Interpolation.fade));
 	}
 
 	@Override
@@ -130,5 +164,10 @@ public class ViewInfoDaiLySmall extends View {
 				Actions.scaleTo(0.5f, 0.5f, 0.2f, Interpolation.fade),
 				Actions.hide()));
 		addAction(Actions.fadeOut(0.2f, Interpolation.fade));
+	}
+	@Override
+	public void back() {
+		super.back();
+		getViewController().removeView(getName());
 	}
 }

@@ -12,11 +12,12 @@ import com.coder5560.game.assets.Assets;
 
 public class TextfieldStatic extends Group {
 
+	public float minHeight = 35;
 	public Label lbContent;
 	private Image bg;
 
 	public TextfieldStatic(String content, Color color, float width) {
-		setSize(width, 35);
+		setSize(width, minHeight);
 		bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch1, 6, 6,
 				6, 6));
 		bg.setColor(new Color(245 / 255f, 245 / 255f, 245 / 255f, 1));
@@ -26,7 +27,7 @@ public class TextfieldStatic extends Group {
 				color));
 		lbContent.setWrap(true);
 		lbContent.setWidth(width - 10);
-		if (lbContent.getTextBounds().height > 35) {
+		if (lbContent.getTextBounds().height > minHeight) {
 			setHeight(lbContent.getTextBounds().height + 10);
 		}
 		bg.setSize(getWidth(), getHeight());
@@ -57,16 +58,21 @@ public class TextfieldStatic extends Group {
 
 	public void setContent(String content) {
 		this.lbContent.setText(content);
-		if (lbContent.getTextBounds().height > getHeight()) {
+		if (lbContent.getTextBounds().height >= minHeight - 10) {
 			setHeight(lbContent.getTextBounds().height + 10);
+		} else {
+			setHeight(minHeight);
 		}
-		bg.setSize(getWidth(), getHeight());
 	}
 
 	public void setHeight(float height) {
 		super.setHeight(height);
 		bg.setHeight(height);
 		lbContent.setY(height / 2 - lbContent.getHeight() / 2);
+	}
+
+	public void setMinHeight(float height) {
+		this.minHeight = height;
 	}
 
 }

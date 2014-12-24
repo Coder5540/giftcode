@@ -17,9 +17,9 @@ import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.ViewController;
 
 public class GameScreen extends AbstractGameScreen {
-	ViewController			controller;
-	Image					flash;
-	public GestureDetector	gestureDetector;
+	ViewController controller;
+	Image flash;
+	public GestureDetector gestureDetector;
 
 	public GameScreen(GameCore game) {
 		super(game);
@@ -64,14 +64,16 @@ public class GameScreen extends AbstractGameScreen {
 		}
 	}
 
-	boolean	isExit		= false;
-	float	timeExit	= 0;
+	boolean isExit = false;
+	float timeExit = 0;
 
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
 
-			if (controller.getView(StringSystem.VIEW_MAIN_MENU).getViewState() == ViewState.SHOW) {
+			if (controller.getView(StringSystem.VIEW_MAIN_MENU) != null
+					&& controller.getView(StringSystem.VIEW_MAIN_MENU)
+							.getViewState() == ViewState.SHOW) {
 				controller.getView(StringSystem.VIEW_MAIN_MENU).hide(null);
 				return true;
 			}
@@ -94,11 +96,11 @@ public class GameScreen extends AbstractGameScreen {
 		Gdx.input.setInputProcessor(parent.inputMultiplexer);
 	}
 
-	OnSelectListener	selectListener	= new OnSelectListener() {
+	OnSelectListener selectListener = new OnSelectListener() {
 
-											@Override
-											public void onSelect(int i) {
-											}
-										};
+		@Override
+		public void onSelect(int i) {
+		}
+	};
 
 }

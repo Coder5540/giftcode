@@ -3,6 +3,7 @@ package imp.view;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
+import utils.factory.StringUtil;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
 import utils.keyboard.VirtualKeyboard.OnHideListener;
@@ -14,6 +15,7 @@ import utils.screen.Toast;
 
 import com.aia.appsreport.component.table.AbstractTable;
 import com.aia.appsreport.component.table.ItemInfoDaily;
+import com.aia.appsreport.component.table.ItemTable;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.Color;
@@ -21,7 +23,6 @@ import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -40,7 +41,9 @@ import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.DialogCustom;
+import com.coder5560.game.ui.ItemListener;
 import com.coder5560.game.ui.Loading;
+import com.coder5560.game.ui.Page;
 import com.coder5560.game.ui.TextfieldStatic;
 import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
@@ -51,6 +54,7 @@ public class ViewCapTienDaiLy extends View {
 	private CustomTextField tfPerson;
 
 	private AbstractTable tableDaily;
+	private Page page;
 
 	private JsonValue responeGetDaily;
 	private JsonValue responeGetDailyLower;
@@ -63,6 +67,7 @@ public class ViewCapTienDaiLy extends View {
 
 	public void buildComponent() {
 		this.top();
+		this.setVisible(false);
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
 
@@ -124,6 +129,24 @@ public class ViewCapTienDaiLy extends View {
 		tableDaily = new AbstractTable(new Table(), widthCol);
 		String[] title = { "STT", "Tên đại lý", "Số điện thoại", "" };
 		tableDaily.setTitle(title);
+		tableDaily.setCancelTouchFocus(false);
+
+		page = new Page(getWidth(), 60);
+		page.setListener(new ItemListener() {
+			@Override
+			public void onItemClick() {
+				tableDaily.setScrollX(0);
+				tableDaily.setScrollY(0);
+				tableDaily.addAction(Actions.sequence(
+						Actions.alpha(0, 0.5f, Interpolation.exp5Out),
+						Actions.alpha(1, 0.5f, Interpolation.exp5Out)));
+				tableDaily.removeAll();
+				for (int i = 0; i < page.getCurrentDataPage().size(); i++) {
+					ItemTable item = page.getCurrentDataPage().get(i);
+					tableDaily.addItem(item);
+				}
+			}
+		});
 
 		viewDetail = new ViewDetail();
 
@@ -132,7 +155,8 @@ public class ViewCapTienDaiLy extends View {
 		this.add(tfPerson).padLeft(10).width(250).height(35).left().row();
 		this.add(btSend).padTop(10).width(120).height(40).colspan(2).row();
 		this.add(lbTitle).padTop(15).colspan(2).row();
-		this.add(tableDaily).padTop(10).colspan(2);
+		this.add(tableDaily).padTop(10).colspan(2).row();
+		this.add(page).colspan(2);
 		this.addActor(viewDetail);
 		Request.getInstance().getLowerDaily(AppPreference.instance.name,
 				AppPreference.instance.pass, -1, new GetDailyLower());
@@ -143,6 +167,8 @@ public class ViewCapTienDaiLy extends View {
 		viewDetail.update(delta);
 		if (responeGetDailyLower != null) {
 			Loading.ins.hide();
+			page.removeAllPage();
+			tableDaily.removeAll();
 			boolean result = responeGetDailyLower
 					.getBoolean(ExtParamsKey.RESULT);
 			if (result) {
@@ -150,27 +176,27 @@ public class ViewCapTienDaiLy extends View {
 						.get(ExtParamsKey.LIST);
 				if (listDaily.size > 0) {
 					for (int i = 0; i < listDaily.size; i++) {
-						final String nameDaily = responeGetDaily
+						JsonValue content = listDaily.get(i);
+						final String nameDaily = content
 								.getString(ExtParamsKey.FULL_NAME);
-						final String address = responeGetDaily
+						final String address = content
 								.getString(ExtParamsKey.ADDRESS);
-						final String level = responeGetDaily
+						final String level = content
 								.getString(ExtParamsKey.ROLE_NAME);
-						final String phone = responeGetDaily
+						final String phone = content
 								.getString(ExtParamsKey.AGENCY_NAME);
-						final String sdtGt = responeGetDaily
+						final String sdtGt = content
 								.getString(ExtParamsKey.REF_CODE);
-						final int money = responeGetDaily
-								.getInt(ExtParamsKey.AMOUNT);
-						final String currency = responeGetDaily
+						final int money = content.getInt(ExtParamsKey.AMOUNT);
+						final String currency = content
 								.getString(ExtParamsKey.CURRENCY);
-						final String email = responeGetDaily
+						final String email = content
 								.getString(ExtParamsKey.EMAIL);
-						final String deviceId = responeGetDaily
+						final String deviceId = content
 								.getString(ExtParamsKey.DEVICE_ID);
-						final String deviceName = responeGetDaily
+						final String deviceName = content
 								.getString(ExtParamsKey.DEVICE_NAME);
-						int state = responeGetDaily.getInt(ExtParamsKey.STATE);
+						int state = content.getInt(ExtParamsKey.STATE);
 						final String realState;
 						if (state == 0) {
 							realState = "Chưa kích hoạt";
@@ -180,21 +206,25 @@ public class ViewCapTienDaiLy extends View {
 							realState = "Bị khóa";
 						}
 						ItemInfoDaily item = new ItemInfoDaily(tableDaily,
-								new String[] { nameDaily, phone });
+								new String[] { "" + (i + 1), nameDaily, phone });
 						item.btSee.addListener(new ClickListener() {
 							@Override
 							public void clicked(InputEvent event, float x,
 									float y) {
 								super.clicked(event, x, y);
 								String[] info = { nameDaily, address, level,
-										tfPerson.getText(), sdtGt,
-										money + " " + currency, email,
-										deviceId, deviceName, realState };
+										phone, sdtGt, money + " " + currency,
+										email, deviceId, deviceName, realState };
 								viewDetail.money = money;
 								viewDetail.setInfo(info);
 								viewDetail.show(null);
 							}
 						});
+						page.addData(item);
+					}
+					page.init();
+					for (int i = 0; i < page.getCurrentDataPage().size(); i++) {
+						ItemTable item = page.getCurrentDataPage().get(i);
 						tableDaily.addItem(item);
 					}
 				} else {
@@ -250,7 +280,7 @@ public class ViewCapTienDaiLy extends View {
 				} else {
 					stringState = "Bị khóa";
 				}
-				
+
 				String[] info = { nameDaily, address, capDaily,
 						tfPerson.getText(), sdtGt, money + " " + currency,
 						email, deviceId, deviceName, stringState };
@@ -359,7 +389,7 @@ public class ViewCapTienDaiLy extends View {
 						Assets.instance.fontFactory.getFont(20,
 								fontType.Regular), Color.GRAY));
 				lbTitle[i].setWrap(true);
-				lbTitle[i].setWidth(220);
+				lbTitle[i].setWidth(180);
 				lbTitle[i].setText(title[i]);
 			}
 
@@ -367,6 +397,9 @@ public class ViewCapTienDaiLy extends View {
 				lbInfo[i] = new TextfieldStatic("", Color.BLACK, 270);
 			}
 			lbInfo[4].setHeight(lbTitle[4].getTextBounds().height + 10);
+			lbInfo[4].setMinHeight(lbTitle[4].getTextBounds().height + 10);
+			lbInfo[5].setHeight(lbTitle[5].getTextBounds().height + 10);
+			lbInfo[5].setMinHeight(lbTitle[5].getTextBounds().height + 10);
 			tfMoney = new CustomTextField("", Style.ins.getTextFieldStyle(8,
 					Assets.instance.fontFactory.getFont(25, fontType.Light)));
 			tfMoney.setOnscreenKeyboard(AbstractGameScreen.keyboard);
@@ -443,6 +476,10 @@ public class ViewCapTienDaiLy extends View {
 						Toast.makeText(getStage(),
 								"Vui lòng nhập đúng số tiền",
 								Toast.LENGTH_SHORT);
+					} else if (StringUtil.isContainSpecialChar(taNote.getText())) {
+						Toast.makeText(getStage(),
+								"Ghi chú không được chứa ký tự đặc biệt",
+								Toast.LENGTH_SHORT);
 					} else {
 						AbstractGameScreen.keyboard.hide();
 						DialogCustom dl = new DialogCustom("");
@@ -450,6 +487,7 @@ public class ViewCapTienDaiLy extends View {
 								+ tfMoney.getText() + " USD " + " cho "
 								+ tfPerson.getText());
 						dl.button("Ok", new Runnable() {
+
 							@Override
 							public void run() {
 								Loading.ins.show(ViewDetail.this);
@@ -460,6 +498,7 @@ public class ViewCapTienDaiLy extends View {
 										"USD", taNote.getText(),
 										new SendMoney());
 							}
+
 						});
 						dl.button("Hủy");
 						dl.show(getStage());
@@ -489,7 +528,7 @@ public class ViewCapTienDaiLy extends View {
 			}
 			tbContent.add(lbTitle[10]).width(180).padTop(5);
 			tbContent.add(tfMoney).left().width(200).padTop(5).height(35);
-			tbContent.add(lbCurrency).padLeft(5).row();
+			tbContent.add(lbCurrency).left().row();
 			tbContent.add(lbTitle[11]).width(180).padTop(5);
 			tbContent.add(taNote).width(270).padTop(5).height(100).left()
 					.colspan(2).row();
@@ -500,8 +539,8 @@ public class ViewCapTienDaiLy extends View {
 			for (int i = 0; i < lbInfo.length; i++) {
 				lbInfo[i].setContent(info[i]);
 				tbContent.getCell(lbInfo[i]).height(lbInfo[i].getHeight());
-				invalidate();
 			}
+			tbContent.invalidate();
 		}
 
 		@Override
@@ -565,8 +604,6 @@ public class ViewCapTienDaiLy extends View {
 
 	@Override
 	public void hide(OnCompleteListener listener) {
-		setViewState(ViewState.HIDE);
-		setTouchable(Touchable.disabled);
 		TraceView.instance.removeView(this.getName());
 		getViewController().removeView(name);
 	}

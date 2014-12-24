@@ -39,6 +39,7 @@ public interface IViews {
 
 	public Rectangle getBound();
 
+	public String getLabel();
 	/*
 	 * return true : means this view catch the leftSizeEvent and prevent view
 	 * controller call the left side by automatically

@@ -37,6 +37,7 @@ public class View extends Table implements IViews {
 		name = "";
 	}
 
+	@Override
 	public String getLabel() {
 		return "8B8 Gift Code";
 	}
@@ -83,6 +84,9 @@ public class View extends Table implements IViews {
 		setViewState(ViewState.HIDE);
 		setTouchable(Touchable.disabled);
 		TraceView.instance.removeView(this.getName());
+		((TopBarView) getViewController().getView(StringSystem.VIEW_ACTION_BAR))
+				.setTopName(getViewController().getView(
+						TraceView.instance.getLastView()).getLabel());
 	}
 
 	@Override

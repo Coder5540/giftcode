@@ -16,11 +16,11 @@ import com.coder5560.game.enums.Constants;
 
 public class Request {
 
-	private static Request	INSTANCE;
+	private static Request INSTANCE;
 
-	public HttpRequest		lastestHttpRequest;
+	public HttpRequest lastestHttpRequest;
 
-	float					timeout	= 0;
+	float timeout = 0;
 
 	private Request() {
 	}
@@ -341,6 +341,34 @@ public class Request {
 						.build(), listener);
 	}
 
+	public void getExchangeInGame(String amount, String currency,
+			HttpResponseListener listener) {
+		post(CommandRequest.GET_EXCHANGE_IN_GAME,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AMOUNT, amount)
+						.add(ExtParamsKey.CURRENCY, currency)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(amount + currency
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+
+	public void generateGiftCode(String agencyName, String amount,
+			String currency, int timeExpire, HttpResponseListener listener) {
+		post(CommandRequest.GET_EXCHANGE_IN_GAME,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.AMOUNT, amount)
+						.add(ExtParamsKey.CURRENCY, currency)
+						.add(ExtParamsKey.TIME_EXPIRE,timeExpire)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(amount + currency
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+
 	public void sendMoney(String name, String pass, String receiveName,
 			String amount, String currency, String note,
 			HttpResponseListener listener) {
@@ -357,5 +385,5 @@ public class Request {
 								hash(name + pass + receiveName
 										+ ConnectionConfig.CLIENT_KEY)).build(),
 				listener);
-	}	
+	}
 }

@@ -8,14 +8,19 @@ import utils.networks.Request;
 import utils.screen.Toast;
 
 import com.aia.appsreport.component.table.AbstractTable;
+import com.aia.appsreport.component.table.ItemAdminActive;
 import com.aia.appsreport.component.table.ItemAdminLock;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
@@ -49,6 +54,7 @@ public class ViewAdminLock extends View {
 				"Cấp", "Địa chỉ", "Email", "Tên thiết bị", "Imei thiết bị",
 				"Tình trạng", "" };
 		tableContent.setTitle(title);
+
 		this.add(tableContent).padTop(5).width(getWidth())
 				.height(getHeight() - 100).row();
 		return this;
@@ -67,9 +73,29 @@ public class ViewAdminLock extends View {
 				JsonValue content = respone.get(ExtParamsKey.LIST);
 				if (content.size > 0) {
 					for (int i = 0; i < content.size; i++) {
-						JsonValue infoUser = content.get(i);
+						final JsonValue infoUser = content.get(i);
 						final String phone = infoUser
 								.getString(ExtParamsKey.AGENCY_NAME);
+
+						final DialogCustom dia = new DialogCustom("");
+						dia.text("Bạn có chắc chắn mở khóa cho tài khoản "
+								+ phone + " không?");
+						dia.button("Ok", new Runnable() {
+							@Override
+							public void run() {
+								getViewController().getView(
+										ViewInfoDaiLySmall.class.getName())
+										.hide(null);
+								Loading.ins.show(ViewAdminLock.this);
+								Request.getInstance().chaneStateAdmin(phone,
+										AppPreference.instance.name,
+										AppPreference.instance.pass,
+										Constants.agency_type_active,
+										new LockListener());
+							}
+						});
+						dia.button("Hủy");
+
 						ItemAdminLock newItem = new ItemAdminLock(
 								tableContent,
 								new String[] {
@@ -77,6 +103,7 @@ public class ViewAdminLock extends View {
 										infoUser.getString(ExtParamsKey.FULL_NAME),
 										Factory.getStrMoney(infoUser
 												.getInt(ExtParamsKey.AMOUNT))
+												+ " "
 												+ infoUser
 														.getString(ExtParamsKey.CURRENCY),
 										infoUser.getString(ExtParamsKey.REF_CODE),
@@ -85,29 +112,43 @@ public class ViewAdminLock extends View {
 										infoUser.getString(ExtParamsKey.EMAIL),
 										infoUser.getString(ExtParamsKey.DEVICE_NAME),
 										infoUser.getString(ExtParamsKey.DEVICE_ID),
-										infoUser.getString(ExtParamsKey.STATE) });
+										infoUser.getString(ExtParamsKey.STATE) }) {
+							@Override
+							public void click() {
+								View view = ((ViewInfoDaiLySmall) getViewController()
+										.getView(
+												ViewInfoDaiLySmall.class
+														.getName()))
+										.show(infoUser
+												.getString(ExtParamsKey.FULL_NAME),
+												infoUser.getString(ExtParamsKey.ADDRESS),
+												infoUser.getString(ExtParamsKey.ROLE_NAME),
+												infoUser.getString(ExtParamsKey.AGENCY_NAME),
+												infoUser.getString(ExtParamsKey.REF_CODE),
+												infoUser.getString(ExtParamsKey.AMOUNT),
+												infoUser.getString(ExtParamsKey.EMAIL),
+												infoUser.getString(ExtParamsKey.DEVICE_ID),
+												infoUser.getString(ExtParamsKey.DEVICE_NAME),
+												infoUser.getString(ExtParamsKey.STATE));
+								TextButton btnLock = new TextButton("Mở khóa",
+										this.btLock.getStyle());
+								btnLock.addListener(new ClickListener() {
+									@Override
+									public void clicked(InputEvent event,
+											float x, float y) {
+										dia.show(getStage());
+									}
+								});
+								view.add(btnLock).colspan(2).width(160)
+										.height(50).pad(30);
+							}
+						};
 						tableContent.addItem(newItem);
 
 						newItem.btLock.addListener(new ClickListener() {
 							@Override
 							public void clicked(InputEvent event, float x,
 									float y) {
-								DialogCustom dia = new DialogCustom("");
-								dia.text("Bạn có chắc chắn mở khóa cho tài khoản "
-										+ phone + " không?");
-								dia.button("Ok", new Runnable() {
-									@Override
-									public void run() {
-										Loading.ins.show(ViewAdminLock.this);
-										Request.getInstance().chaneStateAdmin(
-												phone,
-												AppPreference.instance.name,
-												AppPreference.instance.pass,
-												Constants.agency_type_active,
-												new LockListener());
-									}
-								});
-								dia.button("Hủy");
 								dia.show(getStage());
 							}
 						});
@@ -190,5 +231,11 @@ public class ViewAdminLock extends View {
 					AppPreference.instance.pass, Constants.agency_type_lock,
 					new Listener());
 		}
+	}
+
+	@Override
+	public void hide(OnCompleteListener listener) {
+		super.hide(listener);
+		toBack();
 	}
 }

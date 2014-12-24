@@ -181,18 +181,15 @@ public class Page extends Table {
 	public ArrayList<ItemTable> getDataFromPage(int i) {
 		ArrayList<ItemTable> data = new ArrayList<ItemTable>();
 		int begin = (i - 1) * 30;
-		int end = 0;
-		for (int a = 0; a < 30; a++) {
-			if (this.data.size() > end + a) {
-				end = begin + a;
-			} else {
-				break;
-			}
-		}
+		int end = begin + 29;
 		if (end != 0) {
 			for (int j = begin; j <= end; j++) {
-				ItemTable item = this.data.get(j);
-				data.add(item);
+				if (this.data.size() > j) {
+					ItemTable item = this.data.get(j);
+					data.add(item);
+				} else {
+					break;
+				}
 			}
 		}
 		return data;

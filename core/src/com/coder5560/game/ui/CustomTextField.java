@@ -89,13 +89,36 @@ public class CustomTextField extends TextField {
 
 	public class CustomTextFieldClickListener extends TextFieldClickListener {
 		@Override
+		public void clicked(InputEvent event, float x, float y) {
+			int count = getTapCount() % 4;
+			if (count == 0) clearSelection();
+		}
+		@Override
 		public boolean touchDown(InputEvent event, float x, float y,
 				int pointer, int button) {
+			System.out.println(" x = " + x + ":" + "y = " + y);
 			super.touchDown(event, x - getStyle().background.getLeftWidth(), y,
 					pointer, button);
+			System.out.println("cursor tf : " + getCursorPosition());
 			((VirtualKeyboard) getOnscreenKeyboard())
 					.setCursorPosition(getCursorPosition() - 1);
+			System.out.println(((VirtualKeyboard) getOnscreenKeyboard()).getCursorPosition());
 			return true;
+		}	
+		
+		@Override
+		public void touchUp(InputEvent event, float x, float y, int pointer,
+				int button) {
+			// TODO Auto-generated method stub
+			super.touchUp(event, x - getStyle().background.getLeftWidth(), y,
+					pointer, button);
+		}
+		
+		@Override
+		public void touchDragged(InputEvent event, float x, float y, int pointer) {
+			// TODO Auto-generated method stub
+			super.touchDragged(event, x - getStyle().background.getLeftWidth(), y,
+					pointer);
 		}
 	}
 }

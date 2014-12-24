@@ -7,6 +7,7 @@ import utils.factory.FontFactory.fontType;
 import utils.factory.Log;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
+import utils.networks.UserInfo;
 
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
@@ -38,17 +39,22 @@ import com.coder5560.game.views.IViewController;
 public class ListMenu extends ScrollPane {
 
 	Table					table;
-	IViewController	controller;
+	IViewController			controller;
 	ArrayList<ItemMenu>		listItem	= new ArrayList<ListMenu.ItemMenu>();
 	private OnClickListener	onBlockUserClicked;
 	private OnClickListener	onUnActiveUserClicked;
 	private OnClickListener	onActiveUserClicked;
 	private OnClickListener	onAvatarClicked;
 	private OnClickListener	onAllMailClicked;
-	private OnClickListener onHistoryTransitionClicked;
-	private OnClickListener onAddMoneyClicked;
+	private OnClickListener	onHistoryTransitionClicked;
+	private OnClickListener	onAddMoneyClicked;
+	private OnClickListener	onSellGiftCode;
+	private OnClickListener	onUsedGiftCode;
+	private OnClickListener	onUnUseGiftCode;
+
 	LabelStyle				lbStyle;
 	private IconMail		iconMail;
+	public Label			lbName;
 
 	public ListMenu(IViewController controllerView, final Table table,
 			Rectangle bound) {
@@ -77,21 +83,68 @@ public class ListMenu extends ScrollPane {
 		addItem(itemMail, 1);
 
 		addLine(table, 2);
-		ItemMenu itemLog = new ItemMenu(
-				Assets.instance.ui.getIconTransition(),
+		ItemMenu itemLog = new ItemMenu(Assets.instance.ui.getIconTransition(),
 				"LỊCH SỬ GIAO DỊCH", getWidth(), 50);
 		createItemHistoryTransitio(itemLog);
 		addItem(itemLog, 2);
+
+		addLine(table, 2);
+		ItemMenu itemGiftCode = new ItemMenu(
+				Assets.instance.ui.getIconTransition(), "GIFT CODE",
+				getWidth(), 50);
+		createItemGiftcode(itemGiftCode);
+		addItem(itemGiftCode, 3);
+
+	}
+
+	private void createItemGiftcode(ItemMenu itemGiftCode) {
+		LabelButton sellGiftCode = new LabelButton("Bán giftcode", lbStyle,
+				getWidth(), 45);
+		sellGiftCode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(float x, float y) {
+				if (onSellGiftCode != null) {
+					onSellGiftCode.onClick(x, y);
+				}
+			}
+		});
+
+		LabelButton usedGiftCode = new LabelButton("Giftcode đã sử dụng",
+				lbStyle, getWidth(), 45);
+		usedGiftCode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(float x, float y) {
+				if (onUsedGiftCode != null) {
+					onUsedGiftCode.onClick(x, y);
+				}
+			}
+		});
+		LabelButton unUseGiftCode = new LabelButton("Giftcode chưa sử dụng",
+				lbStyle, getWidth(), 45);
+		unUseGiftCode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(float x, float y) {
+				if (onUnUseGiftCode != null) {
+					onUnUseGiftCode.onClick(x, y);
+				}
+			}
+		});
+
+		itemGiftCode.addComponent(sellGiftCode);
+		itemGiftCode.addComponent(usedGiftCode);
+		itemGiftCode.addComponent(unUseGiftCode);
 	}
 
 	private void createItemHistoryTransitio(ItemMenu itemLog) {
-		LabelButton log = new LabelButton("Lịch sử", lbStyle,
-				getWidth(), 45);
+		LabelButton log = new LabelButton("Lịch sử", lbStyle, getWidth(), 45);
 		log.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(float x, float y) {
-				if(onHistoryTransitionClicked != null){
+				if (onHistoryTransitionClicked != null) {
 					onHistoryTransitionClicked.onClick(x, y);
 				}
 			}
@@ -100,8 +153,9 @@ public class ListMenu extends ScrollPane {
 	}
 
 	public void updateMail() {
-		Request.getInstance().getMessageUnseen(AppPreference.instance.getName(),
-				new HttpResponseListener() {
+		lbName.setText(UserInfo.fullName);
+		Request.getInstance().getMessageUnseen(
+				AppPreference.instance.getName(), new HttpResponseListener() {
 
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
@@ -139,7 +193,7 @@ public class ListMenu extends ScrollPane {
 		Image avatar = new Image(Assets.instance.ui.getAvatar());
 		avatar.setSize(120, 120);
 		avatar.setPosition(20, user.getHeight() / 2 - avatar.getHeight() / 2);
-		Label lbName = new Label("Coder 5560", new LabelStyle(
+		lbName = new Label(UserInfo.fullName, new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, fontType.Light),
 				Color.WHITE));
 		lbName.setPosition(avatar.getX() + avatar.getWidth() + 5,
@@ -219,10 +273,11 @@ public class ListMenu extends ScrollPane {
 					onBlockUserClicked.onClick(x, y);
 			}
 		});
-		
-		LabelButton addMoney = new LabelButton("Cấp tiền", lbStyle, getWidth(), 45);
+
+		LabelButton addMoney = new LabelButton("Cấp tiền", lbStyle, getWidth(),
+				45);
 		addMoney.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(float x, float y) {
 				if (onAddMoneyClicked != null)
@@ -272,10 +327,10 @@ public class ListMenu extends ScrollPane {
 		layout();
 	}
 
-	public void setNotify(int number){
+	public void setNotify(int number) {
 		iconMail.setNotify(number);
 	}
-	
+
 	class ItemMenu extends Group {
 		Group					item;
 		Image					bg;
@@ -706,31 +761,25 @@ public class ListMenu extends ScrollPane {
 
 	}
 
-
 	public void setOnBlockUserClicked(OnClickListener onBlockUserClicked) {
 		this.onBlockUserClicked = onBlockUserClicked;
 	}
-
 
 	public void setOnUnActiveUserClicked(OnClickListener onUnActiveUserClicked) {
 		this.onUnActiveUserClicked = onUnActiveUserClicked;
 	}
 
-
 	public void setOnActiveUserClicked(OnClickListener onActiveUserClicked) {
 		this.onActiveUserClicked = onActiveUserClicked;
 	}
-
 
 	public void setController(IViewController controller) {
 		this.controller = controller;
 	}
 
-
 	public void setOnAvatarClicked(OnClickListener onAvatarClicked) {
 		this.onAvatarClicked = onAvatarClicked;
 	}
-
 
 	public void setOnAllMailClicked(OnClickListener onMailClicked) {
 		this.onAllMailClicked = onMailClicked;
@@ -745,5 +794,16 @@ public class ListMenu extends ScrollPane {
 		this.onAddMoneyClicked = onAddMoneyClicked;
 	}
 
-	
+	public void setOnSellGiftCode(OnClickListener onSellGiftCode) {
+		this.onSellGiftCode = onSellGiftCode;
+	}
+
+	public void setOnUsedGiftCode(OnClickListener onUsedGiftCode) {
+		this.onUsedGiftCode = onUsedGiftCode;
+	}
+
+	public void setOnUnUseGiftCode(OnClickListener onUnUseGiftCode) {
+		this.onUnUseGiftCode = onUnUseGiftCode;
+	}
+
 }

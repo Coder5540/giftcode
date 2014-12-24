@@ -77,4 +77,10 @@ public class ViewInfoDaiLy extends View {
 			this.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
 		}
 	}
+
+	@Override
+	public void back() {
+		super.back();
+		getViewController().removeView(getName());
+	}
 }

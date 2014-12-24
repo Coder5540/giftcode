@@ -9,7 +9,7 @@ public class AppPreference {
 	public static AppPreference instance = new AppPreference();
 
 	private Preferences preferences;
-	private String name, pass;
+	public String name, pass;
 	public int type;
 	public boolean isWaitActiveCode = false;
 
@@ -32,15 +32,14 @@ public class AppPreference {
 		preferences.flush();
 	}
 
-	
-	
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name, boolean flush) {
 		this.name = name;
-		if(flush) flush();
+		if (flush)
+			flush();
 	}
 
 	public String getPass() {
@@ -49,11 +48,14 @@ public class AppPreference {
 
 	public void setPass(String pass, boolean flush) {
 		this.pass = pass;
-		if(flush) flush();
+		if (flush)
+			flush();
 	}
-	public void flush(){
+
+	public void flush() {
 		preferences.flush();
 	}
+
 	public Preferences getPreferences() {
 		return preferences;
 	}
