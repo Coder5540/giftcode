@@ -11,15 +11,13 @@ import com.aia.appsreport.component.table.AbstractTable;
 import com.aia.appsreport.component.table.ItemAdminActive;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
@@ -56,6 +54,17 @@ public class ViewAdminActive extends View {
 
 		this.add(tableContent).padTop(5).width(getWidth())
 				.height(getHeight() - 100).row();
+
+		if (!getViewController().isContainView(
+				ViewInfoDaiLySmall.class.getName())) {
+			ViewInfoDaiLySmall view = new ViewInfoDaiLySmall();
+			view.build(getStage(), getViewController(),
+					ViewInfoDaiLySmall.class.getName(), new Rectangle(0, 0,
+							Constants.WIDTH_SCREEN - 30,
+							Constants.HEIGHT_SCREEN
+									- Constants.HEIGHT_ACTIONBAR * 3));
+		}
+
 		return this;
 	}
 

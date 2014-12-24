@@ -33,6 +33,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -49,48 +50,58 @@ import com.coder5560.game.ui.Loading;
 import com.coder5560.game.ui.Page;
 import com.coder5560.game.views.View;
 
-public class ViewLog extends View {
+public class ViewLogTransferMoney extends View {
 
-	AbstractTable		content;
-	Page				pages;
-	boolean				isLoad					= true;
-	DatePicker			dateFrom;
-	DatePicker			dateTo;
-	CustomTextField		tfSearch;
-	PartnerPicker		partner;
-	PartnerPicker		partnerFun;
-	LabelButton			btnXem;
-	Group				gExtendDate;
-	boolean				isExtend				= false;
-	Image				iconsortby;
+	AbstractTable content;
+	Page pages;
+	boolean isLoad = true;
+	DatePicker dateFrom;
+	DatePicker dateTo;
+	CustomTextField tfSearch;
+	PartnerPicker partner;
+	PartnerPicker partnerFun;
+	TextButton btnXem;
+	Group gExtendDate;
+	boolean isExtend = false;
+	Image iconsortby;
 
-	Actor				colHoten;
-	Actor				colThoigian;
-	int					sortby;
-	int					sorttype;
-	static final int	HOTEN					= 1;
-	static final int	THOIGIAN				= 2;
-	static final int	TOPDOWN					= 1;
-	static final int	BOTTOMUP				= 2;
+	Actor colHoten;
+	Actor colThoigian;
+	int sortby;
+	int sorttype;
+	static final int HOTEN = 1;
+	static final int THOIGIAN = 2;
+	static final int TOPDOWN = 1;
+	static final int BOTTOMUP = 2;
 
-	float				widthCol[]				= { 50, 150, 200, 200, 220,
-			220, 220, 150, 200, 270, 300, 150	};
-	String				title[]					= { "STT", "Số điện thoại",
-			"Họ tên", "Loại giao dịch", "Số tiền trước giao dịch",
-			"Số tiền sau giao dịch", "Số tiền giao dịch", "Đơn vị",
-			"Người giao dịch", "Số điện thoại người giao dịch", "Nội dung",
-			"Thời gian"						};
+	float widthCol[] = { 50, 150, 200, 200, 220, 220, 220, 150, 200, 270, 300,
+			150 };
+	String title[] = { "STT", "Số điện thoại", "Họ tên", "Loại giao dịch",
+			"Số tiền trước giao dịch", "Số tiền sau giao dịch",
+			"Số tiền giao dịch", "Đơn vị", "Người giao dịch",
+			"Số điện thoại người giao dịch", "Nội dung", "Thời gian" };
 
-	boolean				isLoadByName;
-	String				responseByName;
-	boolean				isLoadByRoleId;
-	String				reponseByRoleId;
+	boolean isLoadByName;
+	String responseByName;
+	boolean isLoadByRoleId;
+	String reponseByRoleId;
 
-	boolean				isChange;
-	String				stateofpartnerFun		= "0";
-	String				laststateofpartnerFun	= "0";
+	boolean isChange;
+	String stateofpartnerFun = "0";
+	String laststateofpartnerFun = "0";
 
-	public ViewLog buildComponent() {
+	Image iconextendDate;
+	PartnerSelectBox quickDatePicker;
+	boolean isChangeFun;
+	int stateFun;
+
+	int typeView;
+	public static int TYPE_SEND = 0;
+	public static int TYPE_RECEIVE = 1;
+	public static int TYPE_ALL = -1;
+
+	public ViewLogTransferMoney buildComponent(int type) {
+		this.typeView = type;
 		top();
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
 				Color.WHITE));
@@ -117,8 +128,6 @@ public class ViewLog extends View {
 				DateTime.getCurrentDate("MM"), DateTime.getCurrentDate("yyyy"));
 		dateFrom.setSize(Constants.WIDTH_SCREEN / 2 - 5, 50);
 		dateTo.setSize(Constants.WIDTH_SCREEN / 2 - 5, 50);
-		// dateFrom.setStartString("Từ");
-		// dateTo.setStartString("Đến");
 		dateFrom.setStartString("");
 		dateTo.setStartString("");
 		dateFrom.setPosition(30, bgTop.getHeight() - dateFrom.getHeight() - 5);
@@ -130,7 +139,7 @@ public class ViewLog extends View {
 		bgiconextendDate.setPosition(getWidth() - bgiconextendDate.getWidth(),
 				dateFrom.getY());
 		bgiconextendDate.setColor(245 / 255f, 245 / 255f, 245 / 255f, 1);
-		final Image iconextendDate = new Image(new TextureRegion(new Texture(
+		iconextendDate = new Image(new TextureRegion(new Texture(
 				Gdx.files.internal("Img/play.png"))));
 		iconextendDate.setSize(25, 25);
 		iconextendDate.setOrigin(iconextendDate.getWidth() / 2,
@@ -180,6 +189,7 @@ public class ViewLog extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
+				// TODO Auto-generated method stub
 				iconextendDate.getColor().a = 0.25f;
 				return super.touchDown(event, x, y, pointer, button);
 			}
@@ -187,6 +197,7 @@ public class ViewLog extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
+				// TODO Auto-generated method stub
 				iconextendDate.getColor().a = 0.5f;
 				if (isExtend) {
 					gExtendDate.clearActions();
@@ -217,24 +228,26 @@ public class ViewLog extends View {
 		bgExtendDate.setSize(gExtendDate.getWidth(), gExtendDate.getHeight());
 		Label lbExtendDate = new Label("Chọn nhanh", Style.ins.getLabelStyle(
 				20, fontType.Regular, Color.BLACK));
-		final PartnerSelectBox picker = new PartnerSelectBox(
-				Style.ins.selectBoxStyle);
-		picker.setSize(220, 40);
-		picker.addPartner(new ItemDatePartner(0));
-		picker.addPartner(new ItemDatePartner(1));
-		picker.addPartner(new ItemDatePartner(2));
-		picker.addPartner(new ItemDatePartner(3));
-		picker.addPartner(new ItemDatePartner(7));
-		picker.addPartner(new ItemDatePartner(14));
-		picker.addPartner(new ItemDatePartner(21));
-		picker.addPartner(new ItemDatePartner(28));
+		quickDatePicker = new PartnerSelectBox(Style.ins.selectBoxStyle);
+		quickDatePicker.setSize(220, 40);
+		quickDatePicker.addPartner(new ItemDatePartner(0));
+		quickDatePicker.addPartner(new ItemDatePartner(1));
+		quickDatePicker.addPartner(new ItemDatePartner(2));
+		quickDatePicker.addPartner(new ItemDatePartner(3));
+		quickDatePicker.addPartner(new ItemDatePartner(7));
+		quickDatePicker.addPartner(new ItemDatePartner(14));
+		quickDatePicker.addPartner(new ItemDatePartner(21));
+		quickDatePicker.addPartner(new ItemDatePartner(28));
+		quickDatePicker.setSelectedIndex(4);
 		LabelButton btnOk = new LabelButton("Chọn", Style.ins.getLabelStyle(20,
 				fontType.Regular, Color.BLACK), 80, 40, LabelButton.CENTER);
-		lbExtendDate.setPosition(15,
+		lbExtendDate.setPosition(55,
 				gExtendDate.getHeight() / 2 - lbExtendDate.getHeight() / 2);
-		picker.setPosition(lbExtendDate.getWidth() + 35,
-				gExtendDate.getHeight() / 2 - picker.getHeight() / 2);
-		btnOk.setPosition(getWidth() - btnOk.getWidth() - 20, picker.getY());
+		quickDatePicker.setPosition(
+				lbExtendDate.getX() + lbExtendDate.getWidth() + 25,
+				gExtendDate.getHeight() / 2 - quickDatePicker.getHeight() / 2);
+		btnOk.setPosition(getWidth() - btnOk.getWidth() - 20,
+				quickDatePicker.getY());
 		btnOk.setListener(new ItemListener() {
 
 			@Override
@@ -246,16 +259,14 @@ public class ViewLog extends View {
 				gExtendDate.addAction(Actions.alpha(0, 0.075f));
 				iconextendDate.addAction(Actions.rotateTo(270, 0.15f));
 				isExtend = false;
-				dateFrom.setDate(
-						DateTime.getDateBefor(
-								"dd",
-								((ItemDatePartner) picker.getSelected()).daybefor),
-						DateTime.getDateBefor(
-								"MM",
-								((ItemDatePartner) picker.getSelected()).daybefor),
-						DateTime.getDateBefor(
-								"yyyy",
-								((ItemDatePartner) picker.getSelected()).daybefor));
+				dateFrom.setDate(DateTime
+						.getDateBefor("dd", ((ItemDatePartner) quickDatePicker
+								.getSelected()).daybefor), DateTime
+						.getDateBefor("MM", ((ItemDatePartner) quickDatePicker
+								.getSelected()).daybefor), DateTime
+						.getDateBefor("yyyy",
+								((ItemDatePartner) quickDatePicker
+										.getSelected()).daybefor));
 				dateTo.setDate(DateTime.getCurrentDate("dd"),
 						DateTime.getCurrentDate("MM"),
 						DateTime.getCurrentDate("yyyy"));
@@ -263,8 +274,8 @@ public class ViewLog extends View {
 		});
 		gExtendDate.addActor(bgExtendDate);
 		gExtendDate.addActor(lbExtendDate);
-		gExtendDate.addActor(picker);
-		gExtendDate.addActor(btnOk);
+		gExtendDate.addActor(quickDatePicker);
+		// gExtendDate.addActor(btnOk);
 
 		gExtendDate.setPosition(0, dateFrom.getY());
 		gExtendDate.getColor().a = 0f;
@@ -282,9 +293,6 @@ public class ViewLog extends View {
 			partnerFun.addPartner(1, "Xem theo SDT", "1");
 			partnerFun.addPartner(2, "Xem theo cấp", "2");
 		}
-
-		// Label lbSDT = new Label("Số điện thoại", Style.ins.getLabelStyle(20,
-		// fontType.Regular, Color.BLACK));
 		TextFieldStyle style = new TextFieldStyle();
 		NinePatch ninepatch = new NinePatch(
 				Assets.instance.getRegion("ninepatch_stock"), 4, 4, 4, 4);
@@ -299,8 +307,6 @@ public class ViewLog extends View {
 		tfSearch.setOnscreenKeyboard(AbstractGameScreen.keyboard);
 		tfSearch.setMessageText("Số điện thoại");
 		tfSearch.setSize(2 * getWidth() / 5, 40);
-		// lbSDT.setPosition(6, bgTop.getHeight() - dateFrom.getHeight()
-		// - tfSearch.getHeight() / 2 - lbSDT.getHeight() / 2 - 15);
 		tfSearch.setPosition(getWidth() / 2 - tfSearch.getWidth() / 2,
 				dateTo.getY() - tfSearch.getHeight() - 5);
 		tfSearch.addListener(new InputListener() {
@@ -317,42 +323,40 @@ public class ViewLog extends View {
 		partner.setSize(2 * getWidth() / 5, 38);
 		partner.setPosition(getWidth() / 2 - partner.getWidth() / 2,
 				dateTo.getY() - 5 - partner.getHeight());
-		btnXem = new LabelButton("Xem", Style.ins.getLabelStyle(20,
-				fontType.Regular, Color.BLACK), 2 * getWidth() / 5, 40,
-				LabelButton.CENTER);
+		btnXem = new TextButton("Xem", Style.ins.textButtonStyle);
+		btnXem.setSize(2 * getWidth() / 5, 40);
 		btnXem.setPosition(getWidth() / 2 - btnXem.getWidth() / 2,
 				bgTop.getY() + 10);
-		btnXem.setListener(new ItemListener() {
-
+		btnXem.addListener(new ClickListener() {
 			@Override
-			public void onItemClick() {
-				// TODO Auto-generated method stub
+			public void clicked(InputEvent event, float x, float y) {
 				if (stateofpartnerFun.equals("-1")) {
-					Request.getInstance().getLogByName(
+					Request.getInstance().getLogByName(typeView,
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
-					Loading.ins.show(ViewLog.this);
+					Loading.ins.show(ViewLogTransferMoney.this);
 				} else if (stateofpartnerFun.equals("0")) {
-					Request.getInstance().getLogByRole(
+					Request.getInstance().getLogByRole(typeView,
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), partner.getPartnerId(),
 							new getListByRoleId());
-					Loading.ins.show(ViewLog.this);
+					Loading.ins.show(ViewLogTransferMoney.this);
 				} else if (stateofpartnerFun.equals("1")) {
-					Request.getInstance().getLogByName(tfSearch.getText(),
-							dateFrom.getDate(), dateTo.getDate(),
-							new getListByName());
-					Loading.ins.show(ViewLog.this);
+					Request.getInstance().getLogByName(typeView,
+							tfSearch.getText(), dateFrom.getDate(),
+							dateTo.getDate(), new getListByName());
+					Loading.ins.show(ViewLogTransferMoney.this);
 				} else if (stateofpartnerFun.equals("2")) {
-					Request.getInstance().getLogByRole(
+					Request.getInstance().getLogByRole(typeView,
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), partner.getPartnerId(),
 							new getListByRoleId());
-					Loading.ins.show(ViewLog.this);
+					Loading.ins.show(ViewLogTransferMoney.this);
 				}
+				AbstractGameScreen.keyboard.hide();
+				super.clicked(event, x, y);
 			}
 		});
-
 		gTop.addActor(bgTop);
 		gTop.addActor(tfSearch);
 		gTop.addActor(partner);
@@ -381,44 +385,44 @@ public class ViewLog extends View {
 		// addActor(iconsortby);
 		// iconsortby.setVisible(false);
 
-		colHoten = content.rowTitle.getChildren().get(2);
-		colHoten.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				System.out.println("click to ho ten");
-				sortby = HOTEN;
-				iconsortby.setVisible(true);
-				if (sorttype == TOPDOWN) {
-					sorttype = BOTTOMUP;
-					iconsortby.setRotation(270);
-					System.out.println("change to bottom up");
-				} else {
-					iconsortby.setRotation(90);
-					sorttype = TOPDOWN;
-					System.out.println("change to top down");
-				}
-				iconsortby.setPosition(
-						content.rowTitle.getX() + colHoten.getX()
-								+ colHoten.getWidth() - iconsortby.getWidth(),
-						content.rowTitle.getY() - content.getScrollY()
-								+ colHoten.getY() + colHoten.getHeight() / 2
-								- iconsortby.getHeight() / 2);
-				System.out.println(content.rowTitle.getX() + " : "
-						+ colHoten.getX() + ":" + colHoten.getWidth());
-				System.out.println(content.rowTitle.getY() + " : "
-						+ content.getScrollY() + ":" + colHoten.getHeight());
-				super.clicked(event, x, y);
-			}
-		});
-		colThoigian = content.rowTitle.getChildren().get(8);
-		colThoigian.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				// TODO Auto-generated method stub
-				System.out.println("click to thoi gian");
-				super.clicked(event, x, y);
-			}
-		});
+		// colHoten = content.rowTitle.getChildren().get(2);
+		// colHoten.addListener(new ClickListener() {
+		// @Override
+		// public void clicked(InputEvent event, float x, float y) {
+		// System.out.println("click to ho ten");
+		// sortby = HOTEN;
+		// iconsortby.setVisible(true);
+		// if (sorttype == TOPDOWN) {
+		// sorttype = BOTTOMUP;
+		// iconsortby.setRotation(270);
+		// System.out.println("change to bottom up");
+		// } else {
+		// iconsortby.setRotation(90);
+		// sorttype = TOPDOWN;
+		// System.out.println("change to top down");
+		// }
+		// iconsortby.setPosition(
+		// content.rowTitle.getX() + colHoten.getX()
+		// + colHoten.getWidth() - iconsortby.getWidth(),
+		// content.rowTitle.getY() - content.getScrollY()
+		// + colHoten.getY() + colHoten.getHeight() / 2
+		// - iconsortby.getHeight() / 2);
+		// System.out.println(content.rowTitle.getX() + " : "
+		// + colHoten.getX() + ":" + colHoten.getWidth());
+		// System.out.println(content.rowTitle.getY() + " : "
+		// + content.getScrollY() + ":" + colHoten.getHeight());
+		// super.clicked(event, x, y);
+		// }
+		// });
+		// colThoigian = content.rowTitle.getChildren().get(8);
+		// colThoigian.addListener(new ClickListener() {
+		// @Override
+		// public void clicked(InputEvent event, float x, float y) {
+		// // TODO Auto-generated method stub
+		// System.out.println("click to thoi gian");
+		// super.clicked(event, x, y);
+		// }
+		// });
 
 		pages = new Page(getWidth(), 50);
 		pages.init();
@@ -470,49 +474,55 @@ public class ViewLog extends View {
 				pages.removeAllPage();
 				content.removeAll();
 				JsonValue arr = json.get(ExtParamsKey.LIST);
-				for (int i = 0; i < arr.size; i++) {
-					JsonValue content = arr.get(i);
-					String agencyname = content
-							.getString(ExtParamsKey.AGENCY_NAME);
-					int type = content.getInt(ExtParamsKey.TRANSFER_TYPE);
-					// int type = 0;
-					long money_before = content
-							.getLong(ExtParamsKey.MONEY_BEFORE);
-					String str_money_before = StringUtil
-							.getStrMoney((int) money_before);
-					long money_after = content
-							.getLong(ExtParamsKey.MONEY_AFTER);
-					String str_money_after = StringUtil
-							.getStrMoney((int) money_after);
-					long money_transfer = content
-							.getLong(ExtParamsKey.MONEY_TRANSFER);
-					String str_money_transfer = StringUtil
-							.getStrMoney((int) money_transfer);
-					String currency = content.getString(ExtParamsKey.CURRENCY);
-					String date = DateTime.getStringDate(
-							content.getLong(ExtParamsKey.GEN_DATE),
-							"dd-MM-yyyy");
-					String full_name = content
-							.getString(ExtParamsKey.FULL_NAME);
-					String agency_transfer = content
-							.getString(ExtParamsKey.AGENCY_TRANSFER);
-					String agency_transfer_full_name = content
-							.getString(ExtParamsKey.AGENCY_TRANSFER_FULL_NAME);
-					String note = content.getString(ExtParamsKey.NOTE);
-					String loaigd = "Chuyển tiền";
-					if (type == 1) {
-						loaigd = "Nhận tiền";
+				if (arr.size > 0) {
+					for (int i = 0; i < arr.size; i++) {
+						JsonValue content = arr.get(i);
+						String agencyname = content
+								.getString(ExtParamsKey.AGENCY_NAME);
+						int type = content.getInt(ExtParamsKey.TRANSFER_TYPE);
+						// int type = 0;
+						long money_before = content
+								.getLong(ExtParamsKey.MONEY_BEFORE);
+						String str_money_before = StringUtil
+								.getStrMoney((int) money_before);
+						long money_after = content
+								.getLong(ExtParamsKey.MONEY_AFTER);
+						String str_money_after = StringUtil
+								.getStrMoney((int) money_after);
+						long money_transfer = content
+								.getLong(ExtParamsKey.MONEY_TRANSFER);
+						String str_money_transfer = StringUtil
+								.getStrMoney((int) money_transfer);
+						String currency = content
+								.getString(ExtParamsKey.CURRENCY);
+						String date = DateTime.getStringDate(
+								content.getLong(ExtParamsKey.GEN_DATE),
+								"dd-MM-yyyy");
+						String full_name = content
+								.getString(ExtParamsKey.FULL_NAME);
+						String agency_transfer = content
+								.getString(ExtParamsKey.AGENCY_TRANSFER);
+						String agency_transfer_full_name = content
+								.getString(ExtParamsKey.AGENCY_TRANSFER_FULL_NAME);
+						String note = content.getString(ExtParamsKey.NOTE);
+						String loaigd = "Chuyển tiền";
+						if (type == 1) {
+							loaigd = "Nhận tiền";
+						}
+						ItemLog item = new ItemLog(this.content, (i + 1) + "",
+								agencyname, full_name, loaigd,
+								str_money_before, str_money_after,
+								str_money_transfer, currency,
+								agency_transfer_full_name, agency_transfer,
+								note, date);
+						pages.addData(item);
 					}
-					ItemLog item = new ItemLog(this.content, (i + 1) + "",
-							agencyname, full_name, loaigd, str_money_before,
-							str_money_after, str_money_transfer, currency,
-							agency_transfer_full_name, agency_transfer, note,
-							date);
-					pages.addData(item);
-				}
-				pages.init();
-				for (int i = 0; i < pages.getCurrentDataPage().size(); i++) {
-					content.addItem(pages.getCurrentDataPage().get(i));
+					pages.init();
+					for (int i = 0; i < pages.getCurrentDataPage().size(); i++) {
+						content.addItem(pages.getCurrentDataPage().get(i));
+					}
+				} else {
+					Toast.makeText(getStage(), "Không có dữ liệu !!!", 3f);
 				}
 			} else {
 				Toast.makeText(getStage(), message, 3f);
@@ -522,15 +532,34 @@ public class ViewLog extends View {
 		}
 	}
 
-	void getListByRoleId() {
-		if (isLoadByRoleId) {
-			Loading.ins.hide();
-			isLoadByRoleId = false;
-		}
-	}
-
 	@Override
 	public void update(float delta) {
+		if (((ItemDatePartner) quickDatePicker.getSelected()).daybefor != stateFun) {
+			stateFun = ((ItemDatePartner) quickDatePicker.getSelected()).daybefor;
+			isChangeFun = true;
+		}
+		if (isChangeFun) {
+			gExtendDate.clearActions();
+			iconextendDate.clearActions();
+			gExtendDate.addAction(Actions.moveTo(0, dateFrom.getY(), 0.15f));
+			gExtendDate.addAction(Actions.alpha(0, 0.075f));
+			iconextendDate.addAction(Actions.rotateTo(270, 0.15f));
+			isExtend = false;
+			dateFrom.setDate(
+					DateTime.getDateBefor(
+							"dd",
+							((ItemDatePartner) quickDatePicker.getSelected()).daybefor),
+					DateTime.getDateBefor(
+							"MM",
+							((ItemDatePartner) quickDatePicker.getSelected()).daybefor),
+					DateTime.getDateBefor(
+							"yyyy",
+							((ItemDatePartner) quickDatePicker.getSelected()).daybefor));
+			dateTo.setDate(DateTime.getCurrentDate("dd"),
+					DateTime.getCurrentDate("MM"),
+					DateTime.getCurrentDate("yyyy"));
+			isChangeFun = false;
+		}
 		if (!partnerFun.getPartnerCode().equals(stateofpartnerFun)) {
 			isChange = true;
 			stateofpartnerFun = partnerFun.getPartnerCode();
@@ -626,20 +655,36 @@ public class ViewLog extends View {
 	@Override
 	public void show(OnCompleteListener listener) {
 		if (UserInfo.getInstance().getRoleId() == 3) {
-			// Request.getInstance()
-			// .getLogByName(AppPreference.instance.name,
-			// dateFrom.getDate(), dateTo.getDate(),
-			// new getListByRoleId());
-			Request.getInstance()
-					.getLogByName(AppPreference.instance.name,
-							dateFrom.getDate(), dateTo.getDate(),
-							new getListByRoleId());
+			Request.getInstance().getLogByName(typeView,
+					AppPreference.instance.name, dateFrom.getDate(),
+					dateTo.getDate(), new getListByRoleId());
+			Loading.ins.show(this);
 		} else {
-			Request.getInstance().getLogByRole(AppPreference.instance.name,
-					dateFrom.getDate(), dateTo.getDate(),
-					partner.getPartnerId(), new getListByRoleId());
+			Request.getInstance().getLogByRole(typeView,
+					AppPreference.instance.name, dateFrom.getDate(),
+					dateTo.getDate(), partner.getPartnerId(),
+					new getListByRoleId());
+			Loading.ins.show(this);
 		}
 		super.show(listener);
+	}
+
+	@Override
+	public void hide(OnCompleteListener listener) {
+		toBack();
+		super.hide(listener);
+	}
+
+	@Override
+	public String getLabel() {
+		if (typeView == TYPE_SEND) {
+			return "Lịch sử chuyển tiền";
+		} else if (typeView == TYPE_RECEIVE) {
+			return "Lịch sử nhận tiền";
+		} else if (typeView == TYPE_ALL) {
+			return "Lịch sử giao dịch";
+		}
+		return "Lịch sử giao dịch";
 	}
 
 	class getListByName implements HttpResponseListener {
@@ -647,7 +692,6 @@ public class ViewLog extends View {
 		@Override
 		public void handleHttpResponse(HttpResponse httpResponse) {
 			responseByName = httpResponse.getResultAsString();
-			System.out.println(responseByName);
 			isLoadByName = true;
 		}
 
@@ -672,7 +716,6 @@ public class ViewLog extends View {
 			// TODO Auto-generated method stub
 			responseByName = httpResponse.getResultAsString();
 			isLoadByName = true;
-			System.out.println(responseByName);
 		}
 
 		@Override
@@ -685,16 +728,5 @@ public class ViewLog extends View {
 		public void cancelled() {
 			// TODO Auto-generated method stub
 		}
-	}
-
-	@Override
-	public String getLabel() {
-		return "Lịch sử giao dịch";
-	}
-
-	@Override
-	public void back() {
-		super.back();
-		getViewController().removeView(getName());
 	}
 }

@@ -22,7 +22,6 @@ public class AppPreference {
 		name = preferences.getString("name");
 		type = preferences.getInteger("type");
 		isWaitActiveCode = preferences.getBoolean("waitactivecode");
-
 	}
 
 	public void save() {
@@ -38,6 +37,7 @@ public class AppPreference {
 
 	public void setName(String name, boolean flush) {
 		this.name = name;
+		preferences.putString("name", name);
 		if (flush)
 			flush();
 	}
@@ -48,6 +48,7 @@ public class AppPreference {
 
 	public void setPass(String pass, boolean flush) {
 		this.pass = pass;
+		preferences.putString("pass",pass);
 		if (flush)
 			flush();
 	}

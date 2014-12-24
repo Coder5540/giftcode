@@ -2,28 +2,30 @@ package utils.networks;
 
 import java.util.ArrayList;
 
+import utils.factory.Log;
+
 import com.badlogic.gdx.utils.JsonValue;
 
 public class UserInfo {
 
-	private ArrayList<Partner> listPartners;
-	private Permission permission;
-	private String username;
-	private int role_id;
-	private static UserInfo INSTANCE;
+	private ArrayList<Partner>	listPartners;
+	private Permission			permission;
+	private String				username;
+	private int					role_id;
+	private static UserInfo		INSTANCE;
 
-	public static String fullName;
-	public static String address;
-	public static String level;
-	public static String phone;
-	public static String phoneNGT;
-	public static int money;
-	public static String currency;
-	public static String email;
-	public static String imeiDevice;
-	public static String nameDevice;
-	public static int state;
-	
+	public static String		fullName;
+	public static String		address;
+	public static String		level;
+	public static String		phone;
+	public static String		phoneNGT;
+	public static int			money;
+	public static String		currency;
+	public static String		email;
+	public static String		imeiDevice;
+	public static String		nameDevice;
+	public static int			state;
+
 	public UserInfo() {
 		this.listPartners = new ArrayList<UserInfo.Partner>();
 		this.permission = new Permission();
@@ -88,6 +90,14 @@ public class UserInfo {
 		this.permission.parseFromJsonArray(json);
 	}
 
+	public void setPermission(int[] newper) {
+		this.permission.setPermission(newper);
+	}
+
+	public void setPermisstion(int index) {
+		this.permission.permission[index] = 1;
+	}
+
 	public ArrayList<Partner> getListPartners() {
 		return listPartners;
 	}
@@ -106,9 +116,9 @@ public class UserInfo {
 
 	public class Partner {
 
-		public int id;
-		public String code;
-		public String title;
+		public int		id;
+		public String	code;
+		public String	title;
 
 		public Partner(int id, String code, String title) {
 			this.id = id;
@@ -124,24 +134,33 @@ public class UserInfo {
 
 	public class Permission {
 		//
-		public final static int MAX_PERMISSION = 10;
-		public final static int PERMISSION_THONGKECHISOGAME = 0;
-		public final static int PERMISSION_MINIGAME = PERMISSION_THONGKECHISOGAME + 1;
-		public final static int PERMISSION_TIENTRONGGAME = PERMISSION_MINIGAME + 1;
-		public final static int PERMISSION_QUANLYDOANHTHU = PERMISSION_TIENTRONGGAME + 1;
-		public final static int PERMISSION_NAPTIENKHUYENMAI = PERMISSION_QUANLYDOANHTHU + 1;
-		public final static int PERMISSION_QUANLYUSER = PERMISSION_NAPTIENKHUYENMAI + 1;
-		public final static int PERMISSION_NOTIFICATION = PERMISSION_QUANLYUSER + 1;
-		public final static int PERMISSION_QUANLYPARTNER = PERMISSION_NOTIFICATION + 1;
-		public final static int PERMISSION_PHANQUYENUSER = PERMISSION_QUANLYPARTNER + 1;
+		public final static int	MAX_PERMISSION					= 10;
+		public final static int	PERMISSION_ADMIN_ACTIVE			= 0;
+		public final static int	PERMISSION_ADMIN_INACTIVE		= PERMISSION_ADMIN_ACTIVE + 1;
+		public final static int	PERMISSION_ADMIN_LOCK			= PERMISSION_ADMIN_INACTIVE + 1;
+		public final static int	PERMISSION_CAPTIEN				= PERMISSION_ADMIN_LOCK + 1;
+		public final static int	PERMISSION_MAIL					= PERMISSION_CAPTIEN + 1;
+		public final static int	PERMISSION_LOG_CHUYENTIEN		= PERMISSION_MAIL + 1;
+		public final static int	PERMISSION_LOG_NHANTIEN			= PERMISSION_LOG_CHUYENTIEN + 1;
+		public final static int	PERMISSION_BAN_GIFTCODE			= PERMISSION_LOG_NHANTIEN + 1;
+		public final static int	PERMISSION_GIFTCODE_CHUASUDUNG	= PERMISSION_BAN_GIFTCODE + 1;
+		public final static int	PERMISSION_GIFTCODE_DASUDUNG	= PERMISSION_GIFTCODE_CHUASUDUNG + 1;
 		//
-		public int[] permission;
+		public int[]			permission;
 
 		public Permission() {
-			permission = new int[MAX_PERMISSION];
+			permission = new int[PermissionConfig.values().length];
 			for (int i = 0; i < permission.length; i++) {
-				permission[i] = 1;
+				permission[i] = 0;
 			}
+		}
+
+		public void resetPermission() {
+
+			for (int i = 0; i < permission.length; i++) {
+				permission[i] = 0;
+			}
+			Log.d("Reset permission");
 		}
 
 		// Kiem tra xem co quyen nao do hay khong. PermissionId dung cac bien

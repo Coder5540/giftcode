@@ -1,10 +1,12 @@
 package imp.view;
 
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
 import utils.factory.StringSystem;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeType.Face;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -23,32 +25,49 @@ public class ViewMessage extends View {
 	Image	bg;
 	Table	tbContent;
 	Label	lbShortDescription;
-	int		id;
-	String	content;
-	String	sender;
+	Label	time;
+	long	_time;
+	int		_id;
+	String	_content;
+	String	_sender;
 
-	public ViewMessage(String sender, String content, int id) {
+	public ViewMessage(String sender, String content, int id, long time) {
 		super();
-		this.content = content;
-		this.id = id;
-		this.sender = sender;
+		this._content = content;
+		this._id = id;
+		this._sender = sender;
+		this._time = time;
 	}
 
 	public void buildComponent() {
 		LabelStyle style = new LabelStyle();
 		style.font = Assets.instance.fontFactory.getFont(20, fontType.Medium);
 		style.fontColor = new Color(Color.BLACK);
-		lbShortDescription = new Label(content, style);
+		lbShortDescription = new Label(_content, style);
 		lbShortDescription.setAlignment(Align.top, Align.left);
 		lbShortDescription.setTouchable(Touchable.disabled);
 		lbShortDescription.setWidth(getWidth() - 40);
 		lbShortDescription.setWrap(true);
 
+		
+		
+		LabelStyle styleTime = new LabelStyle();
+		styleTime.font = Assets.instance.fontFactory.getFont(18, fontType.Light);
+		styleTime.fontColor = Color.BLACK;
+		
+		time = new Label(Factory.getTime(_time), styleTime);
+		time.setTouchable(Touchable.disabled);
+		time.setWidth(getWidth()/2);
+		time.setWrap(true);
+		
+		
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, Color.WHITE)));
 		top();
 		add(lbShortDescription).expand().fill().align(Align.top).padLeft(20)
 				.padTop(20).padRight(20);
+		row();
+		add(time).padRight(20).padTop(20).top();
 		setTouchable(Touchable.enabled);
 	}
 
@@ -101,7 +120,7 @@ public class ViewMessage extends View {
 
 	@Override
 	public String getLabel() {
-		return sender;
+		return _sender;
 	}
 
 }

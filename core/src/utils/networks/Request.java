@@ -16,11 +16,11 @@ import com.coder5560.game.enums.Constants;
 
 public class Request {
 
-	private static Request INSTANCE;
+	private static Request	INSTANCE;
 
-	public HttpRequest lastestHttpRequest;
+	public HttpRequest		lastestHttpRequest;
 
-	float timeout = 0;
+	float					timeout	= 0;
 
 	private Request() {
 	}
@@ -277,34 +277,6 @@ public class Request {
 		lastestHttpRequest = null;
 	}
 
-	public void getLogByName(String sdt, String timestart, String timeend,
-			HttpResponseListener listener) {
-		post(CommandRequest.GET_TRANSFER_LOG,
-				ParamsBuilder
-						.builder()
-						.add(ExtParamsKey.AGENCY_NAME, sdt)
-						.add(ExtParamsKey.SIGNATURE,
-								hash(sdt + timestart + timeend
-										+ ConnectionConfig.CLIENT_KEY))
-						.add(ExtParamsKey.DATE_FROM, timestart)
-						.add(ExtParamsKey.DATE_TO, timeend).build(), listener);
-	}
-
-	public void getLogByRole(String sdt, String timestart, String timeend,
-			int role_id, HttpResponseListener listener) {
-		post(CommandRequest.GET_TRANSFER_LOG_SUB,
-				ParamsBuilder
-						.builder()
-						.add(ExtParamsKey.AGENCY_NAME, sdt)
-						.add(ExtParamsKey.DATE_FROM, timestart)
-						.add(ExtParamsKey.DATE_TO, timeend)
-						.add(ExtParamsKey.ROLE_ID, role_id)
-						.add(ExtParamsKey.SIGNATURE,
-								hash(sdt + timestart + timeend
-										+ ConnectionConfig.CLIENT_KEY)).build(),
-				listener);
-	}
-
 	public void checkDaily(String name, String receive,
 			HttpResponseListener listener) {
 		post(CommandRequest.CHECK_AGENCY_RECEIVE,
@@ -362,7 +334,7 @@ public class Request {
 						.add(ExtParamsKey.AGENCY_NAME, agencyName)
 						.add(ExtParamsKey.AMOUNT, amount)
 						.add(ExtParamsKey.CURRENCY, currency)
-						.add(ExtParamsKey.TIME_EXPIRE,timeExpire)
+						.add(ExtParamsKey.TIME_EXPIRE, timeExpire)
 						.add(ExtParamsKey.SIGNATURE,
 								hash(amount + currency
 										+ ConnectionConfig.CLIENT_KEY)).build(),
@@ -383,6 +355,112 @@ public class Request {
 						.add(ExtParamsKey.NOTE, note)
 						.add(ExtParamsKey.SIGNATURE,
 								hash(name + pass + receiveName
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+
+	public void getLogByName(int type, String sdt, String timestart,
+			String timeend, HttpResponseListener listener) {
+		post(CommandRequest.GET_TRANSFER_LOG,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.TRANSFER_TYPE, type)
+						.add(ExtParamsKey.AGENCY_NAME, sdt)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(sdt + timestart + timeend
+										+ ConnectionConfig.CLIENT_KEY))
+						.add(ExtParamsKey.DATE_FROM, timestart)
+						.add(ExtParamsKey.DATE_TO, timeend).build(), listener);
+	}
+
+	public void getLogByRole(int type, String sdt, String timestart,
+			String timeend, int role_id, HttpResponseListener listener) {
+		post(CommandRequest.GET_TRANSFER_LOG_SUB,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.TRANSFER_TYPE, type)
+						.add(ExtParamsKey.AGENCY_NAME, sdt)
+						.add(ExtParamsKey.DATE_FROM, timestart)
+						.add(ExtParamsKey.DATE_TO, timeend)
+						.add(ExtParamsKey.ROLE_ID, role_id)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(sdt + timestart + timeend
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+
+	public void getNormalGiftCode(String name, int type,
+			HttpResponseListener listener) {
+		post(CommandRequest.GET_GIFTCODE_LIST,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, name)
+						.add(ExtParamsKey.STATE, type)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(name + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void getUsedGiftCode(String name, HttpResponseListener listener) {
+		post(CommandRequest.GET_GIFTCODE_LOG,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, name)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(name + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void returnGiftCode(String name, String idGiftCode,
+			HttpResponseListener listener) {
+		post(CommandRequest.RETURN_GIFT_CODE,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, name)
+						.add(ExtParamsKey.GIFT_CODE_ID, idGiftCode)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(name + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void setStateGiftCode(String name, String giftCode, int state,
+			HttpResponseListener listener) {
+		post(CommandRequest.CHANGE_GIFTCODE_STATE,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, name)
+						.add(ExtParamsKey.GIFT_CODE, giftCode)
+						.add(ExtParamsKey.IS_SOLD, state)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(name + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void getExchangeInGame(int amount, String currency,
+			HttpResponseListener listener) {
+		post(CommandRequest.GET_EXCHANGE_IN_GAME,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AMOUNT, amount)
+						.add(ExtParamsKey.CURRENCY, currency)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(amount + currency
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+
+	public void generateGiftCode(String agencyName, int amount,
+			String currency, int timeExpire, HttpResponseListener listener) {
+		post(CommandRequest.GENERATE_GIFT_CODE,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.AMOUNT, amount)
+						.add(ExtParamsKey.CURRENCY, currency)
+						.add(ExtParamsKey.TIME_EXPIRE, timeExpire)
+						.add(ExtParamsKey.QUANTITY, 1)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + amount
 										+ ConnectionConfig.CLIENT_KEY)).build(),
 				listener);
 	}

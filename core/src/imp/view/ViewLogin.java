@@ -284,6 +284,11 @@ public class ViewLogin extends View {
 			String mess = respone.getString(ExtParamsKey.MESSAGE);
 			Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
 			if (isSuccess) {
+				JsonValue per = respone.get(ExtParamsKey.PERMISSION);
+			    for (int i = 0; i < per.size; i++) {
+			     int index = per.getInt(i);
+			     UserInfo.getInstance().setPermisstion(index);
+			    }
 				int role_id = respone.getInt(ExtParamsKey.ROLE_ID);
 				UserInfo.getInstance().setRoleId(role_id);
 				HomeView homeView = new HomeView();
@@ -301,7 +306,7 @@ public class ViewLogin extends View {
 								Constants.HEIGHT_ACTIONBAR));
 				topBarView.buildComponent();
 
-				MainMenuView mainMenu = new MainMenuView();
+				final MainMenuView mainMenu = new MainMenuView();
 				mainMenu.build(getStage(), getViewController(),
 						StringSystem.VIEW_MAIN_MENU,
 						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
@@ -316,12 +321,9 @@ public class ViewLogin extends View {
 					@Override
 					public void onError() {
 					}
-
 					@Override
 					public void done() {
-						getViewController()
-								.getView(StringSystem.VIEW_MAIN_MENU)
-								.show(null);
+						mainMenu.hide(null);
 					}
 				});
 

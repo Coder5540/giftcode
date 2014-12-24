@@ -1,9 +1,11 @@
 package imp.view;
 
-import utils.elements.GalleryViewHorizontal;
+import utils.elements.CustomTable;
 import utils.elements.Img;
 import utils.factory.FontFactory.fontType;
 import utils.factory.StringSystem;
+import utils.networks.UserInfo;
+import utils.networks.UserInfo.Permission;
 import utils.screen.Toast;
 
 import com.badlogic.gdx.Gdx;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.listener.OnClickListener;
@@ -24,46 +28,65 @@ import com.coder5560.game.views.IViewController;
 import com.coder5560.game.views.View;
 
 public class HomeView extends View {
-	GalleryViewHorizontal	galleryViewHorizontal;
+	CustomTable	content;
+	ScrollPane	scrollPane;
 
 	public HomeView() {
 	}
 
 	public HomeView buildComponent() {
+		content = new CustomTable();
+		content.setSize(getWidth(), getHeight());
+		content.top();
+		scrollPane = new ScrollPane(content);
+		scrollPane.setSmoothScrolling(true);
+		scrollPane.setScrollingDisabled(true, false);
+		add(scrollPane).expand().fill().top();
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, Color.WHITE)));
-		defaults().width(220).height(220);
-
-		for (int i = 0; i < 4; i++) {
-			IconFunction iconFunction = new IconFunction(getViewController(),
-					220, 220, new Texture(
-							Gdx.files.internal("Img/Add-User-icon.png")),
-					getString(i));
-			add(iconFunction).pad(20);
-			if (i % 2 == 1) {
-				row();
-			}
-
-		}
-
+		content.defaults().width(220).height(220);
+		buildBypermission();
 		return this;
+	}
+
+	public void buildBypermission() {
+		int[] permission = UserInfo.getInstance().getPermission().permission;
+		for (int i = 0; i < permission.length; i++) {
+			if (UserInfo.getInstance().getPermission().isHasPermission(i)
+					&& !getString(i).equalsIgnoreCase("")) {
+				IconFunction iconFunction = new IconFunction(
+						getViewController(), 220, 220, new Texture(
+								Gdx.files.internal("Img/Add-User-icon.png")),
+						getString(i));
+				content.add(iconFunction).pad(20);
+				if (content.getChildren().size % 2 == 0
+						&& content.getChildren().size > 0) {
+					content.row();
+				}
+			}
+		}
 	}
 
 	private String getString(int i) {
 		if (i == 0)
-			return StringSystem.FUNCTION_USERMANAGEMENT;
+			return StringSystem.FUNCTION_USERMANAGEMENT_ACTIVE;
 		if (i == 1)
-			return StringSystem.FUNCTION_MAIL;
+			return StringSystem.FUNCTION_USERMANAGEMENT_UN_ACTIVE;
 		if (i == 2)
-			return StringSystem.FUNCTION_LOG;
+			return StringSystem.FUNCTION_USERMANAGEMENT_BLOCK;
 		if (i == 3)
-			return StringSystem.FUNCTION_GIFT_CODE;
+			return StringSystem.FUNCTION_USERMANAGEMENT_ADD_MONEY;
 		if (i == 4)
-			return "";
+			return StringSystem.FUNCTION_MAIL_ALL_MAIL;
+		if (i == 5)
+			return StringSystem.FUNCTION_LOG_SEND_MONEY;
+		if (i == 6)
+			return StringSystem.FUNCTION_LOG_RECIEVE_MONEY;
+		if (i == 7)
+			return StringSystem.FUNCTION_GIFT_CODE_SELL_GIFTCODE;
+		if (i == 8)
+			return StringSystem.FUNCTION_GIFT_CODE_LIST_GIFTCODE;
 		return "";
-	}
-
-	void createListener() {
 	}
 
 	@Override
@@ -128,16 +151,42 @@ class IconFunction extends Group {
 						.getView(StringSystem.VIEW_MAIN_MENU);
 				if (mainMenuView != null) {
 					if (title
-							.equalsIgnoreCase(StringSystem.FUNCTION_USERMANAGEMENT)) {
+							.equalsIgnoreCase(StringSystem.FUNCTION_USERMANAGEMENT_ACTIVE)) {
 						mainMenuView.onActiveUserClicked.onClick(x, y);
 					}
-					if (title.equalsIgnoreCase(StringSystem.FUNCTION_LOG)) {
-						mainMenuView.onHistory.onClick(x, y);
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_USERMANAGEMENT_UN_ACTIVE)) {
+						mainMenuView.onUnActiveUserClicked.onClick(x, y);
 					}
-					if (title.equalsIgnoreCase(StringSystem.FUNCTION_MAIL)) {
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_USERMANAGEMENT_BLOCK)) {
+						mainMenuView.onBlockUserClicked.onClick(x, y);
+					}
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_USERMANAGEMENT_ADD_MONEY)) {
+						mainMenuView.onAddMoneyClicked.onClick(x, y);
+					}
+
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_LOG_SEND_MONEY)) {
+						mainMenuView.onHistorySendMoney.onClick(x, y);
+					}
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_LOG_RECIEVE_MONEY)) {
+						mainMenuView.onHistoryReceiveMoney.onClick(x, y);
+					}
+
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_MAIL_ALL_MAIL)) {
 						mainMenuView.onAllMailClicked.onClick(x, y);
 					}
-					if (title.equalsIgnoreCase(StringSystem.FUNCTION_GIFT_CODE)) {
+
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_GIFT_CODE_LIST_GIFTCODE)) {
+						mainMenuView.onGiftcodeClicked.onClick(x, y);
+					}
+					if (title
+							.equalsIgnoreCase(StringSystem.FUNCTION_GIFT_CODE_SELL_GIFTCODE)) {
 						mainMenuView.onSellGiftCode.onClick(x, y);
 					}
 
@@ -150,7 +199,7 @@ class IconFunction extends Group {
 	public void valid() {
 		icon.setPosition(bg.getWidth() / 2 - icon.getWidth() / 2,
 				bg.getHeight() / 2 - icon.getHeight() / 2);
-		bgTitle.setPosition(bg.getX() + 6, bg.getY()+10);
+		bgTitle.setPosition(bg.getX() + 6, bg.getY() + 10);
 		lbTitle.setPosition(bgTitle.getX() + 5,
 				bgTitle.getX() + bgTitle.getHeight() / 2 - lbTitle.getHeight()
 						/ 2);

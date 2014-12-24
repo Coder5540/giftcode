@@ -114,7 +114,7 @@ public class AbstractTable extends ScrollPane {
 	}
 
 	public float getWidthTable() {
-		return tableScroll.getWidth();
+		return rowTitle.getWidth();
 	}
 
 }

@@ -5,6 +5,7 @@ import utils.factory.AppPreference;
 import utils.factory.PlatformResolver;
 import utils.factory.StringSystem;
 import utils.networks.FacebookConnector;
+import utils.networks.UserInfo;
 import utils.screen.GameCore;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -25,6 +26,7 @@ public class ViewController implements IViewController {
 	private GameCore			_gameParent;
 	private GameScreen			_gameScreen;
 	public PlatformResolver		platformResolver;
+	boolean						reset	= false;
 
 	public ViewController(GameCore _gameParent, GameScreen gameScreen) {
 		super();
@@ -59,6 +61,34 @@ public class ViewController implements IViewController {
 			if (views.get(i).getViewState() == ViewState.DISPOSE) {
 				removeView(views.get(i).getName());
 			}
+		}
+
+		if (reset) {
+			UserInfo.getInstance().getPermission().resetPermission();
+			for (Actor actor : stage.getActors()) {
+				if (actor instanceof View) {
+					stage.getActors().removeValue(actor, false);
+				}
+			}
+			TraceView.instance.traceView.clear();
+			views.clear();
+
+			ViewLogin viewLogin = new ViewLogin();
+			viewLogin.build(stage, this, StringSystem.VIEW_LOGIN,
+					new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+							Constants.HEIGHT_SCREEN));
+			viewLogin.buildComponent();
+			viewLogin.show(new OnCompleteListener() {
+
+				@Override
+				public void onError() {
+				}
+
+				@Override
+				public void done() {
+				}
+			});
+			reset = false;
 		}
 	}
 
@@ -164,6 +194,11 @@ public class ViewController implements IViewController {
 	public void setCurrentView(IViews view) {
 		this.currentView = view;
 		TraceView.instance.addViewToTrace(view.getName());
+	}
+
+	@Override
+	public void resetAll() {
+		reset = true;
 	}
 
 	@Override

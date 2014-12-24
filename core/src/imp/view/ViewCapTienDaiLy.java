@@ -6,7 +6,6 @@ import utils.factory.FontFactory.fontType;
 import utils.factory.StringUtil;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
-import utils.keyboard.VirtualKeyboard.OnHideListener;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
 import utils.networks.UserInfo;
@@ -50,15 +49,15 @@ import com.coder5560.game.views.View;
 
 public class ViewCapTienDaiLy extends View {
 
-	private ViewDetail viewDetail;
-	private CustomTextField tfPerson;
+	private ViewDetail		viewDetail;
+	private CustomTextField	tfPerson;
 
-	private AbstractTable tableDaily;
-	private Page page;
+	private AbstractTable	tableDaily;
+	private Page			page;
 
-	private JsonValue responeGetDaily;
-	private JsonValue responeGetDailyLower;
-	private JsonValue responeCheck;
+	private JsonValue		responeGetDaily;
+	private JsonValue		responeGetDailyLower;
+	private JsonValue		responeCheck;
 
 	@Override
 	public String getLabel() {
@@ -67,7 +66,6 @@ public class ViewCapTienDaiLy extends View {
 
 	public void buildComponent() {
 		this.top();
-		this.setVisible(false);
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
 
@@ -155,11 +153,13 @@ public class ViewCapTienDaiLy extends View {
 		this.add(tfPerson).padLeft(10).width(250).height(35).left().row();
 		this.add(btSend).padTop(10).width(120).height(40).colspan(2).row();
 		this.add(lbTitle).padTop(15).colspan(2).row();
-		this.add(tableDaily).padTop(10).colspan(2).row();
+		this.add(tableDaily).padTop(10).height(540).colspan(2).row();
 		this.add(page).colspan(2);
 		this.addActor(viewDetail);
+
+		Loading.ins.show(this);
 		Request.getInstance().getLowerDaily(AppPreference.instance.name,
-				AppPreference.instance.pass, -1, new GetDailyLower());
+				AppPreference.instance.pass, 1, new GetDailyLower());
 	}
 
 	@Override
@@ -216,6 +216,7 @@ public class ViewCapTienDaiLy extends View {
 										phone, sdtGt, money + " " + currency,
 										email, deviceId, deviceName, realState };
 								viewDetail.money = money;
+								viewDetail.agencyReceive = phone;
 								viewDetail.setInfo(info);
 								viewDetail.show(null);
 							}
@@ -285,6 +286,7 @@ public class ViewCapTienDaiLy extends View {
 						tfPerson.getText(), sdtGt, money + " " + currency,
 						email, deviceId, deviceName, stringState };
 				viewDetail.money = money;
+				viewDetail.agencyReceive = tfPerson.getText();
 				viewDetail.setInfo(info);
 				viewDetail.show(null);
 			} else {
@@ -294,6 +296,21 @@ public class ViewCapTienDaiLy extends View {
 			responeGetDaily = null;
 		}
 
+	}
+
+	@Override
+	public void hide(OnCompleteListener listener) {
+		TraceView.instance.removeView(this.getName());
+		getViewController().removeView(name);
+	}
+
+	@Override
+	public void back() {
+		if (viewDetail != null && viewDetail.onBack()) {
+			return;
+		}
+		super.back();
+		getViewController().removeView(getName());
 	}
 
 	class GetDailyLower implements HttpResponseListener {
@@ -355,15 +372,16 @@ public class ViewCapTienDaiLy extends View {
 
 	class ViewDetail extends View {
 
-		Table tbContent;
-		ScrollPane scroll;
-		JsonValue responeSendMoney;
-		Label[] lbTitle;
-		TextfieldStatic[] lbInfo;
-		int money;
-		CustomTextField tfMoney;
-		TextArea taNote;
-		Image bg;
+		Table				tbContent;
+		ScrollPane			scroll;
+		Label[]				lbTitle;
+		TextfieldStatic[]	lbInfo;
+		String				agencyReceive;
+		int					money;
+		Image				bg;
+		boolean				isSend	= false;
+
+		ViewSendMoney		viewSendMoney;
 
 		public ViewDetail() {
 			setVisible(false);
@@ -400,109 +418,18 @@ public class ViewCapTienDaiLy extends View {
 			lbInfo[4].setMinHeight(lbTitle[4].getTextBounds().height + 10);
 			lbInfo[5].setHeight(lbTitle[5].getTextBounds().height + 10);
 			lbInfo[5].setMinHeight(lbTitle[5].getTextBounds().height + 10);
-			tfMoney = new CustomTextField("", Style.ins.getTextFieldStyle(8,
-					Assets.instance.fontFactory.getFont(25, fontType.Light)));
-			tfMoney.setOnscreenKeyboard(AbstractGameScreen.keyboard);
-			tfMoney.addListener(new InputListener() {
-				@Override
-				public boolean touchDown(InputEvent event, float x, float y,
-						int pointer, int button) {
-					AbstractGameScreen.keyboard.registerTextField(tfMoney,
-							KeyboardConfig.NUMBER, KeyboardConfig.SINGLE_LINE);
-					AbstractGameScreen.keyboard
-							.setHideListener(new OnHideListener() {
-
-								@Override
-								public void hide() {
-									getCell(scroll).height(getHeight());
-									invalidate();
-									layout();
-								}
-							});
-					getCell(scroll).height(
-							getHeight()
-									- AbstractGameScreen.keyboard
-											.getRealHeight());
-					invalidate();
-					layout();
-					scroll.setScrollY(scroll.getMaxY());
-					return super.touchDown(event, x, y, pointer, button);
-				}
-			});
-
-			Label lbCurrency = new Label(UserInfo.currency, new LabelStyle(
-					Assets.instance.fontFactory.getFont(20, fontType.Regular),
-					Color.BLACK));
-
-			taNote = new TextArea("", Style.ins.getTextFieldStyle(8,
-					Assets.instance.fontFactory.getFont(25, fontType.Light)));
-			taNote.setOnscreenKeyboard(AbstractGameScreen.keyboard);
-			taNote.addListener(new InputListener() {
-				@Override
-				public boolean touchDown(InputEvent event, float x, float y,
-						int pointer, int button) {
-					AbstractGameScreen.keyboard.registerTextField(taNote,
-							KeyboardConfig.NORMAL, KeyboardConfig.MULTI_LINE);
-					AbstractGameScreen.keyboard
-							.setHideListener(new OnHideListener() {
-								@Override
-								public void hide() {
-									getCell(scroll).height(getHeight());
-									invalidate();
-									layout();
-								}
-							});
-					getCell(scroll).height(
-							getHeight()
-									- AbstractGameScreen.keyboard
-											.getRealHeight());
-					invalidate();
-					layout();
-					scroll.setScrollY(scroll.getMaxY());
-					return super.touchDown(event, x, y, pointer, button);
-				}
-			});
 
 			Table tbButton = new Table();
-			TextButton btSend = new TextButton("Ok", Style.ins.textButtonStyle);
+			TextButton btSend = new TextButton("Chuyển tiền",
+					Style.ins.textButtonStyle);
 			TextButton btCancel = new TextButton("Hủy",
 					Style.ins.textButtonStyle);
-			tbButton.add(btSend).width(100).height(40);
-			tbButton.add(btCancel).padLeft(5).width(100).height(40);
+			tbButton.add(btSend).width(120).height(40);
+			tbButton.add(btCancel).padLeft(5).width(120).height(40);
 			btSend.addListener(new ClickListener() {
 				@Override
 				public void clicked(InputEvent event, float x, float y) {
-					if (!Factory.isNumeric(tfMoney.getText())) {
-						Toast.makeText(getStage(),
-								"Vui lòng nhập đúng số tiền",
-								Toast.LENGTH_SHORT);
-					} else if (StringUtil.isContainSpecialChar(taNote.getText())) {
-						Toast.makeText(getStage(),
-								"Ghi chú không được chứa ký tự đặc biệt",
-								Toast.LENGTH_SHORT);
-					} else {
-						AbstractGameScreen.keyboard.hide();
-						DialogCustom dl = new DialogCustom("");
-						dl.text("Bạn có chắc chắn muốn chuyển "
-								+ tfMoney.getText() + " USD " + " cho "
-								+ tfPerson.getText());
-						dl.button("Ok", new Runnable() {
-
-							@Override
-							public void run() {
-								Loading.ins.show(ViewDetail.this);
-								Request.getInstance().sendMoney(
-										AppPreference.instance.name,
-										AppPreference.instance.pass,
-										tfPerson.getText(), tfMoney.getText(),
-										"USD", taNote.getText(),
-										new SendMoney());
-							}
-
-						});
-						dl.button("Hủy");
-						dl.show(getStage());
-					}
+					viewSendMoney.show(null);
 					super.clicked(event, x, y);
 				}
 			});
@@ -512,6 +439,14 @@ public class ViewCapTienDaiLy extends View {
 					super.clicked(event, x, y);
 					hide(null);
 					AbstractGameScreen.keyboard.hide();
+					if (isSend) {
+						isSend = false;
+						Loading.ins.show(ViewCapTienDaiLy.this);
+						Request.getInstance().getLowerDaily(
+								AppPreference.instance.name,
+								AppPreference.instance.pass, 1,
+								new GetDailyLower());
+					}
 				}
 			});
 
@@ -526,13 +461,9 @@ public class ViewCapTienDaiLy extends View {
 				tbContent.add(lbInfo[i]).padLeft(5).padTop(5).colspan(2).left()
 						.row();
 			}
-			tbContent.add(lbTitle[10]).width(180).padTop(5);
-			tbContent.add(tfMoney).left().width(200).padTop(5).height(35);
-			tbContent.add(lbCurrency).left().row();
-			tbContent.add(lbTitle[11]).width(180).padTop(5);
-			tbContent.add(taNote).width(270).padTop(5).height(100).left()
-					.colspan(2).row();
 			tbContent.add(tbButton).padTop(20).colspan(3);
+			viewSendMoney = new ViewSendMoney();
+			this.addActor(viewSendMoney);
 		}
 
 		void setInfo(String[] info) {
@@ -545,20 +476,7 @@ public class ViewCapTienDaiLy extends View {
 
 		@Override
 		public void update(float delta) {
-			if (responeSendMoney != null) {
-				Loading.ins.hide();
-				boolean result = responeSendMoney
-						.getBoolean(ExtParamsKey.RESULT);
-				if (result) {
-					int moneyTrans = responeSendMoney
-							.getInt(ExtParamsKey.MONEY_TRANSFER);
-					money += moneyTrans;
-					lbInfo[5].setContent("" + money);
-				}
-				String mess = responeSendMoney.getString(ExtParamsKey.MESSAGE);
-				Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
-				responeSendMoney = null;
-			}
+			viewSendMoney.update(delta);
 		}
 
 		@Override
@@ -566,8 +484,6 @@ public class ViewCapTienDaiLy extends View {
 			toFront();
 			this.setViewState(ViewState.SHOW);
 			setVisible(true);
-			tfMoney.setText("");
-			taNote.setText("");
 			this.setPosition(getWidth(), 0);
 			this.clearActions();
 			this.addAction(Actions.moveTo(0, 0, 0.5f, Interpolation.exp10Out));
@@ -581,30 +497,237 @@ public class ViewCapTienDaiLy extends View {
 					Actions.visible(false)));
 		}
 
-		class SendMoney implements HttpResponseListener {
+		public boolean onBack() {
+			if (viewSendMoney != null && viewSendMoney.onBack()) {
+				return true;
+			}
+			if (ViewDetail.this.getViewState() == ViewState.SHOW) {
+				hide(null);
+				return true;
+			}
+			return false;
+		}
 
-			@Override
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				responeSendMoney = (new JsonReader()).parse(httpResponse
-						.getResultAsString());
+		class ViewSendMoney extends View {
+			JsonValue		responeSendMoney;
+			TextfieldStatic	tfSMoney;
+			CustomTextField	tfMoney;
+			TextArea		taNote;
+
+			public ViewSendMoney() {
+				this.top();
+				setVisible(false);
+				setSize(Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
+						- Constants.HEIGHT_ACTIONBAR);
+				bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
+						new Color(1, 1, 1, 1)));
+				bg.setSize(getWidth(), getHeight());
+
+				Label lbHeader = new Label("Chuyển tiền",
+						new LabelStyle(Assets.instance.fontFactory.getFont(30,
+								fontType.Medium), Color.BLUE));
+				Label lbMoney = new Label("Số tiền còn lại", new LabelStyle(
+						Assets.instance.fontFactory.getFont(20,
+								fontType.Regular), Color.GRAY));
+				Label lbMoneySend = new Label("Số tiền cấn chuyển",
+						new LabelStyle(Assets.instance.fontFactory.getFont(20,
+								fontType.Regular), Color.GRAY));
+				Label lbNote = new Label("Ghi chú", new LabelStyle(
+						Assets.instance.fontFactory.getFont(20,
+								fontType.Regular), Color.GRAY));
+
+				tfSMoney = new TextfieldStatic(UserInfo.money + " "
+						+ UserInfo.currency, Color.BLACK, 270);
+
+				tfMoney = new CustomTextField("",
+						Style.ins.getTextFieldStyle(8,
+								Assets.instance.fontFactory.getFont(25,
+										fontType.Light)));
+				tfMoney.setOnscreenKeyboard(AbstractGameScreen.keyboard);
+				tfMoney.addListener(new InputListener() {
+					@Override
+					public boolean touchDown(InputEvent event, float x,
+							float y, int pointer, int button) {
+						AbstractGameScreen.keyboard.registerTextField(tfMoney,
+								KeyboardConfig.NUMBER,
+								KeyboardConfig.SINGLE_LINE);
+						return super.touchDown(event, x, y, pointer, button);
+					}
+				});
+
+				Label lbCurrency = new Label(UserInfo.currency, new LabelStyle(
+						Assets.instance.fontFactory.getFont(20,
+								fontType.Regular), Color.BLACK));
+
+				taNote = new TextArea("",
+						Style.ins.getTextFieldStyle(8,
+								Assets.instance.fontFactory.getFont(25,
+										fontType.Light)));
+				taNote.setOnscreenKeyboard(AbstractGameScreen.keyboard);
+				taNote.addListener(new InputListener() {
+					@Override
+					public boolean touchDown(InputEvent event, float x,
+							float y, int pointer, int button) {
+						AbstractGameScreen.keyboard.registerTextField(taNote,
+								KeyboardConfig.NORMAL,
+								KeyboardConfig.MULTI_LINE);
+						return super.touchDown(event, x, y, pointer, button);
+					}
+				});
+
+				Table tbButton = new Table();
+				TextButton btSend = new TextButton("Ok",
+						Style.ins.textButtonStyle);
+				TextButton btCancel = new TextButton("Hủy",
+						Style.ins.textButtonStyle);
+				tbButton.add(btSend).width(120).height(40);
+				tbButton.add(btCancel).padLeft(5).width(120).height(40);
+				btSend.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						super.clicked(event, x, y);
+						if (!Factory.isNumeric(tfMoney.getText())) {
+							Toast.makeText(getStage(),
+									"Vui lòng nhập đúng số tiền",
+									Toast.LENGTH_SHORT);
+						} else if (StringUtil.isContainSpecialChar(taNote
+								.getText())) {
+							Toast.makeText(getStage(),
+									"Ghi chú không được chứa ký tự đặc biệt",
+									Toast.LENGTH_SHORT);
+						} else {
+							if (Integer.parseInt(tfMoney.getText()) > UserInfo.money) {
+								Toast.makeText(
+										getStage(),
+										"Số tiền chuyển phải nhỏ hơn số tiền của bạn",
+										Toast.LENGTH_SHORT);
+							} else {
+								AbstractGameScreen.keyboard.hide();
+								DialogCustom dl = new DialogCustom("");
+								dl.text("Bạn có chắc chắn muốn chuyển "
+										+ tfMoney.getText() + " "
+										+ UserInfo.currency + " cho "
+										+ agencyReceive);
+								dl.button("Ok", new Runnable() {
+									@Override
+									public void run() {
+										Loading.ins.show(ViewDetail.this);
+										Request.getInstance().sendMoney(
+												AppPreference.instance.name,
+												AppPreference.instance.pass,
+												agencyReceive,
+												tfMoney.getText(),
+												UserInfo.currency,
+												taNote.getText(),
+												new SendMoney());
+									}
+
+								});
+								dl.button("Hủy", new Runnable() {
+									@Override
+									public void run() {
+
+									}
+								});
+								dl.show(getStage());
+							}
+						}
+					}
+				});
+				btCancel.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						super.clicked(event, x, y);
+						hide(null);
+						AbstractGameScreen.keyboard.hide();
+					}
+				});
+
+				this.addActor(bg);
+				this.add(lbHeader).padTop(10).colspan(3).row();
+				this.add(lbMoney).width(180).padTop(15);
+				this.add(tfSMoney).padTop(15).colspan(2).left().row();
+				this.add(lbMoneySend).width(180).padTop(5);
+				this.add(tfMoney).left().width(200).padTop(5).height(35);
+				this.add(lbCurrency).left().padTop(5).row();
+				this.add(lbNote).width(180).padTop(5);
+				this.add(taNote).width(270).padTop(5).height(100).left()
+						.colspan(2).row();
+				this.add(tbButton).padTop(20).colspan(3);
 			}
 
 			@Override
-			public void failed(Throwable t) {
-
+			public void update(float delta) {
+				if (responeSendMoney != null) {
+					Loading.ins.hide();
+					boolean result = responeSendMoney
+							.getBoolean(ExtParamsKey.RESULT);
+					if (result) {
+						isSend = true;
+						int moneyTrans = responeSendMoney
+								.getInt(ExtParamsKey.MONEY_TRANSFER);
+						money += moneyTrans;
+						lbInfo[5].setContent(money + " " + UserInfo.currency);
+						UserInfo.money = responeSendMoney
+								.getInt(ExtParamsKey.MONEY_UPDATE);
+						tfSMoney.setContent(UserInfo.money + " "
+								+ UserInfo.currency);
+					}
+					String mess = responeSendMoney
+							.getString(ExtParamsKey.MESSAGE);
+					Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
+					responeSendMoney = null;
+				}
 			}
 
 			@Override
-			public void cancelled() {
+			public void show(OnCompleteListener listener) {
+				toFront();
+				setViewState(ViewState.SHOW);
+				setVisible(true);
+				tfMoney.setText("");
+				taNote.setText("");
+				this.setPosition(getWidth(), 0);
+				this.clearActions();
+				this.addAction(Actions.moveTo(0, 0, 0.5f,
+						Interpolation.exp10Out));
+			}
 
+			@Override
+			public void hide(OnCompleteListener listener) {
+				setViewState(ViewState.HIDE);
+				this.addAction(Actions.sequence(Actions.moveTo(getWidth(), 0,
+						0.5f, Interpolation.exp10Out), Actions.visible(false)));
+			}
+
+			class SendMoney implements HttpResponseListener {
+
+				@Override
+				public void handleHttpResponse(HttpResponse httpResponse) {
+					responeSendMoney = (new JsonReader()).parse(httpResponse
+							.getResultAsString());
+				}
+
+				@Override
+				public void failed(Throwable t) {
+				}
+
+				@Override
+				public void cancelled() {
+				}
+
+			}
+
+			public boolean onBack() {
+				if (ViewSendMoney.this.getViewState() == ViewState.SHOW) {
+					hide(null);
+					return true;
+				}
+				return false;
 			}
 
 		}
+
 	}
 
-	@Override
-	public void hide(OnCompleteListener listener) {
-		TraceView.instance.removeView(this.getName());
-		getViewController().removeView(name);
-	}
 }

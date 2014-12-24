@@ -49,4 +49,6 @@ public interface IViewController {
 
 	public void setPlatformResolver(PlatformResolver platformResolver);
 
+	public void resetAll();
+
 }

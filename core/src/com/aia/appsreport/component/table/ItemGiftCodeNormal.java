@@ -10,11 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.coder5560.game.assets.Assets;
 
-public class ItemInfoDaily extends ItemTable {
+public class ItemGiftCodeNormal extends ItemTable {
 
-	public TextButton btSee;
+	public TextButton btReturn;
 
-	public ItemInfoDaily(AbstractTable table, String[] content) {
+	public ItemGiftCodeNormal(AbstractTable table, String[] content) {
 		super(table);
 		LabelStyle lbStyle = new LabelStyle(
 				Assets.instance.fontFactory.getFont(15), Color.GRAY);
@@ -27,14 +27,15 @@ public class ItemInfoDaily extends ItemTable {
 			lb[i].setHeight(lb[i].getTextBounds().height);
 		}
 
-		btSee = new TextButton("Xem", Style.ins.textButtonStyle);
-		btSee.setSize(80, 40);
+		btReturn = new TextButton("Trả lại", Style.ins.textButtonStyle);
+		btReturn.setSize(100, 40);
 		Actor[] actor = new Actor[lb.length + 1];
 		for (int i = 0; i < lb.length; i++) {
 			actor[i] = lb[i];
 		}
-		actor[actor.length - 1] = btSee;
+		actor[actor.length - 1] = btReturn;
 		setComponentItem(actor);
 		init();
 	}
+
 }

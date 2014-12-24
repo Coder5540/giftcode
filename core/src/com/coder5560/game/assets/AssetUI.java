@@ -20,6 +20,9 @@ public class AssetUI {
 	private TextureRegion	reg_icon_transition;
 	private TextureRegion	reg_ninepathKnob;
 	private TextureRegion	reg_logout;
+	private TextureRegion	reg_icon_user;
+	private TextureRegion	reg_icon_phone;
+	private TextureRegion	reg_icon_money;
 
 	private TextureAtlas	textureAtlas;
 
@@ -76,6 +79,24 @@ public class AssetUI {
 		if (reg_logout == null)
 			reg_logout = textureAtlas.findRegion("Logout");
 		return reg_logout;
+	}
+
+	public TextureRegion getIconUser() {
+		if (reg_icon_user == null)
+			reg_icon_user = textureAtlas.findRegion("icon-user");
+		return reg_icon_user;
+	}
+
+	public TextureRegion getIconPhone() {
+		if (reg_icon_phone == null)
+			reg_icon_phone = textureAtlas.findRegion("phone-icon");
+		return reg_icon_phone;
+	}
+
+	public TextureRegion getIconMoney() {
+		if (reg_icon_money == null)
+			reg_icon_money = textureAtlas.findRegion("money_icon");
+		return reg_icon_money;
 	}
 
 }

@@ -27,4 +27,7 @@ public class CommandRequest {
 	public final static String GET_GIFT_CODE_LOG = "get_gift_code_log	";
 	public final static String RETURN_GIFT_CODE = "return_gift_code	";
 
+	public final static String GET_GIFTCODE_LIST = "get_gift_code_list";
+	public final static String GET_GIFTCODE_LOG = "get_gift_code_log";
+	public final static String CHANGE_GIFTCODE_STATE = "change_code_state";
 }

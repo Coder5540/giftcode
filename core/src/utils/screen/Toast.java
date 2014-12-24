@@ -161,11 +161,9 @@ public class Toast {
 					public void run() {
 						isEnd = true;
 						if (listToast.size() > 0) {
-							makeText(listToast.get(0).stage,
-									listToast.get(0).text,
-									listToast.get(0).duration,
-									listToast.get(0).align);
-							listToast.remove(0);
+							ToastInfo toast = listToast.remove(0);
+							makeText(toast.stage, toast.text, toast.duration,
+									toast.align);
 						}
 					}
 				})));

@@ -1,6 +1,5 @@
 package imp.view;
 
-import utils.elements.CustomTable;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
@@ -36,11 +35,11 @@ import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
-public class ViewMails extends View {
+public class CopyOfViewMails extends View {
 
 	private boolean		isDoneAction	= true;
-	public CustomTable	root;
-	CustomTable			bgDialog;
+	public Table		root;
+	Table				bgDialog;
 	private JsonValue	dataResponse	= null;
 	private JsonValue	responseSeen	= null;
 	Color				colorBg			= new Color(255 / 255f, 255 / 255f,
@@ -49,7 +48,7 @@ public class ViewMails extends View {
 	public void buildComponent() {
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, colorBg)));
-		root = new CustomTable();
+		root = new Table();
 		root.setSize(getWidth(), getHeight());
 		root.defaults().expandX().fillX().height(80).align(Align.left);
 		root.top();
@@ -189,7 +188,7 @@ public class ViewMails extends View {
 	}
 
 	public void createDialogNoMessage() {
-		bgDialog = new CustomTable();
+		bgDialog = new Table();
 		bgDialog.setSize(getWidth(), getHeight());
 		bgDialog.setColor(getColor());
 		bgDialog.setTouchable(Touchable.enabled);
@@ -226,7 +225,7 @@ public class ViewMails extends View {
 		private boolean	isRead;
 
 		public ItemMail(final int index, final String title,
-				final String description, boolean isRead,final long time,
+				final String description, boolean isRead, final long time,
 				final float width, float height) {
 			this.setSize(width, height);
 			this.index = index;
@@ -291,7 +290,6 @@ public class ViewMails extends View {
 					if (!getIsRead()) {
 						requestSeen();
 					}
-					setRead(true);
 					bg.setColor(bgColor);
 					ViewMessage viewMessage = new ViewMessage(title,
 							description, index,time);
@@ -302,7 +300,7 @@ public class ViewMails extends View {
 											- Constants.HEIGHT_ACTIONBAR));
 					viewMessage.buildComponent();
 					viewMessage.show(null);
-
+					setRead(true);
 				}
 
 				@Override

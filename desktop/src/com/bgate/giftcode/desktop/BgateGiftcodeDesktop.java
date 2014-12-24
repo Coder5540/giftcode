@@ -17,8 +17,8 @@ public class BgateGiftcodeDesktop {
 				setScreen(new FlashScreen(this));
 			}
 		};
-		config.width = (int)(Constants.WIDTH_SCREEN);
-		config.height = (int)(Constants.HEIGHT_SCREEN);
+		config.width = (int) (Constants.WIDTH_SCREEN);
+		config.height = (int) (Constants.HEIGHT_SCREEN);
 
 		game.setPlatformResolver(new DesktopResolver());
 		new LwjglApplication(game, config);

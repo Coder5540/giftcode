@@ -2,10 +2,12 @@ package com.coder5560.game.ui;
 
 import java.util.ArrayList;
 
+import utils.elements.Img;
 import utils.factory.AppPreference;
 import utils.factory.FontFactory.fontType;
 import utils.factory.Log;
 import utils.networks.ExtParamsKey;
+import utils.networks.PermissionConfig;
 import utils.networks.Request;
 import utils.networks.UserInfo;
 
@@ -46,15 +48,15 @@ public class ListMenu extends ScrollPane {
 	private OnClickListener	onActiveUserClicked;
 	private OnClickListener	onAvatarClicked;
 	private OnClickListener	onAllMailClicked;
-	private OnClickListener	onHistoryTransitionClicked;
+	private OnClickListener	onHistorySendMoneyClicked;
+	private OnClickListener	onHistoryReceiveMoneyClicked;
 	private OnClickListener	onAddMoneyClicked;
 	private OnClickListener	onSellGiftCode;
-	private OnClickListener	onUsedGiftCode;
-	private OnClickListener	onUnUseGiftCode;
+	private OnClickListener	listGiftcodeClicked;
 
 	LabelStyle				lbStyle;
 	private IconMail		iconMail;
-	public Label			lbName;
+	private Icon			iconUser, iconMoney, iconPhone;
 
 	public ListMenu(IViewController controllerView, final Table table,
 			Rectangle bound) {
@@ -68,32 +70,65 @@ public class ListMenu extends ScrollPane {
 		Group user = new Group();
 		createAvatar(user);
 		table.add(user).row();
-		addLine(table, 2);
-
 		ItemMenu itemManager = new ItemMenu(
 				Assets.instance.ui.getRegUsermanagement(),
 				"QUẢN LÝ ĐẠI LÝ CẤP DƯỚI", getWidth(), 50);
 		createItemManager(itemManager);
-		addItem(itemManager, 0);
-
-		addLine(table, 2);
+		if (itemManager.getChirldenSize() > 0) {
+			addLine(table, 2);
+			addItem(itemManager, 0);
+		}
 		iconMail = new IconMail(45, 45);
 		ItemMenu itemMail = new ItemMenu(iconMail, "HÒM THƯ", getWidth(), 50);
 		createItemMail(itemMail);
-		addItem(itemMail, 1);
+		if (itemMail.getChirldenSize() > 0) {
+			addLine(table, 2);
+			addItem(itemMail, 1);
+		}
 
-		addLine(table, 2);
 		ItemMenu itemLog = new ItemMenu(Assets.instance.ui.getIconTransition(),
 				"LỊCH SỬ GIAO DỊCH", getWidth(), 50);
-		createItemHistoryTransitio(itemLog);
-		addItem(itemLog, 2);
+		createItemHistory(itemLog);
+		if (itemLog.getChirldenSize() > 0) {
+			addLine(table, 2);
+			addItem(itemLog, 2);
+		}
 
-		addLine(table, 2);
 		ItemMenu itemGiftCode = new ItemMenu(
 				Assets.instance.ui.getIconTransition(), "GIFT CODE",
 				getWidth(), 50);
 		createItemGiftcode(itemGiftCode);
-		addItem(itemGiftCode, 3);
+		if (itemGiftCode.getChirldenSize() > 0) {
+			addLine(table, 2);
+			addItem(itemGiftCode, 3);
+		}
+
+		// ItemMenu itemManager = new ItemMenu(
+		// Assets.instance.ui.getRegUsermanagement(),
+		// "QUẢN LÝ ĐẠI LÝ CẤP DƯỚI", getWidth(), 50);
+		// createItemManager(itemManager);
+		// addItem(itemManager, 0);
+		//
+		// addLine(table, 2);
+		// iconMail = new IconMail(45, 45);
+		// ItemMenu itemMail = new ItemMenu(iconMail, "HÒM THƯ", getWidth(),
+		// 50);
+		// createItemMail(itemMail);
+		// addItem(itemMail, 1);
+		//
+		// addLine(table, 2);
+		// ItemMenu itemLog = new
+		// ItemMenu(Assets.instance.ui.getIconTransition(),
+		// "LỊCH SỬ GIAO DỊCH", getWidth(), 50);
+		// createItemHistoryTransitio(itemLog);
+		// addItem(itemLog, 2);
+		//
+		// addLine(table, 2);
+		// ItemMenu itemGiftCode = new ItemMenu(
+		// Assets.instance.ui.getIconTransition(), "GIFT CODE",
+		// getWidth(), 50);
+		// createItemGiftcode(itemGiftCode);
+		// addItem(itemGiftCode, 3);
 
 	}
 
@@ -110,50 +145,89 @@ public class ListMenu extends ScrollPane {
 			}
 		});
 
-		LabelButton usedGiftCode = new LabelButton("Giftcode đã sử dụng",
+		LabelButton listGiftcode = new LabelButton("Danh sách Giftcode",
 				lbStyle, getWidth(), 45);
-		usedGiftCode.setOnClickListener(new OnClickListener() {
+		listGiftcode.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(float x, float y) {
-				if (onUsedGiftCode != null) {
-					onUsedGiftCode.onClick(x, y);
-				}
-			}
-		});
-		LabelButton unUseGiftCode = new LabelButton("Giftcode chưa sử dụng",
-				lbStyle, getWidth(), 45);
-		unUseGiftCode.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(float x, float y) {
-				if (onUnUseGiftCode != null) {
-					onUnUseGiftCode.onClick(x, y);
+				if (listGiftcodeClicked != null) {
+					listGiftcodeClicked.onClick(x, y);
 				}
 			}
 		});
 
-		itemGiftCode.addComponent(sellGiftCode);
-		itemGiftCode.addComponent(usedGiftCode);
-		itemGiftCode.addComponent(unUseGiftCode);
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_BAN_GIFTCODE.ordinal()))
+			itemGiftCode.addComponent(sellGiftCode);
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
+			itemGiftCode.addComponent(listGiftcode);
 	}
 
-	private void createItemHistoryTransitio(ItemMenu itemLog) {
-		LabelButton log = new LabelButton("Lịch sử", lbStyle, getWidth(), 45);
-		log.setOnClickListener(new OnClickListener() {
+	private void createItemHistory(ItemMenu itemLog) {
+		LabelButton log_send_money = new LabelButton("Lịch sử chuyển tiền",
+				lbStyle, getWidth(), 45);
+		log_send_money.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(float x, float y) {
-				if (onHistoryTransitionClicked != null) {
-					onHistoryTransitionClicked.onClick(x, y);
+				if (onHistorySendMoneyClicked != null) {
+					onHistorySendMoneyClicked.onClick(x, y);
 				}
 			}
 		});
-		itemLog.addComponent(log);
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_LOG_CHUYENTIEN.ordinal()))
+			itemLog.addComponent(log_send_money);
+
+		LabelButton log_receive_money = new LabelButton("Lịch sử nhận tiền",
+				lbStyle, getWidth(), 45);
+		log_receive_money.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(float x, float y) {
+				if (onHistoryReceiveMoneyClicked != null) {
+					onHistoryReceiveMoneyClicked.onClick(x, y);
+				}
+			}
+		});
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_LOG_NHANTIEN.ordinal()))
+			itemLog.addComponent(log_receive_money);
 	}
+
+	// private void createItemHistoryTransitio(ItemMenu itemLog) {
+	// LabelButton log = new LabelButton("Lịch sử", lbStyle, getWidth(), 45);
+	// log.setOnClickListener(new OnClickListener() {
+	//
+	// @Override
+	// public void onClick(float x, float y) {
+	// if (onHistoryTransitionClicked != null) {
+	// onHistoryTransitionClicked.onClick(x, y);
+	// }
+	// }
+	// });
+	// itemLog.addComponent(log);
+	// }
 
 	public void updateMail() {
-		lbName.setText(UserInfo.fullName);
+
+		setUserName(UserInfo.fullName);
+		setPhone(UserInfo.phone);
+		setMoney(UserInfo.money + " $");
 		Request.getInstance().getMessageUnseen(
 				AppPreference.instance.getName(), new HttpResponseListener() {
 
@@ -189,26 +263,25 @@ public class ListMenu extends ScrollPane {
 		final Image bgFocus = new Image(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, Color.GRAY));
 		bgFocus.setSize(user.getWidth(), user.getHeight());
-		bgFocus.getColor().a = 0;
-		Image avatar = new Image(Assets.instance.ui.getAvatar());
-		avatar.setSize(120, 120);
-		avatar.setPosition(20, user.getHeight() / 2 - avatar.getHeight() / 2);
-		lbName = new Label(UserInfo.fullName, new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Light),
-				Color.WHITE));
-		lbName.setPosition(avatar.getX() + avatar.getWidth() + 5,
-				user.getHeight() / 2 - lbName.getHeight() / 2);
+
+		String name = UserInfo.fullName;
 		user.addActor(bgFocus);
-		user.addActor(avatar);
-		user.addActor(lbName);
-		user.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (onAvatarClicked != null) {
-					onAvatarClicked.onClick(x, y);
-				}
-			}
-		});
+		iconUser = new Icon(user.getWidth(), user.getHeight() / 4,
+				Assets.instance.ui.getIconUser(), "Dinh Anh");
+		iconUser.setPosition(user.getWidth() / 2, 3 * user.getHeight() / 4,
+				Align.center);
+		iconUser.icon.setColor(new Color(0, 0.9f, 0.4f, 1f));
+		iconPhone = new Icon(user.getWidth(), user.getHeight() / 4,
+				Assets.instance.ui.getIconPhone(), "01663916248");
+		iconPhone.setPosition(user.getWidth() / 2, 2 * user.getHeight() / 4,
+				Align.center);
+		iconMoney = new Icon(user.getWidth(), user.getHeight() / 4,
+				Assets.instance.ui.getIconMoney(), "10000 $");
+		iconMoney.setPosition(user.getWidth() / 2, 1 * user.getHeight() / 4,
+				Align.center);
+		user.addActor(iconUser);
+		user.addActor(iconPhone);
+		user.addActor(iconMoney);
 		user.addListener(new InputListener() {
 			Vector2	touchPoint	= new Vector2();
 
@@ -225,7 +298,9 @@ public class ListMenu extends ScrollPane {
 					int pointer, int button) {
 				bgFocus.getColor().a = 0;
 				if (touchPoint.epsilonEquals(x, y, 20)) {
-
+					if (onAvatarClicked != null) {
+						onAvatarClicked.onClick(x, y);
+					}
 				}
 				super.touchUp(event, x, y, pointer, button);
 			}
@@ -240,6 +315,18 @@ public class ListMenu extends ScrollPane {
 				super.touchDragged(event, x, y, pointer);
 			}
 		});
+	}
+
+	public void setUserName(String name) {
+		iconUser.text.setText(name);
+	}
+
+	public void setPhone(String phone) {
+		iconPhone.text.setText(phone);
+	}
+
+	public void setMoney(String money) {
+		iconMoney.text.setText(money);
 	}
 
 	private void createItemManager(ItemMenu itemManager) {
@@ -284,10 +371,29 @@ public class ListMenu extends ScrollPane {
 					onAddMoneyClicked.onClick(x, y);
 			}
 		});
-		itemManager.addComponent(userActive);
-		itemManager.addComponent(userUnactive);
-		itemManager.addComponent(userBlock);
-		itemManager.addComponent(addMoney);
+
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_ADMIN_ACTIVE.ordinal())) {
+			itemManager.addComponent(userActive);
+		}
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_ADMIN_INACTIVE.ordinal()))
+			itemManager.addComponent(userUnactive);
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_ADMIN_LOCK.ordinal()))
+			itemManager.addComponent(userBlock);
+		if (UserInfo.getInstance().getPermission()
+				.isHasPermission(PermissionConfig.PERMISSION_CAPTIEN.ordinal()))
+			itemManager.addComponent(addMoney);
 
 	}
 
@@ -302,7 +408,9 @@ public class ListMenu extends ScrollPane {
 
 			}
 		});
-		itemMail.addComponent(allMail);
+		if (UserInfo.getInstance().getPermission()
+				.isHasPermission(PermissionConfig.PERMISSION_MAIL.ordinal()))
+			itemMail.addComponent(allMail);
 	}
 
 	void addLine(Table table, float height) {
@@ -433,6 +541,10 @@ public class ListMenu extends ScrollPane {
 					super.touchDragged(event, x, y, pointer);
 				}
 			});
+		}
+
+		public int getChirldenSize() {
+			return subButton.size();
 		}
 
 		public ItemMenu(IconMail iconMail, String title, float width, int height) {
@@ -785,9 +897,14 @@ public class ListMenu extends ScrollPane {
 		this.onAllMailClicked = onMailClicked;
 	}
 
-	public void setOnHistoryTransitionClicked(
+	public void setOnHistorySendMoneyClicked(
 			OnClickListener onHistoryTransitionClicked) {
-		this.onHistoryTransitionClicked = onHistoryTransitionClicked;
+		this.onHistorySendMoneyClicked = onHistoryTransitionClicked;
+	}
+
+	public void setOnHistoryReceiveClicked(
+			OnClickListener onHistoryTransitionClicked) {
+		this.onHistoryReceiveMoneyClicked = onHistoryTransitionClicked;
 	}
 
 	public void setOnAddMoneyClicked(OnClickListener onAddMoneyClicked) {
@@ -798,12 +915,40 @@ public class ListMenu extends ScrollPane {
 		this.onSellGiftCode = onSellGiftCode;
 	}
 
-	public void setOnUsedGiftCode(OnClickListener onUsedGiftCode) {
-		this.onUsedGiftCode = onUsedGiftCode;
+	public void setOnListGiftcodeClicked(OnClickListener listGiftcodeClicked) {
+		this.listGiftcodeClicked = listGiftcodeClicked;
 	}
 
-	public void setOnUnUseGiftCode(OnClickListener onUnUseGiftCode) {
-		this.onUnUseGiftCode = onUnUseGiftCode;
+}
+
+class Icon extends Group {
+	public Img		icon;
+	public Label	text;
+	private String	_text;
+
+	public Icon(float width, float height, TextureRegion regIcon, String _text) {
+		super();
+		setSize(width, height);
+		icon = new Img(regIcon);
+		this._text = _text;
+		LabelStyle labelStyle = new LabelStyle();
+		labelStyle.font = Assets.instance.fontFactory.getFont(20,
+				fontType.Medium);
+		labelStyle.fontColor = Color.WHITE;
+		text = new Label(_text, labelStyle);
+		text.setWrap(true);
+		addActor(icon);
+		addActor(text);
+		validElements();
+	}
+
+	public void validElements() {
+		icon.setSize(getHeight() - 10, getHeight() - 10);
+		icon.setPosition(20, 5);
+		text.setWidth(getWidth() - icon.getX() + icon.getWidth() - 10);
+		text.setPosition(icon.getX() + icon.getWidth() + 10,
+				icon.getY(Align.center) - text.getHeight() / 2);
+
 	}
 
 }
