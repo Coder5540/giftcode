@@ -5,13 +5,14 @@ import com.badlogic.gdx.Preferences;
 import com.coder5560.game.enums.Constants;
 
 public class AppPreference {
-	public static final String TAG = AppPreference.class.getName();
-	public static AppPreference instance = new AppPreference();
+	public static final String	TAG					= AppPreference.class
+															.getName();
+	public static AppPreference	instance			= new AppPreference();
 
-	private Preferences preferences;
-	public String name, pass;
-	public int type;
-	public boolean isWaitActiveCode = false;
+	private Preferences			preferences;
+	public String				name, pass;
+	public int					type;
+	public boolean				isWaitActiveCode	= false;
 
 	private AppPreference() {
 		preferences = Gdx.app.getPreferences(Constants.APP_NAME);
@@ -48,11 +49,33 @@ public class AppPreference {
 
 	public void setPass(String pass, boolean flush) {
 		this.pass = pass;
-		preferences.putString("pass",pass);
+		preferences.putString("pass", pass);
 		if (flush)
 			flush();
 	}
 
+//	public String getDeviceId() {
+//		return deviceId;
+//	}
+
+//	public void setDeviceId(String deviceId, boolean flush) {
+//		this.deviceId = deviceId;
+//		preferences.putString("deviceID", deviceId);
+//		if (flush)
+//			flush();
+//	}
+//
+//	public String getDeviceName() {
+//		return deviceName;
+//	}
+//
+//	public void setDeviceName(String deviceName, boolean flush) {
+//		this.deviceName = deviceName;
+//		preferences.putString("deviceName", deviceName);
+//		if (flush)
+//			flush();
+//	}
+//
 	public void flush() {
 		preferences.flush();
 	}

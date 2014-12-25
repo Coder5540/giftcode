@@ -5,7 +5,6 @@ import utils.elements.Img;
 import utils.factory.FontFactory.fontType;
 import utils.factory.StringSystem;
 import utils.networks.UserInfo;
-import utils.networks.UserInfo.Permission;
 import utils.screen.Toast;
 
 import com.badlogic.gdx.Gdx;
@@ -19,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.listener.OnClickListener;

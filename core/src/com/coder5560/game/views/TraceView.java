@@ -38,6 +38,8 @@ public class TraceView {
 	public String getLastView() {
 		if (traceView.size > 1) {
 			return traceView.get(traceView.size - 1);
+		} else if (traceView.get(0).equalsIgnoreCase(StringSystem.VIEW_LOGIN)) {
+			return StringSystem.VIEW_LOGIN;
 		}
 		return StringSystem.VIEW_HOME;
 	}

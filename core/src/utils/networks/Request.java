@@ -46,7 +46,7 @@ public class Request {
 	/**
 	 * Sử dụng HttpRequest và HttpResponse của Libgdx Method GET
 	 */
-	private void get(String cmd, String params,
+	void get(String cmd, String params,
 			HttpResponseListener httpResponseListener) {
 		// if (UserInfo.getInstance().userLogged()) {
 		// params = ParamsBuilder.builder().parseParams(params)
@@ -108,13 +108,15 @@ public class Request {
 		thread.start();
 	}
 
-	public void login(String userName, String pass,
-			HttpResponseListener listener) {
+	public void login(String userName, String pass, String deviceID,
+			String deviceName, HttpResponseListener listener) {
 		post(CommandRequest.LOGIN,
 				ParamsBuilder
 						.builder()
 						.add(ExtParamsKey.AGENCY_NAME, userName)
 						.add(ExtParamsKey.PASSWORD, pass)
+						.add(ExtParamsKey.DEVICE_ID, deviceID)
+						.add(ExtParamsKey.DEVICE_NAME, deviceName)
 						.add(ExtParamsKey.SIGNATURE,
 								hash(userName + pass
 										+ ConnectionConfig.CLIENT_KEY)).build(),
@@ -463,5 +465,21 @@ public class Request {
 								hash(agencyName + amount
 										+ ConnectionConfig.CLIENT_KEY)).build(),
 				listener);
+	}
+
+	public void registerDevice(String agencyName, String pass, String deviceID,
+			String deviceName, HttpResponseListener listener) {
+		post(CommandRequest.REGISTER_DEVICE,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.PASSWORD, pass)
+						.add(ExtParamsKey.DEVICE_ID, deviceID)
+						.add(ExtParamsKey.DEVICE_NAME, deviceName)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + deviceID + deviceName
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+
 	}
 }

@@ -4,7 +4,6 @@ import utils.elements.CustomTable;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
-import utils.factory.Log;
 import utils.factory.StringSystem;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
@@ -73,7 +72,6 @@ public class ViewMails extends View {
 		}
 		hideNoMessage(null);
 		for (int i = 0; i < jsonArray.size; i++) {
-			Log.d("Time : " + i + " Size : " + jsonArray.size);
 			JsonValue mail = jsonArray.get(i);
 			String sender = mail.getString(ExtParamsKey.SENDER);
 			String content = mail.getString(ExtParamsKey.CONTENT);
@@ -226,7 +224,7 @@ public class ViewMails extends View {
 		private boolean	isRead;
 
 		public ItemMail(final int index, final String title,
-				final String description, boolean isRead,final long time,
+				final String description, boolean isRead, final long time,
 				final float width, float height) {
 			this.setSize(width, height);
 			this.index = index;
@@ -294,7 +292,7 @@ public class ViewMails extends View {
 					setRead(true);
 					bg.setColor(bgColor);
 					ViewMessage viewMessage = new ViewMessage(title,
-							description, index,time);
+							description, index, time);
 					viewMessage.build(getStage(), getViewController(),
 							"view_message", new Rectangle(0, 0,
 									Constants.WIDTH_SCREEN,

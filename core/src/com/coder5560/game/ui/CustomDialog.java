@@ -17,9 +17,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnClickListener;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.listener.OnResponseListener;
+import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class CustomDialog extends View {
@@ -46,7 +48,7 @@ public class CustomDialog extends View {
 		this.addActor(transparent);
 		root = new Table();
 		root.setTouchable(Touchable.enabled);
-		root.setSize(8 * bound.width / 9, bound.height / 3);
+		root.setSize(6 * bound.width / 9, bound.height / 3);
 		root.top();
 		root.defaults().expand().fillX().center();
 		root.setBackground(new NinePatchDrawable(new NinePatch(
@@ -120,9 +122,9 @@ public class CustomDialog extends View {
 	public void setContent(String txtContent) {
 		if (lbContent != null) {
 			lbContent.setText(txtContent);
-			// lbContent.setAlignment(Align.center, Align.left);
-			// lbContent.setWrap(true);
-			// lbContent.setWidth(root.getWidth() - 20);
+			lbContent.setAlignment(Align.center, Align.left);
+			lbContent.setWrap(true);
+			lbContent.setWidth(root.getWidth() - 20);
 		}
 	}
 
@@ -135,10 +137,10 @@ public class CustomDialog extends View {
 
 	@Override
 	public void hide(OnCompleteListener listener) {
-		super.hide(listener);
 		setVisible(false);
-		this.clear();
-		_viewController.removeView(getName());
+		setViewState(ViewState.HIDE);
+		setTouchable(Touchable.disabled);
+		TraceView.instance.removeView(this.getName());
 	}
 
 	@Override
@@ -155,6 +157,7 @@ public class CustomDialog extends View {
 	public void back() {
 		System.out.println("Back In dialog");
 		hide(null);
+		getViewController().removeView(getName());
 	}
 
 	public void setOnResponseListener(OnResponseListener listener) {
@@ -168,7 +171,7 @@ public class CustomDialog extends View {
 															float x, float y) {
 														onResponseListener
 																.onOk();
-														hide(null);
+														back();
 													}
 												};
 
@@ -177,7 +180,7 @@ public class CustomDialog extends View {
 													@Override
 													public void onClick(
 															float x, float y) {
-														hide(null);
+														back();
 													}
 												};
 }

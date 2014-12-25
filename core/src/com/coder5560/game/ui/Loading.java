@@ -16,12 +16,14 @@ import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 
 public class Loading {
-	public Image loading;
-	public Image bg;
-	Table table;
-	public boolean isLoading = false;
-	public static Loading ins = new Loading();
-
+	public Image			loading;
+	public Image			bg;
+	Table					table;
+	public boolean			isLoading	= false;
+	public static Loading	ins			= new Loading();
+	
+	
+	
 	private Loading() {
 		super();
 	}

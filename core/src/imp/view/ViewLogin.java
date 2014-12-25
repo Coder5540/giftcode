@@ -36,6 +36,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnCompleteListener;
+import com.coder5560.game.listener.OnResponseListener;
+import com.coder5560.game.ui.CustomDialog;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
@@ -46,6 +48,7 @@ public class ViewLogin extends View {
 	private CustomTextField	tfPass;
 	private JsonValue		respone;
 	Label					btnRegister, btnActive;
+	CustomDialog			dialogConfirm;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -138,7 +141,6 @@ public class ViewLogin extends View {
 				MainMenuView.isLoadUserData = false;
 				String username = tfName.getText();
 				String pass = tfPass.getText();
-				AppPreference.instance.setName(tfName.getText(), false);
 				if (username.equalsIgnoreCase("") || pass.equalsIgnoreCase("")) {
 					Toast.makeText(getStage(),
 							"Vui lòng nhập đầy đủ thông tin",
@@ -149,13 +151,18 @@ public class ViewLogin extends View {
 							"Số điện thoại của bạn không đúng. Vui lòng nhập lại!",
 							Toast.LENGTH_SHORT);
 				} else {
-					AbstractGameScreen.keyboard.show(false);
-					Request.getInstance().login(tfName.getText(),
-							tfPass.getText(), new LoginListener());
 					setTouchable(Touchable.disabled);
 					Loading.ins.show(ViewLogin.this);
+					String deviceName = getViewController().getGameParent()
+							.getPlatformResolver().getDeviceName();
+					String deviceID = getViewController().getGameParent()
+							.getPlatformResolver().getDeviceID();
+					Request.getInstance().login(username, pass, deviceID,
+							deviceName, _loginListener);
+					AbstractGameScreen.keyboard.show(false);
+					AppPreference.instance.setName(username, false);
+					AppPreference.instance.setPass(pass, false);
 				}
-				super.clicked(event, x, y);
 			}
 		});
 
@@ -268,6 +275,9 @@ public class ViewLogin extends View {
 		addActor(btnRegister);
 		addActor(btnActive);
 		addActor(btnForgotPass);
+
+		//
+
 		return this;
 	}
 
@@ -285,10 +295,10 @@ public class ViewLogin extends View {
 			Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
 			if (isSuccess) {
 				JsonValue per = respone.get(ExtParamsKey.PERMISSION);
-			    for (int i = 0; i < per.size; i++) {
-			     int index = per.getInt(i);
-			     UserInfo.getInstance().setPermisstion(index);
-			    }
+				for (int i = 0; i < per.size; i++) {
+					int index = per.getInt(i);
+					UserInfo.getInstance().setPermisstion(index);
+				}
 				int role_id = respone.getInt(ExtParamsKey.ROLE_ID);
 				UserInfo.getInstance().setRoleId(role_id);
 				HomeView homeView = new HomeView();
@@ -312,15 +322,14 @@ public class ViewLogin extends View {
 						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
 								Constants.HEIGHT_SCREEN));
 				mainMenu.buildComponent();
-
 				int id = respone.getInt(ExtParamsKey.ROLE_ID);
 				AppPreference.instance.type = id;
-				AppPreference.instance.save();
-				AppPreference.instance.setPass(tfPass.getText(), false);
+				AppPreference.instance.flush();
 				homeView.show(new OnCompleteListener() {
 					@Override
 					public void onError() {
 					}
+
 					@Override
 					public void done() {
 						mainMenu.hide(null);
@@ -328,35 +337,115 @@ public class ViewLogin extends View {
 				});
 
 			} else {
+				// login success but the device is not active. show dialog
+				// confirm
 				setTouchable(Touchable.enabled);
+				dialogConfirm = new CustomDialog();
+				dialogConfirm.build(getStage(), getViewController(), "dialog",
+						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+								Constants.HEIGHT_SCREEN));
+				dialogConfirm.buildComponent("dialog", new Rectangle(0, 0,
+						Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
+				dialogConfirm.setContent(mess);
+				dialogConfirm.show(null);
+				dialogConfirm.setOnResponseListener(new OnResponseListener() {
+
+					@Override
+					public void onOk(String name, String quality) {
+
+					}
+
+					@Override
+					public void onOk() {
+						Log.d("onOk");
+						String username = AppPreference.instance.name;
+						String pass = AppPreference.instance.pass;
+						String deviceID = getViewController().getGameParent()
+								.getPlatformResolver().getDeviceID();
+						String deviceName = getViewController().getGameParent()
+								.getPlatformResolver().getDeviceName();
+						Request.getInstance().registerDevice(username, pass,
+								deviceID, deviceName, _registerDeviceListener);
+					}
+
+					@Override
+					public void onCancel() {
+						Log.d("onCancel");
+					}
+				});
 			}
 			respone = null;
 		}
-	}
-
-	class LoginListener implements HttpResponseListener {
-
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			respone = (new JsonReader())
-					.parse(httpResponse.getResultAsString());
-			Log.d(respone.toString());
-		}
-
-		@Override
-		public void failed(Throwable t) {
-
-		}
-
-		@Override
-		public void cancelled() {
-
-		}
-
 	}
 
 	@Override
 	public void hide(OnCompleteListener listener) {
 		setVisible(false);
 	}
+
+	public void back() {
+		Log.d("Call back on Login View");
+	};
+
+	private void switchView() {
+		Request.getInstance().login(
+				AppPreference.instance.getName(),
+				AppPreference.instance.getPass(),
+				getViewController().getGameParent().getPlatformResolver()
+						.getDeviceID(),
+				getViewController().getGameParent().getPlatformResolver()
+						.getDeviceName(), _loginListener);
+	}
+
+	HttpResponseListener	_registerDeviceListener	= new HttpResponseListener() {
+
+														@Override
+														public void handleHttpResponse(
+																HttpResponse httpResponse) {
+															JsonValue value = (new JsonReader())
+																	.parse(httpResponse
+																			.getResultAsString());
+															if (value
+																	.getBoolean(ExtParamsKey.RESULT))
+																switchView();
+														}
+
+														@Override
+														public void failed(
+																Throwable t) {
+
+														}
+
+														@Override
+														public void cancelled() {
+
+														}
+													};
+
+	HttpResponseListener	_loginListener			= new HttpResponseListener() {
+
+														@Override
+														public void handleHttpResponse(
+																HttpResponse httpResponse) {
+															respone = (new JsonReader())
+																	.parse(httpResponse
+																			.getResultAsString());
+															Log.d("OnLogin result",
+																	respone.toString());
+														}
+
+														@Override
+														public void failed(
+																Throwable t) {
+															Log.d("On Login Fail :",
+																	t.getMessage());
+														}
+
+														@Override
+														public void cancelled() {
+															Log.d("On Login Cancel :",
+																	"Login is cancel");
+														}
+													};
+
 }
