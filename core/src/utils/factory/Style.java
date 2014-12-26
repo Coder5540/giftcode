@@ -18,24 +18,24 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
 
 public class Style {
-	public static Style ins = new Style();
-	public LabelStyle labelStyle20;
-	public LabelStyle labelStyle30;
-	public SelectBoxStyle selectBoxStyle;
-	public ScrollPaneStyle scrollPanelType;
-	public TextButtonStyle textButtonStyle;
-	public WindowStyle windowStyle;
-	public NinePatch np1, np2, np3, np4, np5;
-	public TextFieldStyle tfStyle;
+	public static Style			ins		= new Style();
+	public LabelStyle			labelStyle20;
+	public LabelStyle			labelStyle30;
+	public SelectBoxStyle		selectBoxStyle;
+	public ScrollPaneStyle		scrollPanelType;
+	public TextButtonStyle		textButtonStyle;
+	public WindowStyle			windowStyle;
+	public NinePatch			np1, np2, np3, np4, np5;
+	public TextFieldStyle		tfStyle;
 
-	HashMap<String, LabelStyle> styles = new HashMap<String, LabelStyle>();
+	HashMap<String, LabelStyle>	styles	= new HashMap<String, LabelStyle>();
 
 	public Style() {
-		np1 = new NinePatch(Assets.instance.getRegion("textfield"), 4, 4, 4, 4);
-		np2 = new NinePatch(Assets.instance.getRegion("ninepatch2"), 4, 4, 4, 4);
-		np3 = new NinePatch(Assets.instance.getRegion("ninepatch3"), 4, 4, 4, 4);
-		np4 = new NinePatch(Assets.instance.getRegion("ninepatch4"), 4, 4, 4, 4);
-		np5 = new NinePatch(Assets.instance.getRegion("ninepatch5"), 4, 4, 4, 4);
+		np1 = new NinePatch(Assets.instance.getRegion("textfield"), 6, 6, 6, 6);
+		np2 = new NinePatch(Assets.instance.getRegion("ninepatch2"), 6, 6, 6, 6);
+		np3 = new NinePatch(Assets.instance.getRegion("ninepatch3"), 6, 6, 6, 6);
+		np4 = new NinePatch(Assets.instance.getRegion("ninepatch4"), 6, 6, 6, 6);
+		np5 = new NinePatch(Assets.instance.getRegion("ninepatch5"), 6, 6, 6, 6);
 
 		labelStyle20 = new LabelStyle(Assets.instance.fontFactory.getFont(20),
 				Color.WHITE);
@@ -46,16 +46,16 @@ public class Style {
 		scrollPanelType.background = new NinePatchDrawable(new NinePatch(
 				Assets.instance.getRegion("ninepatch2"), 4, 4, 4, 4));
 
-//		selectBoxStyle = new SelectBoxStyle();
-//		selectBoxStyle.font = Assets.instance.fontFactory.getFont(20);
-//		selectBoxStyle.fontColor = Color.BLACK;
-//		selectBoxStyle.background = new NinePatchDrawable(new NinePatch(
-//				Assets.instance.getRegion("textfield"), 4, 4, 4, 4));
-//		selectBoxStyle.scrollStyle = scrollPanelType;
-//		selectBoxStyle.listStyle = new ListStyle(
-//				Assets.instance.fontFactory.getFont(20), Color.BLACK,
-//				Color.GRAY, new NinePatchDrawable(new NinePatch(
-//						Assets.instance.getRegion("textfield"), 4, 4, 4, 4)));
+		// selectBoxStyle = new SelectBoxStyle();
+		// selectBoxStyle.font = Assets.instance.fontFactory.getFont(20);
+		// selectBoxStyle.fontColor = Color.BLACK;
+		// selectBoxStyle.background = new NinePatchDrawable(new NinePatch(
+		// Assets.instance.getRegion("textfield"), 4, 4, 4, 4));
+		// selectBoxStyle.scrollStyle = scrollPanelType;
+		// selectBoxStyle.listStyle = new ListStyle(
+		// Assets.instance.fontFactory.getFont(20), Color.BLACK,
+		// Color.GRAY, new NinePatchDrawable(new NinePatch(
+		// Assets.instance.getRegion("textfield"), 4, 4, 4, 4)));
 
 		selectBoxStyle = new SelectBoxStyle();
 		selectBoxStyle.font = Assets.instance.fontFactory.getFont(20);
@@ -70,7 +70,7 @@ public class Style {
 		selectBoxStyle.listStyle = new ListStyle(
 				Assets.instance.fontFactory.getFont(20), Color.BLACK,
 				Color.GRAY, new NinePatchDrawable(new NinePatch(
-						Assets.instance.getRegion("textfield"), 4, 4, 4, 4)));
+						Assets.instance.getRegion("textfield"), 6, 6, 6, 6)));
 
 		// textButtonStyle = new TextButtonStyle();
 		// textButtonStyle.up = new NinePatchDrawable(new NinePatch(new
@@ -114,12 +114,13 @@ public class Style {
 		}
 		return styles.get("" + size + type.toString());
 	}
+
 	public LabelStyle getLabelStyle(int size, fontType type, Color color) {
-		if (styles.get("" + size + type.toString()+ color) == null) {
-			styles.put("" + size + type.toString()+ color, new LabelStyle(
-					Assets.instance.fontFactory.getFont(size, type),color));
+		if (styles.get("" + size + type.toString() + color) == null) {
+			styles.put("" + size + type.toString() + color, new LabelStyle(
+					Assets.instance.fontFactory.getFont(size, type), color));
 		}
-		return styles.get("" + size + type.toString()+ color);
+		return styles.get("" + size + type.toString() + color);
 	}
 
 	public LabelStyle getLabelStyle(int size) {

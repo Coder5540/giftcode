@@ -240,11 +240,10 @@ public class Factory {
 				}
 			}
 		}
-		if (String.valueOf(imeiDevice.charAt(imeiDevice.length() - 1))
+		if (!imeiDevice.equalsIgnoreCase("")&&String.valueOf(imeiDevice.charAt(imeiDevice.length() - 1))
 				.equalsIgnoreCase(",")) {
 			imeiDevice = imeiDevice.substring(0, imeiDevice.length() - 2);
 		}
-
 		return imeiDevice;
 	}
 
@@ -260,7 +259,25 @@ public class Factory {
 				}
 			}
 		}
-		if (String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
+		if (!nameDevice.equalsIgnoreCase("")&& String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
+				.equalsIgnoreCase(",")) {
+			nameDevice = nameDevice.substring(0, nameDevice.length() - 2);
+		}
+		return nameDevice;
+	}
+	public static String getListByKey(String parameterKey,JsonValue jsonValue) {
+		JsonValue responseNames = jsonValue.get(parameterKey);
+		String nameDevice = "";
+		for (int i = 0; i < responseNames.size; i++) {
+			if (!responseNames.getString(i).equalsIgnoreCase("")
+					&& !responseNames.getString(i).equalsIgnoreCase("null")) {
+				nameDevice += responseNames.getString(i);
+				if (i < responseNames.size - 1) {
+					nameDevice += ",";
+				}
+			}
+		}
+		if (!nameDevice.equalsIgnoreCase("")&& String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
 				.equalsIgnoreCase(",")) {
 			nameDevice = nameDevice.substring(0, nameDevice.length() - 2);
 		}

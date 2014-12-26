@@ -5,6 +5,7 @@ import utils.factory.Factory;
 import utils.factory.Log;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
+import utils.networks.UserInfo;
 import utils.screen.Toast;
 
 import com.aia.appsreport.component.table.AbstractTable;
@@ -18,20 +19,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnCompleteListener;
+import com.coder5560.game.listener.OnSelectListener;
 import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
 public class ViewAdminActive extends View {
 
-	private JsonValue respone;
-	Table content = new Table();
-	private AbstractTable tableContent;
+	private JsonValue		respone;
+	private JsonValue		responeLock;
+	private JsonValue		responeUnlock;
+	Table					content	= new Table();
+	private AbstractTable	tableContent;
 
 	@Override
 	public String getLabel() {
@@ -64,12 +69,12 @@ public class ViewAdminActive extends View {
 							Constants.HEIGHT_SCREEN
 									- Constants.HEIGHT_ACTIONBAR * 3));
 		}
-
 		return this;
 	}
 
 	@Override
 	public void update(float deltaTime) {
+		updateLock();
 		if (respone != null) {
 			Loading.ins.hide();
 			Log.d("" + respone.toString());
@@ -85,25 +90,6 @@ public class ViewAdminActive extends View {
 						final String phone = infoUser
 								.getString(ExtParamsKey.AGENCY_NAME);
 
-						final DialogCustom dia = new DialogCustom("");
-						dia.text("Bạn có chắc chắn khóa tài khoản " + phone
-								+ " không?");
-						dia.button("Ok", new Runnable() {
-							@Override
-							public void run() {
-								getViewController().getView(
-										ViewInfoDaiLySmall.class.getName())
-										.hide(null);
-								Loading.ins.show(ViewAdminActive.this);
-								Request.getInstance().chaneStateAdmin(phone,
-										AppPreference.instance.name,
-										AppPreference.instance.pass,
-										Constants.agency_type_lock,
-										new LockListener());
-							}
-						});
-						dia.button("Hủy");
-
 						final ItemAdminActive newItem = new ItemAdminActive(
 								tableContent,
 								new String[] {
@@ -118,11 +104,27 @@ public class ViewAdminActive extends View {
 										infoUser.getString(ExtParamsKey.ROLE_NAME),
 										infoUser.getString(ExtParamsKey.ADDRESS),
 										infoUser.getString(ExtParamsKey.EMAIL),
-//										infoUser.getString(ExtParamsKey.DEVICE_NAME),
-//										infoUser.getString(ExtParamsKey.DEVICE_ID),
+										Factory.getDeviceName(infoUser),
+										Factory.getDeviceID(infoUser),
 										infoUser.getString(ExtParamsKey.STATE) }) {
 							@Override
 							public void click() {
+								if (!getViewController().isContainView(
+										ViewInfoDaiLySmall.class.getName())) {
+									ViewInfoDaiLySmall view = new ViewInfoDaiLySmall();
+									view.build(
+											getStage(),
+											getViewController(),
+											ViewInfoDaiLySmall.class.getName(),
+											new Rectangle(
+													0,
+													0,
+													Constants.WIDTH_SCREEN - 30,
+													Constants.HEIGHT_SCREEN
+															- Constants.HEIGHT_ACTIONBAR
+															* 3));
+								}
+
 								View view = ((ViewInfoDaiLySmall) getViewController()
 										.getView(
 												ViewInfoDaiLySmall.class
@@ -135,8 +137,8 @@ public class ViewAdminActive extends View {
 												infoUser.getString(ExtParamsKey.REF_CODE),
 												infoUser.getString(ExtParamsKey.AMOUNT),
 												infoUser.getString(ExtParamsKey.EMAIL),
-//												infoUser.getString(ExtParamsKey.DEVICE_ID),
-//												infoUser.getString(ExtParamsKey.DEVICE_NAME),
+												Factory.getDeviceName(infoUser),
+												Factory.getDeviceID(infoUser),
 												infoUser.getString(ExtParamsKey.STATE));
 								TextButton btnLock = new TextButton("Khóa",
 										this.btLock.getStyle());
@@ -144,11 +146,22 @@ public class ViewAdminActive extends View {
 									@Override
 									public void clicked(InputEvent event,
 											float x, float y) {
-										dia.show(getStage());
+										onBtnLockClicked(phone, infoUser);
 									}
 								});
-								view.add(btnLock).colspan(2).width(160)
-										.height(50).pad(30);
+								view.add(btnLock).width(160).height(50).pad(30);
+
+								TextButton btnUnlock = new TextButton(
+										"Mở khóa", this.btLock.getStyle());
+								btnUnlock.addListener(new ClickListener() {
+									@Override
+									public void clicked(InputEvent event,
+											float x, float y) {
+										onBtnUnlockClicked(phone, infoUser);
+									}
+								});
+								view.add(btnUnlock).width(160).height(50)
+										.pad(30);
 
 							}
 						};
@@ -158,7 +171,7 @@ public class ViewAdminActive extends View {
 							@Override
 							public void clicked(InputEvent event, float x,
 									float y) {
-								dia.show(getStage());
+								onBtnLockClicked(phone, infoUser);
 							}
 						});
 					}
@@ -236,4 +249,257 @@ public class ViewAdminActive extends View {
 		toBack();
 	}
 
+	String			blockName	= "";
+	Array<String>	IDs			= new Array<String>();
+	Array<String>	Names		= new Array<String>();
+
+	void onBtnLockClicked(String phone, JsonValue infoUser) {
+		Array<String> imeis = new Array<String>();
+		JsonValue deviceIDs = infoUser.get(ExtParamsKey.DEVICE_ID);
+		JsonValue deviceNames = infoUser.get(ExtParamsKey.DEVICE_NAME);
+		blockName = phone;
+
+		if (deviceIDs.size == 0 || deviceNames.size == 0
+				|| Factory.getDeviceID(infoUser).equalsIgnoreCase("")
+				|| Factory.getDeviceName(infoUser).equalsIgnoreCase("")) {
+			showDialogWhenNoDevice("User không có thiết bị nào chưa khóa!");
+			return;
+		}
+
+		for (int i = 0; i < deviceIDs.size; i++) {
+			String imei = deviceNames.getString(i) + " - "
+					+ deviceIDs.getString(i);
+			imeis.add(imei);
+			IDs.add(deviceIDs.getString(i));
+			Names.add(deviceNames.getString(i));
+		}
+
+		BlockView blockView = new BlockView(1, phone, imeis);
+		blockView.build(getStage(), getViewController(), "block",
+				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
+		blockView.buildComponent();
+		blockView.show(null);
+		blockView.setOnSelectListener(onSelectLock);
+	}
+
+	void showDialogWhenNoDevice(String message) {
+		final DialogCustom dia = new DialogCustom("");
+		dia.text(message);
+		dia.button("Ok", new Runnable() {
+			@Override
+			public void run() {
+
+			}
+		});
+		dia.show(getStage());
+	}
+
+	private void onBtnUnlockClicked(String phone, JsonValue infoUser) {
+		Array<String> imeis = new Array<String>();
+		JsonValue deviceIDs = infoUser.get(ExtParamsKey.DEVICE_ID_BLOCK);
+		JsonValue deviceNames = infoUser.get(ExtParamsKey.DEVICE_NAME_BLOCK);
+		blockName = phone;
+		if (deviceIDs.size == 0
+				|| deviceNames.size == 0
+				|| Factory.getListByKey(ExtParamsKey.DEVICE_ID_BLOCK, infoUser)
+						.equalsIgnoreCase("")
+				|| Factory.getListByKey(ExtParamsKey.DEVICE_NAME_BLOCK,
+						infoUser).equalsIgnoreCase("")) {
+			showDialogWhenNoDevice("User không có thiết bị nào bị khóa!");
+			return;
+		}
+
+		for (int i = 0; i < deviceIDs.size; i++) {
+			String imei = deviceNames.getString(i) + " - "
+					+ deviceIDs.getString(i);
+			imeis.add(imei);
+			IDs.add(deviceIDs.getString(i));
+			Names.add(deviceNames.getString(i));
+		}
+
+		BlockView blockView = new BlockView(2, phone, imeis);
+		blockView.build(getStage(), getViewController(), "block",
+				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
+		blockView.buildComponent();
+		blockView.show(null);
+		blockView.setOnSelectListener(onSelectLock);
+	}
+
+	public void updateLock() {
+		if (responeLock != null) {
+			boolean result = responeLock.getBoolean(ExtParamsKey.RESULT);
+			if (result) {
+				final String message = responeLock
+						.getString(ExtParamsKey.MESSAGE);
+				getViewController().getView(ViewInfoDaiLySmall.class.getName())
+						.hide(new OnCompleteListener() {
+
+							@Override
+							public void onError() {
+
+							}
+
+							@Override
+							public void done() {
+								Toast.makeText(getStage(), message,
+										Toast.LENGTH_SHORT);
+							}
+						});
+				;
+
+			} else {
+				Toast.makeText(getStage(), "Lock device fail",
+						Toast.LENGTH_SHORT);
+			}
+			responeLock = null;
+		}
+		if (responeUnlock != null) {
+			boolean result = responeUnlock.getBoolean(ExtParamsKey.RESULT);
+			if (result) {
+				final String message = responeUnlock
+						.getString(ExtParamsKey.MESSAGE);
+				getViewController().getView(ViewInfoDaiLySmall.class.getName())
+						.hide(new OnCompleteListener() {
+
+							@Override
+							public void onError() {
+
+							}
+
+							@Override
+							public void done() {
+								Toast.makeText(getStage(), message,
+										Toast.LENGTH_SHORT);
+							}
+						});
+				;
+
+			} else {
+				Toast.makeText(getStage(), "Unlock device fail",
+						Toast.LENGTH_SHORT);
+			}
+			responeUnlock = null;
+		}
+	}
+
+	OnSelectListener	onSelectLock	= new OnSelectListener() {
+
+											@Override
+											public void onSelect(final int i) {
+												final DialogCustom dia = new DialogCustom(
+														"");
+												dia.text("Bạn có chắc chắn khóa thiết bị "
+														+ Names.get(i)
+														+ " có IMEI : "
+														+ IDs.get(i)
+														+ " không?");
+												dia.button("Ok",
+														new Runnable() {
+															@Override
+															public void run() {
+																try {
+																	Loading.ins
+																			.show(ViewAdminActive.this);
+																	getViewController()
+																			.removeView(
+																					"block");
+																	Request.getInstance()
+																			.lockLoginDevice(
+																					UserInfo.phone,
+																					blockName,
+																					IDs.get(i),
+																					Names.get(i),
+																					new HttpResponseListener() {
+
+																						@Override
+																						public void handleHttpResponse(
+																								HttpResponse httpResponse) {
+																							Loading.ins
+																									.hide();
+																							responeLock = new JsonReader()
+																									.parse(httpResponse
+																											.getResultAsString());
+																						}
+
+																						@Override
+																						public void failed(
+																								Throwable t) {
+
+																						}
+
+																						@Override
+																						public void cancelled() {
+
+																						}
+																					});
+																} catch (Exception e) {
+																	e.printStackTrace();
+																}
+															}
+														});
+												dia.button("Hủy");
+												dia.show(getStage());
+											}
+										};
+	OnSelectListener	onSelectUnLock	= new OnSelectListener() {
+
+											@Override
+											public void onSelect(final int i) {
+												final DialogCustom dia = new DialogCustom(
+														"");
+												dia.text("Bạn có chắc chắn mở khóa thiết bị "
+														+ Names.get(i)
+														+ " có IMEI : "
+														+ IDs.get(i)
+														+ " không?");
+												dia.button("Ok",
+														new Runnable() {
+															@Override
+															public void run() {
+																try {
+																	Loading.ins
+																			.show(ViewAdminActive.this);
+																	getViewController()
+																			.removeView(
+																					"block");
+																	Request.getInstance()
+																			.unLockLoginDevice(
+																					UserInfo.phone,
+																					blockName,
+																					IDs.get(i),
+																					Names.get(i),
+																					new HttpResponseListener() {
+
+																						@Override
+																						public void handleHttpResponse(
+																								HttpResponse httpResponse) {
+																							Loading.ins
+																									.hide();
+																							responeUnlock = new JsonReader()
+																									.parse(httpResponse
+																											.getResultAsString());
+																						}
+
+																						@Override
+																						public void failed(
+																								Throwable t) {
+
+																						}
+
+																						@Override
+																						public void cancelled() {
+
+																						}
+																					});
+																} catch (Exception e) {
+																	e.printStackTrace();
+																}
+															}
+														});
+												dia.button("Hủy");
+												dia.show(getStage());
+											}
+										};
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import utils.elements.Img;
 import utils.factory.AppPreference;
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
 import utils.factory.Log;
 import utils.networks.ExtParamsKey;
@@ -53,6 +54,7 @@ public class ListMenu extends ScrollPane {
 	private OnClickListener	onAddMoneyClicked;
 	private OnClickListener	onSellGiftCode;
 	private OnClickListener	listGiftcodeClicked;
+	private OnClickListener	onHistoryGiftcodeClicked;
 
 	LabelStyle				lbStyle;
 	private IconMail		iconMail;
@@ -102,34 +104,6 @@ public class ListMenu extends ScrollPane {
 			addLine(table, 2);
 			addItem(itemGiftCode, 3);
 		}
-
-		// ItemMenu itemManager = new ItemMenu(
-		// Assets.instance.ui.getRegUsermanagement(),
-		// "QUẢN LÝ ĐẠI LÝ CẤP DƯỚI", getWidth(), 50);
-		// createItemManager(itemManager);
-		// addItem(itemManager, 0);
-		//
-		// addLine(table, 2);
-		// iconMail = new IconMail(45, 45);
-		// ItemMenu itemMail = new ItemMenu(iconMail, "HÒM THƯ", getWidth(),
-		// 50);
-		// createItemMail(itemMail);
-		// addItem(itemMail, 1);
-		//
-		// addLine(table, 2);
-		// ItemMenu itemLog = new
-		// ItemMenu(Assets.instance.ui.getIconTransition(),
-		// "LỊCH SỬ GIAO DỊCH", getWidth(), 50);
-		// createItemHistoryTransitio(itemLog);
-		// addItem(itemLog, 2);
-		//
-		// addLine(table, 2);
-		// ItemMenu itemGiftCode = new ItemMenu(
-		// Assets.instance.ui.getIconTransition(), "GIFT CODE",
-		// getWidth(), 50);
-		// createItemGiftcode(itemGiftCode);
-		// addItem(itemGiftCode, 3);
-
 	}
 
 	private void createItemGiftcode(ItemMenu itemGiftCode) {
@@ -163,12 +137,12 @@ public class ListMenu extends ScrollPane {
 				.isHasPermission(
 						PermissionConfig.PERMISSION_BAN_GIFTCODE.ordinal()))
 			itemGiftCode.addComponent(sellGiftCode);
-		if (UserInfo
-				.getInstance()
-				.getPermission()
-				.isHasPermission(
-						PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
-			itemGiftCode.addComponent(listGiftcode);
+		// if (UserInfo
+		// .getInstance()
+		// .getPermission()
+		// .isHasPermission(
+		// PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
+		// itemGiftCode.addComponent(listGiftcode);
 	}
 
 	private void createItemHistory(ItemMenu itemLog) {
@@ -207,27 +181,31 @@ public class ListMenu extends ScrollPane {
 				.isHasPermission(
 						PermissionConfig.PERMISSION_LOG_NHANTIEN.ordinal()))
 			itemLog.addComponent(log_receive_money);
-	}
 
-	// private void createItemHistoryTransitio(ItemMenu itemLog) {
-	// LabelButton log = new LabelButton("Lịch sử", lbStyle, getWidth(), 45);
-	// log.setOnClickListener(new OnClickListener() {
-	//
-	// @Override
-	// public void onClick(float x, float y) {
-	// if (onHistoryTransitionClicked != null) {
-	// onHistoryTransitionClicked.onClick(x, y);
-	// }
-	// }
-	// });
-	// itemLog.addComponent(log);
-	// }
+		LabelButton log_history_giftcode = new LabelButton("Lịch sử Giftcode",
+				lbStyle, getWidth(), 45);
+		log_history_giftcode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(float x, float y) {
+				if (onHistoryGiftcodeClicked != null) {
+					onHistoryGiftcodeClicked.onClick(x, y);
+				}
+			}
+		});
+		if (UserInfo
+				.getInstance()
+				.getPermission()
+				.isHasPermission(
+						PermissionConfig.PERMISSION_LOG_GIFTCODE.ordinal()))
+			itemLog.addComponent(log_history_giftcode);
+	}
 
 	public void updateMail() {
 
 		setUserName(UserInfo.fullName);
 		setPhone(UserInfo.phone);
-		setMoney(UserInfo.money + " $");
+		setMoney(Factory.getDotMoney(UserInfo.money) + " " + UserInfo.currency);
 		Request.getInstance().getMessageUnseen(
 				AppPreference.instance.getName(), new HttpResponseListener() {
 
@@ -267,7 +245,7 @@ public class ListMenu extends ScrollPane {
 		String name = UserInfo.fullName;
 		user.addActor(bgFocus);
 		iconUser = new Icon(user.getWidth(), user.getHeight() / 4,
-				Assets.instance.ui.getIconUser(), "Dinh Anh");
+				Assets.instance.ui.getIconUser(), UserInfo.fullName);
 		iconUser.setPosition(user.getWidth() / 2, 3 * user.getHeight() / 4,
 				Align.center);
 		iconUser.icon.setColor(new Color(0, 0.9f, 0.4f, 1f));
@@ -276,7 +254,8 @@ public class ListMenu extends ScrollPane {
 		iconPhone.setPosition(user.getWidth() / 2, 2 * user.getHeight() / 4,
 				Align.center);
 		iconMoney = new Icon(user.getWidth(), user.getHeight() / 4,
-				Assets.instance.ui.getIconMoney(), "10000 $");
+				Assets.instance.ui.getIconMoney(),
+				Factory.getDotMoney(UserInfo.money) + " " + UserInfo.currency);
 		iconMoney.setPosition(user.getWidth() / 2, 1 * user.getHeight() / 4,
 				Align.center);
 		user.addActor(iconUser);
@@ -917,6 +896,11 @@ public class ListMenu extends ScrollPane {
 
 	public void setOnListGiftcodeClicked(OnClickListener listGiftcodeClicked) {
 		this.listGiftcodeClicked = listGiftcodeClicked;
+	}
+
+	public void setOnHistoryGiftcodeClicked(
+			OnClickListener onHistoryGiftcodeClicked) {
+		this.onHistoryGiftcodeClicked = onHistoryGiftcodeClicked;
 	}
 
 }

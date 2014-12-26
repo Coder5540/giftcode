@@ -31,5 +31,12 @@ public class CommandRequest {
 	public final static String	GET_GIFTCODE_LOG			= "get_gift_code_log";
 	public final static String	CHANGE_GIFTCODE_STATE		= "change_code_state";
 	public static final String	REGISTER_DEVICE				= "register_device";
-	
+
+	public static final String	LOCK_LOGIN_DEVICE			= "lock_login_device";
+	public static final String	GET_LIST_MONEY_LEVEL		= "get_list_money_level";
+
+	public static final String	MONEY_OVERVIEW				= "money_overview";
+	public static final String	GET_MONEY_GIFT_CODE_LOG		= "get_money_gift_code_log";
+	public static final String	GET_MONEY_GIFT_CODE_LOG_SUB	= "get_money_gift_code_log_sub";
+	public static final String	UNLOCK_LOGIN_DEVICE			= "remove_lock_login_device";
 }

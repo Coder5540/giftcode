@@ -1,5 +1,7 @@
 package com.coder5560.game.ui;
 
+import java.util.ArrayList;
+
 import utils.factory.FontFactory.fontType;
 
 import com.aia.appsreport.component.chart.ChartBack;
@@ -27,20 +29,20 @@ public class ColumnChartView extends Group {
 		setHeight(height);
 	}
 
-	public void validateComponent(float colWidth, String[] titledown,
-			String[] dir, Color[] color) {
+	public void validateComponent(float colWidth, ArrayList<String> titledown,
+			ArrayList<String> dir, ArrayList<Color> color) {
 		int size = columnChart.column.size();
 		float widthChartBack = colWidth * size + 100;
 		if (widthChartBack < Constants.WIDTH_SCREEN) {
 			widthChartBack = Constants.WIDTH_SCREEN;
 		}
 		chartback.setdata(columnChart.getMaxValue(),
-				columnChart.getMaxValue() / 5, size, 2, widthChartBack,
-				getHeight(), 80);
-		chartback.colWidth = 150;
+				columnChart.getMaxValue() / 5, size, numbertype,
+				widthChartBack, getHeight(), 80);
+		chartback.colWidth = colWidth;
 		chartback.refresh();
 		columnChart.setDisPerValueHeight(chartback.disPerValue);
-		columnChart.setWidthColumn(150);
+		columnChart.setWidthColumn(colWidth);
 		columnChart.setPosition(ChartBack.START_CHART_X,
 				ChartBack.START_CHART_Y);
 		columnChart.setSize(chartback.getWidth(), chartback.getHeight()

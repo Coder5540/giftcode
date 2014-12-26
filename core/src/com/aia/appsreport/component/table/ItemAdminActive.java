@@ -13,11 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
-import com.coder5560.game.views.View;
 
 public class ItemAdminActive extends ItemTable {
 
-	public TextButton btLock;
+	public TextButton	btLock;
+
+	public TextButton	btUnlock;
 
 	public ItemAdminActive(AbstractTable table, String[] strings) {
 		super(table);
@@ -49,7 +50,9 @@ public class ItemAdminActive extends ItemTable {
 		Table action = new Table();
 		action.setSize(200, 40);
 		btLock = new TextButton("Khóa", Style.ins.textButtonStyle);
+		btUnlock = new TextButton("Mở Khóa", Style.ins.textButtonStyle);
 		action.add(btLock).width(80).height(35).padLeft(5);
+		action.add(btUnlock).width(80).height(35).padLeft(5);
 		Actor[] componentItem = new Actor[lb.length + 1];
 		for (int i = 0; i < lb.length; i++) {
 			componentItem[i] = lb[i];

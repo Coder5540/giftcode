@@ -41,6 +41,14 @@ public class DatePicker extends Table {
 		init();
 	}
 
+	// date format yyyy-MM-dd
+	public void setDate(String date) {
+		String year = date.substring(0, 4);
+		String month = date.substring(5, 7);
+		String day = date.substring(8);
+		setDate(day, month, year);
+	}
+
 	public void setDate(String day, String month, String year) {
 		dayTF.setText(day);
 		monthTF.setText(month);

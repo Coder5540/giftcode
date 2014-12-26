@@ -27,6 +27,19 @@ public class ItemLog extends ItemTable {
 		init();
 	}
 
+	public ItemLog(AbstractTable table, String stt, String sdt, String ten,
+			String loaigd, String sotientruocgd, String sotiensaugd,
+			String sotiengd, String donvi, String thoigian) {
+		super(table);
+		style = Style.ins.getLabelStyle(20, fontType.Regular, Color.GRAY);
+		Label lb[] = { getLabel(stt, 0), getLabel(sdt, 1), getLabel(ten, 2),
+				getLabel(loaigd, 3), getLabel(sotientruocgd, 4),
+				getLabel(sotiensaugd, 5), getLabel(sotiengd, 6),
+				getLabel(donvi, 7), getLabel(thoigian, 8) };
+		setComponentItem(lb);
+		init();
+	}
+
 	Label getLabel(String text, int index) {
 		Label lb = new Label(text, style);
 		lb.setWrap(true);

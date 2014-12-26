@@ -47,11 +47,12 @@ public class Page extends Table {
 		ButtonStyle nextStyle = new ButtonStyle();
 		// nextStyle.up = new TextureRegionDrawable(
 		// Assets.instance.uiP.icon_next_up);
-		nextStyle.up = new TextureRegionDrawable(Assets.instance.ui.reg_submenu);
+		nextStyle.up = new TextureRegionDrawable(
+				Assets.instance.getRegion("next_up"));
 		// nextStyle.down = new TextureRegionDrawable(
 		// Assets.instance.uiP.icon_next_down);
 		nextStyle.down = new TextureRegionDrawable(
-				Assets.instance.ui.reg_submenu);
+				Assets.instance.getRegion("next_down"));
 		btNext = new Button(nextStyle);
 		btNext.addListener(new ClickListener() {
 			@Override
@@ -73,11 +74,12 @@ public class Page extends Table {
 		ButtonStyle backStyle = new ButtonStyle();
 		// backStyle.up = new TextureRegionDrawable(
 		// Assets.instance.uiP.icon_next_up);
-		backStyle.up = new TextureRegionDrawable(Assets.instance.ui.reg_submenu);
+		backStyle.up = new TextureRegionDrawable(
+				Assets.instance.getRegion("next_up"));
 		// backStyle.down = new TextureRegionDrawable(
 		// Assets.instance.uiP.icon_next_down);
 		backStyle.down = new TextureRegionDrawable(
-				Assets.instance.ui.reg_submenu);
+				Assets.instance.getRegion("next_down"));
 		btBack = new Button(backStyle);
 		btBack.setTransform(true);
 		btBack.setOrigin(10, 15);

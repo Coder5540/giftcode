@@ -1,7 +1,8 @@
 package imp.view;
 
+import utils.elements.GiftCode;
 import utils.factory.AppPreference;
-import utils.factory.DateTime;
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
 import utils.factory.Log;
 import utils.factory.Style;
@@ -12,14 +13,13 @@ import utils.networks.UserInfo;
 import utils.screen.AbstractGameScreen;
 import utils.screen.Toast;
 
-import com.aia.appsreport.component.table.AbstractTable;
-import com.aia.appsreport.component.table.ItemNonSellGiftCode;
-import com.aia.appsreport.component.table.ItemTable;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -29,6 +29,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.JsonReader;
@@ -36,30 +38,24 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.DialogCustom;
-import com.coder5560.game.ui.ItemListener;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.ui.MoneyPicker;
-import com.coder5560.game.ui.Page;
 import com.coder5560.game.ui.TextfieldStatic;
 import com.coder5560.game.views.View;
 
 public class ViewSellGiftCode extends View {
 
-	MoneyPicker				pkAmount;
-	private JsonValue		respone;
-	Table					tbGenerate	= new Table(),
-			tbGiftCode = new Table();
-	Label					lbMoneyInGame;
-	float					rateMoney	= 1;
-	Label					lbAdminMoney;
-	TextfieldStatic			tfNewGiftCode;
-	TextButton				btCopy, btSendMessage;
-	private AbstractTable	tableNormal;
-	private JsonValue		responeNormal;
-	private JsonValue		responeReturn;
-	private JsonValue		responeGenerateGiftCode;
+	MoneyPicker pkAmount;
+	private JsonValue respone;
+	Table tbGenerate = new Table(), tbGiftCode = new Table();
+	Label lbMoneyInGame;
+	float rateMoney = 1;
+	Label lbAdminMoney;
+	TextfieldStatic lbNewGiftCode;
+	TextButton btCopy, btReturn;
+	private JsonValue responeReturn;
 
-	private Page			page;
+	GiftCode currentGiftCode = new GiftCode("", "");
 
 	@Override
 	public String getLabel() {
@@ -82,13 +78,19 @@ public class ViewSellGiftCode extends View {
 		lbAmount.setColor(Color.BLACK);
 		lbAdminMoney = new Label("", Style.ins.getLabelStyle(22));
 		lbAdminMoney.setColor(Color.BLACK);
-		Label lbEqual = new Label("Tương ứng", Style.ins.getLabelStyle(22));
+		Label lbEqual = new Label("Game", Style.ins.getLabelStyle(22));
 		lbEqual.setColor(Color.BLACK);
-		lbMoneyInGame = new Label("chip", Style.ins.getLabelStyle(22));
+		lbMoneyInGame = new Label("", Style.ins.getLabelStyle(22));
 		lbMoneyInGame.setColor(Color.BLACK);
 		pkAmount = new MoneyPicker(Style.ins.selectBoxStyle);
-
-		pkAmount.addPartner(10000);
+		pkAmount.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				lbMoneyInGame.setText(Factory.getDotMoney((int) rateMoney
+						* pkAmount.getMoney())
+						+ " ");
+			}
+		});
 
 		TextButtonStyle btStyle = new TextButtonStyle();
 		btStyle.up = new NinePatchDrawable(new NinePatch(Style.ins.np1,
@@ -97,43 +99,20 @@ public class ViewSellGiftCode extends View {
 				new Color(0, 191 / 255f, 1, 0.5f)));
 		btStyle.font = Assets.instance.fontFactory.getFont(20, fontType.Medium);
 		btStyle.fontColor = Color.WHITE;
-		TextButton btOk = new TextButton("Lấy giftcode", btStyle);
-		btOk.setSize(370, 55);
-		btOk.setPosition(tbGenerate.getX(),
-				tbGenerate.getY() - btOk.getHeight() - 20);
-		btOk.addListener(new ClickListener() {
+		TextButton btGetGiftCode = new TextButton("Lấy giftcode", btStyle);
+		btGetGiftCode.setSize(370, 55);
+		btGetGiftCode.setPosition(tbGenerate.getX(), tbGenerate.getY()
+				- btGetGiftCode.getHeight() - 20);
+		btGetGiftCode.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				if (pkAmount.getListData().size == 0) {
+					return;
+				}
 				Loading.ins.show(ViewSellGiftCode.this);
 				Request.getInstance().generateGiftCode(UserInfo.phone,
 						pkAmount.getMoney(), UserInfo.currency, 6,
-						new HttpResponseListener() {
-							@Override
-							public void handleHttpResponse(
-									HttpResponse httpResponse) {
-								Loading.ins.hide();
-								Toast.makeText(
-										getStage(),
-										respone.getString(ExtParamsKey.MESSAGE),
-										Toast.LENGTH_SHORT);
-
-								responeGenerateGiftCode = (new JsonReader())
-										.parse(httpResponse.getResultAsString());
-								Log.d("AAAAA"
-										+ responeGenerateGiftCode.toString());
-
-							}
-
-							@Override
-							public void failed(Throwable t) {
-								Loading.ins.hide();
-							}
-
-							@Override
-							public void cancelled() {
-								Loading.ins.hide();
-							}
-						});
+						new GetGiftCode());
 			}
 		});
 		tbGenerate.top().padTop(10);
@@ -141,77 +120,75 @@ public class ViewSellGiftCode extends View {
 		tbGenerate.row();
 
 		tbGenerate.setWidth(getWidth());
-		tbGenerate.add(lbAmount).width(130).height(55).left();
-		tbGenerate.add(pkAmount).width(190).height(50).left();
-		tbGenerate.add(lbAdminMoney).width(110).height(55).padLeft(5).left();
+		tbGenerate.add(lbAmount).width(100).height(55).left();
+		tbGenerate.add(pkAmount).width(160).height(40).left();
+		tbGenerate.add(lbAdminMoney).width(150).height(55).padLeft(5).left();
 
 		tbGenerate.row();
 
-		tbGenerate.add(lbEqual).width(130).height(55).left();
-		tbGenerate.add(lbMoneyInGame).width(50).height(55).left();
+		tbGenerate.add(lbEqual).width(100).height(55).left();
+		tbGenerate.add(lbMoneyInGame).width(50).height(55).left().padLeft(5);
 
-		tbGenerate.add(btOk).colspan(2).width(150).height(55).pad(10);
+		tbGenerate.add(btGetGiftCode).colspan(2).width(130).height(50).pad(10);
 
 		tbGenerate.setBackground(new NinePatchDrawable(new NinePatch(
-				Style.ins.np2, new Color(0.8f, 0.8f, 0.8f, 1))));
+				Style.ins.np2, new Color(0.7f, 0.7f, 0.7f, 1))));
 
 		tbGiftCode.setSize(getWidth(), 150);
 
 		tbGiftCode.setBackground(new NinePatchDrawable(new NinePatch(
-				Style.ins.np2, new Color(0.7f, 0.7f, 0.7f, 1))));
-		tfNewGiftCode = new TextfieldStatic("Chưa sinh giftcode mới",
-				Style.ins.getLabelStyle(15), Color.BLACK,
-				tbGiftCode.getWidth() - 20);
+				Style.ins.np2, new Color(0.75f, 0.75f, 0.75f, 1))));
+		lbNewGiftCode = new TextfieldStatic("Chưa sinh giftcode mới",
+				Style.ins.getLabelStyle(20), Color.BLACK,
+				tbGiftCode.getWidth() - 10);
+		lbNewGiftCode.setContent("Chưa sinh giftcode mới", Align.center);
 
-		btSendMessage = new TextButton("Gửi tin nhắn", btStyle);
-		btSendMessage.setSize(370, 55);
-		btSendMessage.setPosition(tbGenerate.getX(), tbGenerate.getY()
-				- btSendMessage.getHeight() - 20);
-		btSendMessage.addListener(new ClickListener() {
+		btReturn = new TextButton("Hủy", btStyle);
+		btReturn.setSize(370, 55);
+		btReturn.setOrigin(Align.center);
+		btReturn.setTransform(true);
+		btReturn.setPosition(tbGenerate.getX(),
+				tbGenerate.getY() - btReturn.getHeight() - 20);
+		btReturn.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				Loading.ins.show(ViewSellGiftCode.this);
+				DialogCustom dl = new DialogCustom("");
+				dl.text("Bạn có chắc chắn muốn trả lại Gift Code này");
+				dl.button("Ok", new Runnable() {
+					@Override
+					public void run() {
+						Loading.ins.show(ViewSellGiftCode.this);
+						Request.getInstance().returnGiftCode(
+								AppPreference.instance.name,
+								currentGiftCode.id, new ReturnGiftCode());
+						lbNewGiftCode.setContent("...", Align.center);
+					}
+				});
+				dl.button("Hủy");
+				dl.show(getStage());
 			}
 		});
-		btCopy = new TextButton("Copy", btStyle);
+		btCopy = new TextButton("Copy-Bán", btStyle);
+		btCopy.setOrigin(Align.center);
 		btCopy.setSize(370, 55);
+		btCopy.setTransform(true);
 		btCopy.setPosition(tbGenerate.getX(),
 				tbGenerate.getY() - btCopy.getHeight() - 20);
 		btCopy.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				Loading.ins.show(ViewSellGiftCode.this);
+				Gdx.app.getClipboard().setContents(lbNewGiftCode.getContent());
+				Toast.makeText(getStage(), "Đã copy vào bộ nhớ đệm",
+						Toast.LENGTH_SHORT);
+				Request.getInstance().setStateGiftCode(UserInfo.phone,
+						currentGiftCode.code, 1, new SoldGiftCode());
 			}
 		});
-
-		tbGiftCode.add(tfNewGiftCode).width(getWidth() - 20).top().colspan(2);
+		tbGiftCode.add(lbNewGiftCode).width(lbNewGiftCode.getWidth()).center()
+				.top().colspan(2);
 		tbGiftCode.row();
-		tbGiftCode.add(btSendMessage).width(180).height(45).pad(10);
-		tbGiftCode.add(btCopy).width(150).height(45).pad(10);
-
-		page = new Page(getWidth(), 60);
-		float[] widthColNormal = { 50, 120, 100, 150, 150, 150, 120 };
-		tableNormal = new AbstractTable(new Table(), widthColNormal);
-		String[] titleNormal = { "STT", "Gift code", "Tiền", "Tiền trong game",
-				"Ngày hết hạn", "" };
-		tableNormal.setTitle(titleNormal);
-		page.setListener(new ItemListener() {
-			@Override
-			public void onItemClick() {
-				tableNormal.setScrollX(0);
-				tableNormal.setScrollY(0);
-				tableNormal.addAction(Actions.sequence(
-						Actions.alpha(0, 0.5f, Interpolation.exp5Out),
-						Actions.alpha(1, 0.5f, Interpolation.exp5Out)));
-				tableNormal.removeAll();
-				for (int i = 0; i < page.getCurrentDataPage().size(); i++) {
-					ItemTable item = page.getCurrentDataPage().get(i);
-					tableNormal.addItem(item);
-				}
-			}
-		});
-		tableNormal.setScrollX(0);
-		tableNormal.setScrollY(0);
+		tbGiftCode.add(btReturn).width(180).height(45).pad(10);
+		tbGiftCode.add(btCopy).width(180).height(45).pad(10);
 
 		top();
 		this.add(tbGenerate).width(tbGenerate.getWidth()).top().padTop(1)
@@ -219,8 +196,7 @@ public class ViewSellGiftCode extends View {
 		row();
 		add(tbGiftCode).width(tbGiftCode.getWidth()).height(120).padTop(5)
 				.top();
-		add(tableNormal).padTop(10).height(580).row();
-		add(page);
+		row();
 
 		hideButton();
 		return this;
@@ -228,12 +204,36 @@ public class ViewSellGiftCode extends View {
 
 	public void showButton() {
 		btCopy.setVisible(true);
-		btSendMessage.setVisible(true);
+		btReturn.setVisible(true);
+		btCopy.clearActions();
+		btReturn.clearActions();
+		btReturn.getColor().a = 0.8f;
+		btCopy.getColor().a = 0.8f;
+		btCopy.setScale(0.8f);
+		btReturn.setScale(0.8f);
+		btCopy.addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.fade));
+		btCopy.addAction(Actions.fadeIn(0.2f, Interpolation.fade));
+		btReturn.addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.fade));
+		btReturn.addAction(Actions.fadeIn(0.2f, Interpolation.fade));
 	}
 
 	public void hideButton() {
-		btCopy.setVisible(false);
-		btSendMessage.setVisible(false);
+		btCopy.clearActions();
+		btReturn.clearActions();
+
+		btCopy.addAction(Actions.sequence(
+				Actions.scaleTo(0.5f, 0.5f, 0.2f, Interpolation.fade),
+				Actions.hide()));
+		btCopy.addAction(Actions.fadeOut(0.2f, Interpolation.fade));
+		btReturn.addAction(Actions.sequence(
+				Actions.scaleTo(0.5f, 0.5f, 0.2f, Interpolation.fade),
+				Actions.hide()));
+		btReturn.addAction(Actions.fadeOut(0.2f, Interpolation.fade));
+	}
+
+	public void updateInfo() {
+		lbAdminMoney.setText("/" + Factory.getDotMoney(UserInfo.money) + " "
+				+ UserInfo.currency);
 	}
 
 	public void registerKeyboard(final TextField tf, final int config) {
@@ -252,97 +252,22 @@ public class ViewSellGiftCode extends View {
 	@Override
 	public void update(float deltaTime) {
 		if (lbAdminMoney.getText().equals("") && !UserInfo.currency.equals("")) {
-			lbAdminMoney
-					.setText("/" + UserInfo.money + " " + UserInfo.currency);
-		}
-		if (responeGenerateGiftCode != null) {
-			Loading.ins.hide();
-			if (responeGenerateGiftCode.getBoolean(ExtParamsKey.RESULT)) {
-
-				rateMoney = responeGenerateGiftCode
-						.getFloat(ExtParamsKey.MONEY_IN_GAME) / 1000;
-				lbMoneyInGame.setText((long) rateMoney * pkAmount.getMoney()
-						+ " chip");
-			} else {
-			}
-			responeGenerateGiftCode = null;
-		}    
-
-		if (respone != null) {
-			Loading.ins.hide();
-			Boolean isSuccess = respone.getBoolean(ExtParamsKey.RESULT);
-			String mess = respone.getString(ExtParamsKey.MESSAGE);
-			Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
-			respone = null;
+			lbAdminMoney.setText("/" + Factory.getDotMoney(UserInfo.money)
+					+ " " + UserInfo.currency);
 		}
 
-		if (responeNormal != null) {
+		if (responeReturn != null) {
+			boolean resut = responeReturn.getBoolean(ExtParamsKey.RESULT);
 			Loading.ins.hide();
-			page.removeAllPage();
-			tableNormal.removeAll();
-			boolean resut = responeNormal.getBoolean(ExtParamsKey.RESULT);
+			String mess = responeReturn.getString(ExtParamsKey.MESSAGE);
+			Toast.makeText(_stage, mess, Toast.LENGTH_SHORT);
 			if (resut) {
-				JsonValue list = responeNormal.get(ExtParamsKey.LIST);
-				if (list.size > 0) {
-					for (int i = 0; i < list.size; i++) {
-						JsonValue content = list.get(i);
-						final String giftCode = content
-								.getString(ExtParamsKey.GIFT_CODE);
-						int money = content.getInt(ExtParamsKey.AMOUNT);
-						String currency = content
-								.getString(ExtParamsKey.CURRENCY);
-						int money_in_game = content
-								.getInt(ExtParamsKey.MONEY_IN_GAME);
-						long time = content.getLong(ExtParamsKey.DATE_EXPIRE);
-
-						final String id = content.getString(ExtParamsKey.ID);
-						final ItemNonSellGiftCode item = new ItemNonSellGiftCode(
-								tableNormal, new String[] {
-										"" + (i + 1),
-										giftCode,
-										money + " " + currency,
-										"" + money_in_game,
-										DateTime.getStringDate(time,
-												DateTime.FORMAT) });
-
-						item.btReturn.addListener(new ClickListener() {
-							@Override
-							public void clicked(InputEvent event, float x,
-									float y) {
-								super.clicked(event, x, y);
-								DialogCustom dl = new DialogCustom("");
-								dl.text("Bạn có chắc chắn muốn trả lại Gift Code này");
-								dl.button("Ok", new Runnable() {
-
-									@Override
-									public void run() {
-										Loading.ins.show(ViewSellGiftCode.this);
-										// Request.getInstance().returnGiftCode(
-										// AppPreference.instance.name,
-										// id, new ReturnGiftCode());
-									}
-								});
-								dl.button("Hủy");
-								dl.show(getStage());
-							}
-						});
-						page.addData(item);
-					}
-					page.init();
-					for (int i = 0; i < page.getCurrentDataPage().size(); i++) {
-						ItemTable item = page.getCurrentDataPage().get(i);
-						tableNormal.addItem(item);
-					}
-				} else {
-					Toast.makeText(_stage,
-							"Bạn không có gift code nào chưa sử dụng",
-							Toast.LENGTH_SHORT);
-				}
+				UserInfo.money = responeReturn
+						.getInt(ExtParamsKey.UPDATE_MONEY);
+				updateInfo();
 			} else {
-				String mess = responeNormal.getString(ExtParamsKey.MESSAGE);
-				Toast.makeText(_stage, mess, Toast.LENGTH_SHORT);
 			}
-			responeNormal = null;
+			responeReturn = null;
 		}
 
 	}
@@ -370,12 +295,10 @@ public class ViewSellGiftCode extends View {
 	public void show(OnCompleteListener listener) {
 		super.show(listener);
 		Loading.ins.show(this);
-		lbAdminMoney.setText("/" + UserInfo.money + " " + UserInfo.currency);
-		Request.getInstance().getNormalGiftCode(AppPreference.instance.name, 0,
-				new GetGiftCodeNormal());
+		lbAdminMoney.setText("/" + Factory.getDotMoney(UserInfo.money) + " "
+				+ UserInfo.currency);
 		Request.getInstance().getExchangeInGame(1000, UserInfo.currency,
 				new HttpResponseListener() {
-
 					@Override
 					public void handleHttpResponse(HttpResponse httpResponse) {
 						JsonValue respone = (new JsonReader())
@@ -384,8 +307,10 @@ public class ViewSellGiftCode extends View {
 							Log.d(respone.toString());
 							rateMoney = respone
 									.getFloat(ExtParamsKey.MONEY_IN_GAME) / 1000;
-							lbMoneyInGame.setText((long) rateMoney
-									* pkAmount.getMoney() + " chip");
+							lbMoneyInGame.setText(Factory
+									.getDotMoney((int) rateMoney
+											* pkAmount.getMoney())
+									+ "");
 							Loading.ins.hide();
 						} else {
 							Toast.makeText(getStage(),
@@ -401,9 +326,10 @@ public class ViewSellGiftCode extends View {
 
 					@Override
 					public void cancelled() {
-
+						Loading.ins.hide();
 					}
 				});
+		Request.getInstance().getListMoney(UserInfo.phone, new GetListMoney());
 	}
 
 	@Override
@@ -415,26 +341,6 @@ public class ViewSellGiftCode extends View {
 	public void back() {
 		super.back();
 		getViewController().removeView(getName());
-	}
-
-	class GetGiftCodeNormal implements HttpResponseListener {
-
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			responeNormal = (new JsonReader()).parse(httpResponse
-					.getResultAsString());
-		}
-
-		@Override
-		public void failed(Throwable t) {
-
-		}
-
-		@Override
-		public void cancelled() {
-
-		}
-
 	}
 
 	class ReturnGiftCode implements HttpResponseListener {
@@ -456,4 +362,112 @@ public class ViewSellGiftCode extends View {
 		}
 
 	}
+
+	class GetGiftCode implements HttpResponseListener {
+
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			Loading.ins.hide();
+			JsonValue responeReturn = (new JsonReader()).parse(httpResponse
+					.getResultAsString());
+			Toast.makeText(getStage(),
+					responeReturn.getString(ExtParamsKey.MESSAGE),
+					Toast.LENGTH_SHORT);
+			Log.d(responeReturn.toString());
+
+			if (responeReturn.getBoolean(ExtParamsKey.RESULT)) {
+				currentGiftCode = new GiftCode(responeReturn.get(
+						ExtParamsKey.GIFT_CODE).getString(0), responeReturn
+						.get(ExtParamsKey.ID).getString(0));
+				lbNewGiftCode.setContent("Code: " + currentGiftCode.code
+						+ " Id: " + currentGiftCode.id, Align.center);
+				UserInfo.money = responeReturn
+						.getInt(ExtParamsKey.UPDATE_MONEY);
+				updateInfo();
+
+				showButton();
+			}
+		}
+
+		@Override
+		public void failed(Throwable t) {
+			Loading.ins.hide();
+		}
+
+		@Override
+		public void cancelled() {
+			Loading.ins.hide();
+		}
+	}
+
+	class SoldGiftCode implements HttpResponseListener {
+
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			Loading.ins.hide();
+			JsonValue responeReturn = (new JsonReader()).parse(httpResponse
+					.getResultAsString());
+			Log.d(responeReturn.toString());
+
+			if (responeReturn.getBoolean(ExtParamsKey.RESULT)) {
+				hideButton();
+				updateInfo();
+				lbNewGiftCode
+						.setContent("Vui lòng sinh code mới", Align.center);
+			} else {
+				Toast.makeText(getStage(),
+						responeReturn.getString(ExtParamsKey.MESSAGE),
+						Toast.LENGTH_SHORT);
+				showButton();
+			}
+		}
+
+		@Override
+		public void failed(Throwable t) {
+			Loading.ins.hide();
+			showButton();
+		}
+
+		@Override
+		public void cancelled() {
+			Loading.ins.hide();
+			showButton();
+		}
+	}
+
+	class GetListMoney implements HttpResponseListener {
+
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			JsonValue responeReturn = (new JsonReader()).parse(httpResponse
+					.getResultAsString());
+			Log.d(responeReturn.toString());
+			if (responeReturn.getBoolean(ExtParamsKey.RESULT)) {
+				JsonValue list = responeReturn.get(ExtParamsKey.LIST);
+				for (int i = 0; i < list.size; i++) {
+					pkAmount.addPartner(list.getInt(i));
+				}
+				lbMoneyInGame.setText(Factory.getDotMoney((int) rateMoney
+						* pkAmount.getMoney())
+						+ "");
+
+			} else {
+				Toast.makeText(getStage(),
+						responeReturn.getString(ExtParamsKey.MESSAGE),
+						Toast.LENGTH_SHORT);
+
+			}
+		}
+
+		@Override
+		public void failed(Throwable t) {
+
+		}
+
+		@Override
+		public void cancelled() {
+
+		}
+	}
+
 }

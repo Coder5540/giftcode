@@ -51,15 +51,20 @@ public abstract class AbstractGameScreen implements Screen, InputProcessor,
 	public abstract void update(float delta);
 
 	public void render(float delta) {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		update(delta);
-		stage.act(delta);
-		stage.draw();
-		keyboard.update(delta);
-		keyboard.draw();
-		if (Toast.instance != null)
-			Toast.instance.render(delta);
+		try {
+
+			Gdx.gl.glClearColor(0, 0, 0, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			update(delta);
+			stage.act(delta);
+			stage.draw();
+			keyboard.update(delta);
+			keyboard.draw();
+			if (Toast.instance != null)
+				Toast.instance.render(delta);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void pause() {

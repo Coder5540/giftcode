@@ -191,20 +191,20 @@ public class ChartBack extends Table {
 	Image[] listDirImg;
 	boolean[] isShowDir;
 
-	public void addDirection(String[] type, Color[] color, float height,
-			int numCol) {
-		listDirImg = new Image[type.length];
-		listDirText = new Label[type.length];
-		isShowDir = new boolean[type.length];
+	public void addDirection(ArrayList<String> type, ArrayList<Color> color,
+			float height, int numCol) {
+		listDirImg = new Image[type.size()];
+		listDirText = new Label[type.size()];
+		isShowDir = new boolean[type.size()];
 
 		direction = new Table();
 		direction.setSize(getWidth(), START_CHART_Y - maxHeightLabel);
 		for (int i = 0; i < numType; i++) {
-			Label value = new Label(type[i], style) {
+			Label value = new Label(type.get(i), style) {
 
 			};
 			Image line = new Image(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, color[i])) {
+					Assets.instance.ui.reg_ninepatch, color.get(i))) {
 				@Override
 				public Actor hit(float x, float y, boolean touchable) {
 					if (touchable && this.getTouchable() != Touchable.enabled)
@@ -214,7 +214,7 @@ public class ChartBack extends Table {
 							&& y < this.getHeight() * 2 ? this : null;
 				}
 			};
-			colors.add(color[i]);
+			colors.add(color.get(i));
 			line.setHeight(height);
 
 			direction.add(line).width(50).height(height).pad(10);
@@ -286,9 +286,9 @@ public class ChartBack extends Table {
 		}
 	}
 
-	public void addLabel(String[] listLabel, float boundWidth) {
+	public void addLabel(ArrayList<String> listLabel, float boundWidth) {
 		for (int i = 0; i < numCol; i++) {
-			Label text = new Label(listLabel[i], styleCol);
+			Label text = new Label(listLabel.get(i), styleCol);
 			text.setWrap(true);
 			text.setWidth(boundWidth);
 			text.setBounds(

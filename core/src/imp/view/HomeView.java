@@ -8,9 +8,11 @@ import utils.networks.UserInfo;
 import utils.screen.Toast;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -19,7 +21,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnClickListener;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.views.IViewController;
@@ -64,27 +68,11 @@ public class HomeView extends View {
 			}
 		}
 	}
+
 	@Override
 	public String getLabel() {
 		return super.getLabel();
 	}
-//	public void buildBypermission() {
-//		int[] permission = UserInfo.getInstance().getPermission().permission;
-//		for (int i = 0; i < permission.length; i++) {
-//			if (UserInfo.getInstance().getPermission().isHasPermission(i)
-//					&& !getString(i).equalsIgnoreCase("")) {
-//				IconFunction iconFunction = new IconFunction(
-//						getViewController(), 220, 220, new Texture(
-//								Gdx.files.internal("Img/Add-User-icon.png")),
-//								getString(i));
-//				content.add(iconFunction).pad(20);
-//				if (content.getChildren().size % 2 == 0
-//						&& content.getChildren().size > 0) {
-//					content.row();
-//				}
-//			}
-//		}
-//	}
 
 	private String getString(int i) {
 		if (i == 0)
@@ -107,6 +95,7 @@ public class HomeView extends View {
 			return StringSystem.FUNCTION_GIFT_CODE_LIST_GIFTCODE;
 		return "";
 	}
+
 	@Override
 	public void show(OnCompleteListener listener) {
 		super.show(listener);
@@ -122,6 +111,19 @@ public class HomeView extends View {
 	@Override
 	public void update(float delta) {
 		actorExit.act(delta);
+		// if (Gdx.input.isKeyPressed(Keys.E)) {
+		// if (getViewController().isContainView("block")) {
+		// getViewController().removeView("block");
+		// } else {
+		// BlockView blockView = new BlockView("", new Array<String>());
+		// blockView.build(getStage(), getViewController(), "block",
+		// new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+		// Constants.HEIGHT_SCREEN
+		// - Constants.HEIGHT_ACTIONBAR));
+		// blockView.buildComponent();
+		// blockView.show(null);
+		// }
+		// }
 	}
 
 	@Override
@@ -213,9 +215,6 @@ class IconFunction extends Group {
 		});
 		valid();
 	}
-	
-	
-	
 
 	public void valid() {
 		icon.setPosition(bg.getWidth() / 2 - icon.getWidth() / 2,

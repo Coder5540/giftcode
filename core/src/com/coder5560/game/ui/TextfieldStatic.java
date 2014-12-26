@@ -4,10 +4,12 @@ import utils.factory.FontFactory.fontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g3d.particles.influencers.DynamicsModifier.CentripetalAcceleration;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.coder5560.game.assets.Assets;
 
 public class TextfieldStatic extends Group {
@@ -62,6 +64,24 @@ public class TextfieldStatic extends Group {
 			setHeight(lbContent.getTextBounds().height + 10);
 		} else {
 			setHeight(minHeight);
+		}
+	}
+
+	public String getContent() {
+		return lbContent.getText().toString();
+	}
+
+	public void setContent(String content, int align) {
+		this.lbContent.setText(content);
+		if (lbContent.getTextBounds().height >= minHeight - 10) {
+			setHeight(lbContent.getTextBounds().height + 10);
+		} else {
+			setHeight(minHeight);
+		}
+
+		if (align == Align.center) {
+			lbContent.setX(bg.getWidth() / 2 - lbContent.getTextBounds().width
+					/ 2);
 		}
 	}
 

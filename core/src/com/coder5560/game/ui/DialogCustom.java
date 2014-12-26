@@ -1,6 +1,5 @@
 package com.coder5560.game.ui;
 
-
 import utils.factory.Log;
 import utils.factory.Style;
 
@@ -17,9 +16,9 @@ import com.coder5560.game.enums.Constants;
 
 public class DialogCustom extends MyDialog {
 
-	ObjectMap<Object, Runnable> runMap = new ObjectMap<Object, Runnable>();
-	int i = 0;
-	Image back;
+	ObjectMap<Object, Runnable>	runMap	= new ObjectMap<Object, Runnable>();
+	int							i		= 0;
+	Image						back;
 
 	public DialogCustom(String title, Skin skin) {
 		super(title, skin);
@@ -62,7 +61,7 @@ public class DialogCustom extends MyDialog {
 		super.hide();
 	}
 
-	public static TextButtonStyle buttonStyle = null;
+	public static TextButtonStyle	buttonStyle	= null;
 
 	public void button(String text, Runnable run) {
 
@@ -85,11 +84,13 @@ public class DialogCustom extends MyDialog {
 
 	@Override
 	protected void result(Object object) {
-//		try {
-			runMap.get(object).run();
-			runMap.remove(object);
-//		} catch (Exception e) {
-//			Log.d(e.toString());
-//		}
+		try {
+			if (object != null) {
+				runMap.get(object).run();
+				runMap.remove(object);
+			}
+		} catch (Exception e) {
+			Log.d(e.toString());
+		}
 	}
 }

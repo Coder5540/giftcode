@@ -51,7 +51,7 @@ import com.coder5560.game.ui.Loading;
 import com.coder5560.game.ui.Page;
 import com.coder5560.game.views.View;
 
-public class ViewLogTransferMoney extends View {
+public class ViewLogGiftCode extends View {
 
 	AbstractTable content;
 	Page pages;
@@ -76,12 +76,10 @@ public class ViewLogTransferMoney extends View {
 	static final int TOPDOWN = 1;
 	static final int BOTTOMUP = 2;
 
-	float widthCol[] = { 50, 150, 200, 200, 220, 220, 220, 150, 200, 270, 300,
-			150 };
-	String title[] = { "STT", "Số điện thoại", "Họ tên", "Loại giao dịch",
+	float widthCol[] = { 50, 150, 200, 200, 220, 220, 220, 150, 150 };
+	String title[] = { "STT", "Số điện thoại", "Họ tên", "Hoạt động",
 			"Số tiền trước giao dịch", "Số tiền sau giao dịch",
-			"Số tiền giao dịch", "Đơn vị", "Người giao dịch",
-			"Số điện thoại người giao dịch", "Nội dung", "Thời gian" };
+			"Số tiền giao dịch", "Đơn vị", "Thời gian" };
 
 	boolean isLoadByName;
 	String responseByName;
@@ -97,13 +95,12 @@ public class ViewLogTransferMoney extends View {
 	boolean isChangeFun;
 	int stateFun;
 
-	int typeView;
-	public static int TYPE_SEND = 0;
-	public static int TYPE_RECEIVE = 1;
-	public static int TYPE_ALL = -1;
+	// int typeView;
+	// public static int TYPE_SEND = 0;
+	// public static int TYPE_RECEIVE = 1;
+	// public static int TYPE_ALL = -1;
 
-	public ViewLogTransferMoney buildComponent(int type) {
-		this.typeView = type;
+	public ViewLogGiftCode buildComponent() {
 		top();
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
 				Color.WHITE));
@@ -359,27 +356,27 @@ public class ViewLogTransferMoney extends View {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (stateofpartnerFun.equals("1")) {
-					Request.getInstance().getLogMoneyByName(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByName(
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewLogGiftCode.this);
 				} else if (stateofpartnerFun.equals("0")) {
-					Request.getInstance().getLogMoneyByRole(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByRole(
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), partner.getPartnerId(),
 							new getListByRoleId());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewLogGiftCode.this);
 				} else if (stateofpartnerFun.equals("2")) {
-					Request.getInstance().getLogMoneyByName(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByName(
 							tfSearch.getText(), dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewLogGiftCode.this);
 				} else if (stateofpartnerFun.equals("3")) {
-					Request.getInstance().getLogMoneyByRole(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByRole(
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), partner.getPartnerId(),
 							new getListByRoleId());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewLogGiftCode.this);
 				}
 				AbstractGameScreen.keyboard.hide();
 				super.clicked(event, x, y);
@@ -410,47 +407,6 @@ public class ViewLogTransferMoney extends View {
 
 		content = new AbstractTable(new Table(), widthCol);
 		content.setTitle(title);
-		// addActor(iconsortby);
-		// iconsortby.setVisible(false);
-
-		// colHoten = content.rowTitle.getChildren().get(2);
-		// colHoten.addListener(new ClickListener() {
-		// @Override
-		// public void clicked(InputEvent event, float x, float y) {
-		// System.out.println("click to ho ten");
-		// sortby = HOTEN;
-		// iconsortby.setVisible(true);
-		// if (sorttype == TOPDOWN) {
-		// sorttype = BOTTOMUP;
-		// iconsortby.setRotation(270);
-		// System.out.println("change to bottom up");
-		// } else {
-		// iconsortby.setRotation(90);
-		// sorttype = TOPDOWN;
-		// System.out.println("change to top down");
-		// }
-		// iconsortby.setPosition(
-		// content.rowTitle.getX() + colHoten.getX()
-		// + colHoten.getWidth() - iconsortby.getWidth(),
-		// content.rowTitle.getY() - content.getScrollY()
-		// + colHoten.getY() + colHoten.getHeight() / 2
-		// - iconsortby.getHeight() / 2);
-		// System.out.println(content.rowTitle.getX() + " : "
-		// + colHoten.getX() + ":" + colHoten.getWidth());
-		// System.out.println(content.rowTitle.getY() + " : "
-		// + content.getScrollY() + ":" + colHoten.getHeight());
-		// super.clicked(event, x, y);
-		// }
-		// });
-		// colThoigian = content.rowTitle.getChildren().get(8);
-		// colThoigian.addListener(new ClickListener() {
-		// @Override
-		// public void clicked(InputEvent event, float x, float y) {
-		// // TODO Auto-generated method stub
-		// System.out.println("click to thoi gian");
-		// super.clicked(event, x, y);
-		// }
-		// });
 
 		pages = new Page(getWidth(), 50);
 		pages.init();
@@ -498,11 +454,7 @@ public class ViewLogTransferMoney extends View {
 	}
 
 	public void setFun(int select) {
-		if(UserInfo.getInstance().getRoleId() == 3){
-			partnerFun.setSelectedIndex(0);
-		}else{
-			partnerFun.setSelectedIndex(1);
-		}
+		partnerFun.setSelectedIndex(1);
 	}
 
 	// 841278426508
@@ -520,7 +472,7 @@ public class ViewLogTransferMoney extends View {
 						JsonValue content = arr.get(i);
 						String agencyname = content
 								.getString(ExtParamsKey.AGENCY_NAME);
-						int type = content.getInt(ExtParamsKey.TRANSFER_TYPE);
+						int type = content.getInt(ExtParamsKey.ACTIVITY_TYPE);
 						// int type = 0;
 						long money_before = content
 								.getLong(ExtParamsKey.MONEY_BEFORE);
@@ -530,10 +482,10 @@ public class ViewLogTransferMoney extends View {
 								.getLong(ExtParamsKey.MONEY_AFTER);
 						String str_money_after = StringUtil
 								.getStrMoney((int) money_after);
-						long money_transfer = content
-								.getLong(ExtParamsKey.MONEY_TRANSFER);
-						String str_money_transfer = StringUtil
-								.getStrMoney((int) money_transfer);
+						long money_change = content
+								.getLong(ExtParamsKey.MONEY_CHANGE);
+						String str_money_change = StringUtil
+								.getStrMoney((int) money_change);
 						String currency = content
 								.getString(ExtParamsKey.CURRENCY);
 						String date = DateTime.getStringDate(
@@ -541,21 +493,19 @@ public class ViewLogTransferMoney extends View {
 								"dd-MM-yyyy");
 						String full_name = content
 								.getString(ExtParamsKey.FULL_NAME);
-						String agency_transfer = content
-								.getString(ExtParamsKey.AGENCY_TRANSFER);
-						String agency_transfer_full_name = content
-								.getString(ExtParamsKey.AGENCY_TRANSFER_FULL_NAME);
-						String note = content.getString(ExtParamsKey.NOTE);
-						String loaigd = "Chuyển tiền";
+						// String agency_transfer = content
+						// .getString(ExtParamsKey.AGENCY_TRANSFER);
+						// String agency_transfer_full_name = content
+						// .getString(ExtParamsKey.AGENCY_TRANSFER_FULL_NAME);
+						// String note = content.getString(ExtParamsKey.NOTE);
+						String loaigd = "Sinh GiftCode";
 						if (type == 1) {
-							loaigd = "Nhận tiền";
+							loaigd = "Trả GiftCode";
 						}
 						ItemLog item = new ItemLog(this.content, (i + 1) + "",
 								agencyname, full_name, loaigd,
 								str_money_before, str_money_after,
-								str_money_transfer, currency,
-								agency_transfer_full_name, agency_transfer,
-								note, date);
+								str_money_change, currency, date);
 						pages.addData(item);
 					}
 					pages.init();
@@ -673,17 +623,17 @@ public class ViewLogTransferMoney extends View {
 	@Override
 	public void show(OnCompleteListener listener) {
 		if (UserInfo.getInstance().getRoleId() == 3) {
-			Request.getInstance().getLogMoneyByName(typeView,
+			Request.getInstance().getLogMoneyGiftCodeByName(
 					AppPreference.instance.name, dateFrom.getDate(),
 					dateTo.getDate(), new getListByRoleId());
 			Loading.ins.show(this);
 		} else {
 			if (partnerFun.getPartnerId() == 1) {
-				Request.getInstance().getLogMoneyByName(typeView,
+				Request.getInstance().getLogMoneyGiftCodeByName(
 						AppPreference.instance.name, dateFrom.getDate(),
 						dateTo.getDate(), new getListByRoleId());
 			} else {
-				Request.getInstance().getLogMoneyByRole(typeView,
+				Request.getInstance().getLogMoneyGiftCodeByRole(
 						AppPreference.instance.name, dateFrom.getDate(),
 						dateTo.getDate(), partner.getPartnerId(),
 						new getListByRoleId());
@@ -701,14 +651,7 @@ public class ViewLogTransferMoney extends View {
 
 	@Override
 	public String getLabel() {
-		if (typeView == TYPE_SEND) {
-			return "Lịch sử chuyển tiền";
-		} else if (typeView == TYPE_RECEIVE) {
-			return "Lịch sử nhận tiền";
-		} else if (typeView == TYPE_ALL) {
-			return "Lịch sử giao dịch";
-		}
-		return "Lịch sử giao dịch";
+		return "Lịch sử giao dịch GiftCode";
 	}
 
 	class getListByName implements HttpResponseListener {

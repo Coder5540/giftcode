@@ -24,7 +24,7 @@ public class AbstractTable extends ScrollPane {
 	public Color color;
 	private int size = 0;
 
-	private Table content;
+	public Table content;
 	private Table tableScroll;
 
 	public AbstractTable(Table table, float[] widthCol) {

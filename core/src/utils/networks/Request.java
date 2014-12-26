@@ -361,7 +361,7 @@ public class Request {
 				listener);
 	}
 
-	public void getLogByName(int type, String sdt, String timestart,
+	public void getLogMoneyByName(int type, String sdt, String timestart,
 			String timeend, HttpResponseListener listener) {
 		post(CommandRequest.GET_TRANSFER_LOG,
 				ParamsBuilder
@@ -375,7 +375,7 @@ public class Request {
 						.add(ExtParamsKey.DATE_TO, timeend).build(), listener);
 	}
 
-	public void getLogByRole(int type, String sdt, String timestart,
+	public void getLogMoneyByRole(int type, String sdt, String timestart,
 			String timeend, int role_id, HttpResponseListener listener) {
 		post(CommandRequest.GET_TRANSFER_LOG_SUB,
 				ParamsBuilder
@@ -482,4 +482,92 @@ public class Request {
 				listener);
 
 	}
+
+	public void lockLoginDevice(String agencyAdmin, String agencyBlock,
+			String deviceID, String deviceName, HttpResponseListener listener) {
+		Log.d(agencyAdmin + " " + agencyBlock + " " + deviceID + " "
+				+ deviceName);
+		post(CommandRequest.LOCK_LOGIN_DEVICE,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_ADMIN, agencyAdmin)
+						.add(ExtParamsKey.AGENCY_BLOCK, agencyBlock)
+						.add(ExtParamsKey.DEVICE_ID, deviceID)
+						.add(ExtParamsKey.DEVICE_NAME, deviceName)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyAdmin + deviceID + deviceName
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+	public void unLockLoginDevice(String agencyAdmin, String agencyBlock,
+			String deviceID, String deviceName, HttpResponseListener listener) {
+		Log.d(agencyAdmin + " " + agencyBlock + " " + deviceID + " "
+				+ deviceName);
+		post(CommandRequest.UNLOCK_LOGIN_DEVICE,
+				ParamsBuilder
+				.builder()
+				.add(ExtParamsKey.AGENCY_ADMIN, agencyAdmin)
+				.add(ExtParamsKey.AGENCY_BLOCK, agencyBlock)
+				.add(ExtParamsKey.DEVICE_ID, deviceID)
+				.add(ExtParamsKey.DEVICE_NAME, deviceName)
+				.add(ExtParamsKey.SIGNATURE,
+						hash(agencyAdmin + deviceID + deviceName
+								+ ConnectionConfig.CLIENT_KEY)).build(),
+								listener);
+	}
+
+	public void getListMoney(String agencyName, HttpResponseListener listener) {
+		post(CommandRequest.GET_LIST_MONEY_LEVEL,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void getListTotalMoney(String name, String datefrom, String dateto,
+			HttpResponseListener listener) {
+		post(CommandRequest.MONEY_OVERVIEW,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, name)
+						.add(ExtParamsKey.DATE_FROM, datefrom)
+						.add(ExtParamsKey.DATE_TO, dateto)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(name + datefrom + dateto
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+
+	}
+
+	public void getLogMoneyGiftCodeByName(String sdt, String timestart,
+			String timeend, HttpResponseListener listener) {
+		post(CommandRequest.GET_MONEY_GIFT_CODE_LOG,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, sdt)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(sdt + timestart + timeend
+										+ ConnectionConfig.CLIENT_KEY))
+						.add(ExtParamsKey.DATE_FROM, timestart)
+						.add(ExtParamsKey.DATE_TO, timeend).build(), listener);
+	}
+
+	public void getLogMoneyGiftCodeByRole(String sdt, String timestart,
+			String timeend, int role_id, HttpResponseListener listener) {
+		post(CommandRequest.GET_MONEY_GIFT_CODE_LOG_SUB,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, sdt)
+						.add(ExtParamsKey.DATE_FROM, timestart)
+						.add(ExtParamsKey.DATE_TO, timeend)
+						.add(ExtParamsKey.ROLE_ID, role_id)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(sdt + timestart + timeend
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+
+
 }

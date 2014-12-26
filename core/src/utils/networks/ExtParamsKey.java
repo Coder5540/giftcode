@@ -25,6 +25,9 @@ public class ExtParamsKey {
 	public final static String	ADDRESS						= "address";
 	public final static String	DEVICE_ID					= "device_id";
 	public final static String	DEVICE_NAME					= "device_name";
+	public final static String	DEVICE_ID_BLOCK				= "device_id_block";
+	public final static String	DEVICE_NAME_BLOCK			= "device_name_block";
+
 	public final static String	SIGNATURE					= "signature";
 	public final static String	USER						= "user";
 	public final static String	USER_NAME					= "username";
@@ -84,5 +87,12 @@ public class ExtParamsKey {
 	public final static String	IS_USE						= "is_use";
 	public final static String	MONEY_UPDATE				= "money_update";
 	public final static String	QUANTITY					= "quantity";
+	public static final String	AGENCY_ADMIN				= "agency_admin";
+	public static final String	AGENCY_BLOCK				= "agency_block";
 
+	public static final String	MONEY_GIFT_CODE				= "money_gift_code";
+	public static final String	DATE						= "date";
+	public static final String	ACTIVITY_TYPE				= "activity_type";
+	public static final String	MONEY_CHANGE				= "money_change";
+	public static final String	MONEY_RECEIVE				= "money_receive";
 }

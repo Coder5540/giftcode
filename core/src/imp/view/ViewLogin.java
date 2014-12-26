@@ -35,6 +35,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.listener.OnResponseListener;
 import com.coder5560.game.ui.CustomDialog;
@@ -49,6 +50,7 @@ public class ViewLogin extends View {
 	private JsonValue		respone;
 	Label					btnRegister, btnActive;
 	CustomDialog			dialogConfirm;
+//	View					view;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -66,7 +68,7 @@ public class ViewLogin extends View {
 		Image titleLogin = new Image(Assets.instance.getRegion("8B8 GIFT CODE"));
 		titleLogin.setSize(400, 40);
 		titleLogin.setPosition(getWidth() / 2 - titleLogin.getWidth() / 2,
-				4* getHeight()/5 );
+				4 * getHeight() / 5);
 		addActor(titleLogin);
 		titleLogin.addListener(new ClickListener() {
 			@Override
@@ -279,9 +281,10 @@ public class ViewLogin extends View {
 		addActor(btnForgotPass);
 
 		//
-
+//		buildView();
 		return this;
 	}
+	
 
 	public void registerKeyboard(final TextField tf, String tfname, int config) {
 		AbstractGameScreen.keyboard.registerTextField(tf, tfname, config,
@@ -290,6 +293,14 @@ public class ViewLogin extends View {
 
 	@Override
 	public void update(float deltaTime) {
+//		if(view != null && view.getViewState() == ViewState.HIDE){
+//			view.show(null);
+//			return;
+//		}
+		
+		
+		
+		
 		if (respone != null) {
 			Loading.ins.hide();
 			Boolean isSuccess = respone.getBoolean(ExtParamsKey.RESULT);
@@ -303,12 +314,12 @@ public class ViewLogin extends View {
 				}
 				int role_id = respone.getInt(ExtParamsKey.ROLE_ID);
 				UserInfo.getInstance().setRoleId(role_id);
-				HomeView homeView = new HomeView();
-				homeView.build(getStage(), getViewController(),
-						StringSystem.VIEW_HOME, new Rectangle(0, 0,
-								Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
-										- Constants.HEIGHT_ACTIONBAR));
-				homeView.buildComponent();
+				// HomeView homeView = new HomeView();
+				// homeView.build(getStage(), getViewController(),
+				// StringSystem.VIEW_HOME, new Rectangle(0, 0,
+				// Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
+				// - Constants.HEIGHT_ACTIONBAR));
+				// homeView.buildComponent();
 				TopBarView topBarView = new TopBarView();
 				topBarView.build(getStage(), getViewController(),
 						StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
@@ -327,7 +338,16 @@ public class ViewLogin extends View {
 				int id = respone.getInt(ExtParamsKey.ROLE_ID);
 				AppPreference.instance.type = id;
 				AppPreference.instance.flush();
-				homeView.show(new OnCompleteListener() {
+
+				ViewLogMoneyChart viewLogMoneyChart = new ViewLogMoneyChart();
+				viewLogMoneyChart.build(getStage(), getViewController(),
+						StringSystem.VIEW_HOME,
+						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+								Constants.HEIGHT_SCREEN));
+				viewLogMoneyChart.buildComponent();
+				viewLogMoneyChart.show(
+
+				new OnCompleteListener() {
 					@Override
 					public void onError() {
 					}
@@ -335,6 +355,7 @@ public class ViewLogin extends View {
 					@Override
 					public void done() {
 						mainMenu.hide(null);
+						mainMenu.getUserData();
 						getViewController().getView(StringSystem.VIEW_LOGIN)
 								.hide(null);
 					}
@@ -389,6 +410,11 @@ public class ViewLogin extends View {
 
 	public void back() {
 		Log.d("Call back on Login View");
+		// if(view != null && view.getViewState() == ViewState.SHOW){
+		// view.hide(null);
+		// return;
+		// }
+		
 	};
 
 	private void switchView() {

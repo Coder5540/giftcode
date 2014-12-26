@@ -53,30 +53,36 @@ import com.coder5560.game.ui.DatePicker;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
-public class ViewLogMoneyChart extends View {
-	String responese = "";
-	boolean isLoad = false;
-	ScrollPane scroll;
-	Table content;
+public class ViewLogChart extends View {
+	int						typeView;
+	public static final int	TYPE_SEND_MONEY			= 0;
+	public static final int	TYPE_RECEIVE_MONEY		= 1;
+	public static final int	TYPE_GIFTCODE			= 2;
 
-	DatePicker dateFrom;
-	DatePicker dateTo;
-	CustomTextField tfSearch;
-	PartnerPicker partner;
-	PartnerPicker partnerFun;
-	TextButton btnXem;
-	Group gExtendDate;
-	boolean isExtend = false;
-	boolean isChange;
-	String stateofpartnerFun = "0";
-	String laststateofpartnerFun = "0";
+	String					responese				= "";
+	boolean					isLoad					= false;
+	ScrollPane				scroll;
+	Table					content;
 
-	Image iconextendDate;
-	PartnerSelectBox quickDatePicker;
-	boolean isChangeFun;
-	int stateFun;
+	DatePicker				dateFrom;
+	DatePicker				dateTo;
+	CustomTextField			tfSearch;
+	PartnerPicker			partner;
+	PartnerPicker			partnerFun;
+	TextButton				btnXem;
+	Group					gExtendDate;
+	boolean					isExtend				= false;
+	boolean					isChange;
+	String					stateofpartnerFun		= "0";
+	String					laststateofpartnerFun	= "0";
 
-	public ViewLogMoneyChart buildComponent() {
+	Image					iconextendDate;
+	PartnerSelectBox		quickDatePicker;
+	boolean					isChangeFun;
+	int						stateFun;
+
+	public ViewLogChart buildComponent(int type) {
+		this.typeView = type;
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
 		bg.setSize(getWidth(), getHeight());
 		addActor(bg);
@@ -346,6 +352,12 @@ public class ViewLogMoneyChart extends View {
 		super.show(listener);
 	}
 
+	@Override
+	public void back() {
+		super.back();
+		getViewController().removeView(getName());
+	}
+
 	void getListTotalMoney() {
 		System.out.println(dateFrom.getDate());
 		Request.getInstance().getListTotalMoney(AppPreference.instance.name,
@@ -353,10 +365,9 @@ public class ViewLogMoneyChart extends View {
 				new getTotalMoneyListener());
 		Loading.ins.show(this);
 	}
-	Actor	actorExit	= new Actor();
+
 	@Override
 	public void update(float delta) {
-		actorExit.act(delta);
 		if (isLoad) {
 			JsonValue json = (new JsonReader()).parse(responese);
 			boolean result = json.getBoolean(ExtParamsKey.RESULT);
@@ -371,25 +382,38 @@ public class ViewLogMoneyChart extends View {
 				ArrayList<String> titledown = new ArrayList<String>();
 				ArrayList<Color> color = new ArrayList<Color>();
 				ArrayList<String> dir = new ArrayList<String>();
-				if (UserInfo.getInstance().getRoleId() == 0) {
+
+				if (typeView == TYPE_SEND_MONEY) {
 					dir.add("Tiền đã chuyển");
 					color.add(new Color(255 / 255f, 48 / 255f, 48 / 255f, 1));
 					columnchart.numbertype = 1;
-				} else if (UserInfo.getInstance().getRoleId() == 3) {
-					columnchart.numbertype = 2;
+				} else if (typeView == TYPE_RECEIVE_MONEY) {
+					columnchart.numbertype = 1;
 					dir.add("Tiền đã nhận");
 					color.add(new Color(72 / 255f, 118 / 255f, 255 / 255f, 1));
-					dir.add("Tiền bán GiftCode");
-					color.add(new Color(124 / 255f, 252 / 255f, 0 / 255f, 1));
-				} else {
-					columnchart.numbertype = 3;
-					dir.add("Tiền đã chuyển");
-					color.add(new Color(255 / 255f, 48 / 255f, 48 / 255f, 1));
-					dir.add("Tiền đã nhận");
-					color.add(new Color(72 / 255f, 118 / 255f, 255 / 255f, 1));
+				} else if (typeView == TYPE_GIFTCODE) {
+					columnchart.numbertype = 1;
 					dir.add("Tiền bán GiftCode");
 					color.add(new Color(124 / 255f, 252 / 255f, 0 / 255f, 1));
 				}
+
+				// if (UserInfo.getInstance().getRoleId() == 0) {
+				// dir.add("Tiền đã chuyển");
+				// color.add(new Color(255 / 255f, 48 / 255f, 48 / 255f, 1));
+				// columnchart.numbertype = 1;
+				// } else if (UserInfo.getInstance().getRoleId() == 3) {
+				// columnchart.numbertype = 2;
+				// dir.add("Tiền đã nhận");
+				// color.add(new Color(72 / 255f, 118 / 255f, 255 / 255f, 1));
+				// } else {
+				// columnchart.numbertype = 3;
+				// dir.add("Tiền đã chuyển");
+				// color.add(new Color(255 / 255f, 48 / 255f, 48 / 255f, 1));
+				// dir.add("Tiền đã nhận");
+				// color.add(new Color(72 / 255f, 118 / 255f, 255 / 255f, 1));
+				// dir.add("Tiền bán GiftCode");
+				// color.add(new Color(124 / 255f, 252 / 255f, 0 / 255f, 1));
+				// }
 				if (size == 0) {
 					Toast.makeText(getStage(), "Không có dữ liệu", 3);
 					isLoad = false;
@@ -399,158 +423,149 @@ public class ViewLogMoneyChart extends View {
 					JsonValue content = arr.get(i);
 					final String date = content.getString(ExtParamsKey.DATE);
 					ColumnChartGroup colGroup = new ColumnChartGroup();
-					int index = 0;
-					if (UserInfo.getInstance().getRoleId() != 3) {
-						long money_send = Math.abs(content
-								.getLong(ExtParamsKey.MONEY_TRANSFER));
-						ColumnChartComponent colSend = new ColumnChartComponent();
-						colSend.addListener(new ClickListener() {
-							@Override
-							public void clicked(InputEvent event, float x,
-									float y) {
-								if (_viewController
-										.isContainView(StringSystem.VIEW_LOG_SEND_MONEY)) {
+
+					if (typeView == TYPE_SEND_MONEY) {
+						if (UserInfo.getInstance().getRoleId() != 3) {
+							long money_send = Math.abs(content
+									.getLong(ExtParamsKey.MONEY_TRANSFER));
+							ColumnChartComponent colSend = new ColumnChartComponent();
+							colSend.addListener(new ClickListener() {
+								@Override
+								public void clicked(InputEvent event, float x,
+										float y) {
+									if (_viewController
+											.isContainView(StringSystem.VIEW_LOG_SEND_MONEY)) {
+										((ViewLogTransferMoney) _viewController
+												.getView(StringSystem.VIEW_LOG_SEND_MONEY))
+												.setDate(date);
+										((ViewLogTransferMoney) _viewController
+												.getView(StringSystem.VIEW_LOG_SEND_MONEY))
+												.setFun(1);
+									} else {
+										ViewLogTransferMoney viewLogTransferMoney = new ViewLogTransferMoney();
+										viewLogTransferMoney
+												.build(getStage(),
+														_viewController,
+														StringSystem.VIEW_LOG_SEND_MONEY,
+														new Rectangle(
+																0,
+																0,
+																Constants.WIDTH_SCREEN,
+																Constants.HEIGHT_SCREEN
+																		- Constants.HEIGHT_ACTIONBAR));
+										viewLogTransferMoney
+												.buildComponent(ViewLogTransferMoney.TYPE_SEND);
+										viewLogTransferMoney.setDate(date);
+										viewLogTransferMoney.setFun(1);
+									}
 									((ViewLogTransferMoney) _viewController
 											.getView(StringSystem.VIEW_LOG_SEND_MONEY))
-											.setDate(date);
-									((ViewLogTransferMoney) _viewController
-											.getView(StringSystem.VIEW_LOG_SEND_MONEY))
-											.setFun(1);
-								} else {
-									ViewLogTransferMoney viewLogTransferMoney = new ViewLogTransferMoney();
-									viewLogTransferMoney
-											.build(getStage(),
-													_viewController,
-													StringSystem.VIEW_LOG_SEND_MONEY,
-													new Rectangle(
-															0,
-															0,
-															Constants.WIDTH_SCREEN,
-															Constants.HEIGHT_SCREEN
-																	- Constants.HEIGHT_ACTIONBAR));
-									viewLogTransferMoney
-											.buildComponent(ViewLogTransferMoney.TYPE_SEND);
-									viewLogTransferMoney.setDate(date);
-									viewLogTransferMoney.setFun(1);
+											.show(null);
+									super.clicked(event, x, y);
 								}
-								((ViewLogTransferMoney) _viewController
-										.getView(StringSystem.VIEW_LOG_SEND_MONEY))
-										.show(null);
-								super.clicked(event, x, y);
-							}
-						});
-						colSend.addColumnComponent(new ColumnComponent(
-								(int) money_send, color.get(index)));
-						index ++;
-						colGroup.addComponent(colSend);
+							});
+							colSend.addColumnComponent(new ColumnComponent(
+									(int) money_send, color.get(0)));
+							colGroup.addComponent(colSend);
+						}
 					}
-
-					if (UserInfo.getInstance().getRoleId() != 0) {
-						long money_receive = Math.abs(content
-								.getLong(ExtParamsKey.MONEY_RECEIVE));
-						ColumnChartComponent colReceive = new ColumnChartComponent();
-						colReceive.addColumnComponent(new ColumnComponent(
-								(int) money_receive, color.get(index)));
-						index ++;
-						colReceive.addListener(new ClickListener() {
-							@Override
-							public void clicked(InputEvent event, float x,
-									float y) {
-								System.out.println("click to receive");
-								if (_viewController
-										.isContainView(StringSystem.VIEW_LOG_RECEIVE_MONEY)) {
+					if (typeView == TYPE_RECEIVE_MONEY) {
+						if (UserInfo.getInstance().getRoleId() != 0) {
+							long money_receive = Math.abs(content
+									.getLong(ExtParamsKey.MONEY_RECEIVE));
+							ColumnChartComponent colReceive = new ColumnChartComponent();
+							colReceive.addColumnComponent(new ColumnComponent(
+									(int) money_receive, color.get(0)));
+							colReceive.addListener(new ClickListener() {
+								@Override
+								public void clicked(InputEvent event, float x,
+										float y) {
+									System.out.println("click to receive");
+									if (_viewController
+											.isContainView(StringSystem.VIEW_LOG_RECEIVE_MONEY)) {
+										((ViewLogTransferMoney) _viewController
+												.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
+												.setDate(date);
+										((ViewLogTransferMoney) _viewController
+												.getView(StringSystem.VIEW_LOG_SEND_MONEY))
+												.setFun(1);
+									} else {
+										ViewLogTransferMoney viewLogTransferMoney = new ViewLogTransferMoney();
+										viewLogTransferMoney
+												.build(getStage(),
+														_viewController,
+														StringSystem.VIEW_LOG_RECEIVE_MONEY,
+														new Rectangle(
+																0,
+																0,
+																Constants.WIDTH_SCREEN,
+																Constants.HEIGHT_SCREEN
+																		- Constants.HEIGHT_ACTIONBAR));
+										viewLogTransferMoney
+												.buildComponent(ViewLogTransferMoney.TYPE_RECEIVE);
+										viewLogTransferMoney.setDate(date);
+										viewLogTransferMoney.setFun(1);
+									}
 									((ViewLogTransferMoney) _viewController
 											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
-											.setDate(date);
-									((ViewLogTransferMoney) _viewController
-											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
-											.setFun(1);
-								} else {
-									ViewLogTransferMoney viewLogTransferMoney = new ViewLogTransferMoney();
-									viewLogTransferMoney
-											.build(getStage(),
-													_viewController,
-													StringSystem.VIEW_LOG_RECEIVE_MONEY,
-													new Rectangle(
-															0,
-															0,
-															Constants.WIDTH_SCREEN,
-															Constants.HEIGHT_SCREEN
-																	- Constants.HEIGHT_ACTIONBAR));
-									viewLogTransferMoney
-											.buildComponent(ViewLogTransferMoney.TYPE_RECEIVE);
-									viewLogTransferMoney.setDate(date);
-									viewLogTransferMoney.setFun(1);
-								}
-								((ViewLogTransferMoney) _viewController
-										.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
-										.show(null);
-								super.clicked(event, x, y);
-							};
-						});
-						colGroup.addComponent(colReceive);
+											.show(null);
+									super.clicked(event, x, y);
+								};
+							});
+							colGroup.addComponent(colReceive);
+						}
 					}
 
-					if (UserInfo.getInstance().getRoleId() != 0) {
-						long money_giftcode = Math.abs(content
-								.getLong(ExtParamsKey.MONEY_GIFT_CODE));
-						ColumnChartComponent colGiftCode = new ColumnChartComponent();
-						colGiftCode.addColumnComponent(new ColumnComponent(
-								(int) money_giftcode, color.get(index)));
-						index ++;
-						colGiftCode.addListener(new ClickListener() {
-							@Override
-							public void clicked(InputEvent event, float x,
-									float y) {
-								if (_viewController
-										.isContainView(StringSystem.VIEW_LOG_MONEY_GIFTCODE)) {
+					if (typeView == TYPE_GIFTCODE) {
+						if (UserInfo.getInstance().getRoleId() != 0) {
+							long money_giftcode = Math.abs(content
+									.getLong(ExtParamsKey.MONEY_GIFT_CODE));
+							ColumnChartComponent colGiftCode = new ColumnChartComponent();
+							colGiftCode.addColumnComponent(new ColumnComponent(
+									(int) money_giftcode, color.get(0)));
+							colGiftCode.addListener(new ClickListener() {
+								@Override
+								public void clicked(InputEvent event, float x,
+										float y) {
+									if (_viewController
+											.isContainView(StringSystem.VIEW_LOG_MONEY_GIFTCODE)) {
+										((ViewLogGiftCode) _viewController
+												.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
+												.setDate(date);
+										((ViewLogGiftCode) _viewController
+												.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
+												.setFun(1);
+									} else {
+										ViewLogGiftCode viewlogGiftCode = new ViewLogGiftCode();
+										viewlogGiftCode
+												.build(getStage(),
+														_viewController,
+														StringSystem.VIEW_LOG_MONEY_GIFTCODE,
+														new Rectangle(
+																0,
+																0,
+																Constants.WIDTH_SCREEN,
+																Constants.HEIGHT_SCREEN
+																		- Constants.HEIGHT_ACTIONBAR));
+										viewlogGiftCode.buildComponent();
+										viewlogGiftCode.setDate(date);
+										viewlogGiftCode.setFun(1);
+									}
 									((ViewLogGiftCode) _viewController
 											.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
-											.setDate(date);
-									((ViewLogGiftCode) _viewController
-											.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
-											.setFun(1);
-								} else {
-									ViewLogGiftCode viewlogGiftCode = new ViewLogGiftCode();
-									viewlogGiftCode
-											.build(getStage(),
-													_viewController,
-													StringSystem.VIEW_LOG_MONEY_GIFTCODE,
-													new Rectangle(
-															0,
-															0,
-															Constants.WIDTH_SCREEN,
-															Constants.HEIGHT_SCREEN
-																	- Constants.HEIGHT_ACTIONBAR));
-									viewlogGiftCode.buildComponent();
-									viewlogGiftCode.setDate(date);
-									viewlogGiftCode.setFun(1);
+											.show(null);
+									super.clicked(event, x, y);
 								}
-								((ViewLogGiftCode) _viewController
-										.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
-										.show(null);
-								super.clicked(event, x, y);
-							}
-						});
-
-						colGroup.addComponent(colGiftCode);
+							});
+							colGroup.addComponent(colGiftCode);
+						}
 					}
 
 					columnchart.columnChart.addColumnChartComponent(colGroup);
 					titledown.add(date);
 				}
-				float widthCol = 220;
-				columnchart.columnChart.offsetX = 50;
-				if (UserInfo.getInstance().getRoleId() == 0) {
-					widthCol = 100;
-					columnchart.columnChart.offsetX = 20;
-				} else if (UserInfo.getInstance().getRoleId() == 3) {
-					widthCol = 160;
-					columnchart.columnChart.offsetX = 50;
-				} else {
-					widthCol = 220;
-					columnchart.columnChart.offsetX = 40;
-				}
+				float widthCol = 90;
+				columnchart.columnChart.offsetX = 30;
 				columnchart.validateComponent(widthCol, titledown, dir, color);
 				content.add(columnchart);
 			} else {
@@ -561,18 +576,6 @@ public class ViewLogMoneyChart extends View {
 		}
 		super.update(delta);
 	}
-
-	
-	@Override
-	public void back() {
-		if (actorExit.getActions().size > 0) {
-			Gdx.app.exit();
-		} else {
-			Toast.makeText(getStage(), "Nhấn thêm lần nữa để thoát !", 0.3f);
-			actorExit.addAction(Actions.delay(1f));
-		}
-	}
-
 
 	class getTotalMoneyListener implements HttpResponseListener {
 

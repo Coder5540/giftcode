@@ -49,25 +49,24 @@ public class ViewMessage extends View {
 		lbShortDescription.setWidth(getWidth() - 40);
 		lbShortDescription.setWrap(true);
 
-		
-		
 		LabelStyle styleTime = new LabelStyle();
-		styleTime.font = Assets.instance.fontFactory.getFont(18, fontType.Light);
+		styleTime.font = Assets.instance.fontFactory
+				.getFont(18, fontType.Light);
 		styleTime.fontColor = Color.BLACK;
-		
+
 		time = new Label(Factory.getTime(_time), styleTime);
 		time.setTouchable(Touchable.disabled);
-		time.setWidth(getWidth()/2);
+		time.setWidth(getWidth() / 2);
 		time.setWrap(true);
-		
-		
+
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, Color.WHITE)));
 		top();
+		debug();
 		add(lbShortDescription).expand().fill().align(Align.top).padLeft(20)
 				.padTop(20).padRight(20);
 		row();
-		add(time).padRight(20).padTop(20).top();
+		add(time).padRight(20).padTop(100).right();
 		setTouchable(Touchable.enabled);
 	}
 
