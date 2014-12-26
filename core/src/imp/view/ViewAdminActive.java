@@ -118,8 +118,8 @@ public class ViewAdminActive extends View {
 										infoUser.getString(ExtParamsKey.ROLE_NAME),
 										infoUser.getString(ExtParamsKey.ADDRESS),
 										infoUser.getString(ExtParamsKey.EMAIL),
-										infoUser.getString(ExtParamsKey.DEVICE_NAME),
-										infoUser.getString(ExtParamsKey.DEVICE_ID),
+//										infoUser.getString(ExtParamsKey.DEVICE_NAME),
+//										infoUser.getString(ExtParamsKey.DEVICE_ID),
 										infoUser.getString(ExtParamsKey.STATE) }) {
 							@Override
 							public void click() {
@@ -135,8 +135,8 @@ public class ViewAdminActive extends View {
 												infoUser.getString(ExtParamsKey.REF_CODE),
 												infoUser.getString(ExtParamsKey.AMOUNT),
 												infoUser.getString(ExtParamsKey.EMAIL),
-												infoUser.getString(ExtParamsKey.DEVICE_ID),
-												infoUser.getString(ExtParamsKey.DEVICE_NAME),
+//												infoUser.getString(ExtParamsKey.DEVICE_ID),
+//												infoUser.getString(ExtParamsKey.DEVICE_NAME),
 												infoUser.getString(ExtParamsKey.STATE));
 								TextButton btnLock = new TextButton("Khóa",
 										this.btLock.getStyle());
@@ -229,17 +229,6 @@ public class ViewAdminActive extends View {
 				new Listener());
 		Loading.ins.show(this);
 	}
-
-	// @Override
-	// public void setVisible(boolean visible) {
-	// super.setVisible(visible);
-	// if (visible == true) {
-	// Loading.ins.show(this);
-	// Request.getInstance().getListAgency(AppPreference.instance.name,
-	// AppPreference.instance.pass, Constants.agency_type_active,
-	// new Listener());
-	// }
-	// }
 
 	@Override
 	public void hide(OnCompleteListener listener) {

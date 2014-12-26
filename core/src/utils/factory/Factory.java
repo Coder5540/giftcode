@@ -5,11 +5,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import uitls.input.TextInputHelper;
+import utils.networks.ExtParamsKey;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.enums.Direct;
 
 public class Factory {
@@ -199,8 +201,8 @@ public class Factory {
 	static String	monthNames[]	= { "Jan", "Feb", "Mar", "Apr", "May",
 			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
+	@SuppressWarnings("deprecation")
 	public static String getTime(long time) {
-		long second = (time / 1000) % 60;
 		long minute = (time / (1000 * 60)) % 60;
 		long hour = (time / (1000 * 60 * 60)) % 24;
 
@@ -210,6 +212,59 @@ public class Factory {
 
 		return String.format("%02d:%02d", hour, minute) + "  "
 				+ monthNames[month] + " " + date;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static String getTimeContainSecond(long time) {
+		long second = (time / 1000) % 60;
+		long minute = (time / (1000 * 60)) % 60;
+		long hour = (time / (1000 * 60 * 60)) % 24;
+
+		Date d = new Date(time * 1000);
+		int date = d.getDate();
+		int month = d.getMonth();
+
+		return String.format("%02d:%02d:%02d", hour, minute, second) + "  "
+				+ monthNames[month] + " " + date;
+	}
+
+	public static String getDeviceID(JsonValue jsonValue) {
+		JsonValue responeDevices = jsonValue.get(ExtParamsKey.DEVICE_ID);
+		String imeiDevice = "";
+		for (int i = 0; i < responeDevices.size; i++) {
+			if (!responeDevices.getString(i).equalsIgnoreCase("")
+					&& !responeDevices.getString(i).equalsIgnoreCase("null")) {
+				imeiDevice += responeDevices.getString(i);
+				if (i < responeDevices.size - 1) {
+					imeiDevice += ",";
+				}
+			}
+		}
+		if (String.valueOf(imeiDevice.charAt(imeiDevice.length() - 1))
+				.equalsIgnoreCase(",")) {
+			imeiDevice = imeiDevice.substring(0, imeiDevice.length() - 2);
+		}
+
+		return imeiDevice;
+	}
+
+	public static String getDeviceName(JsonValue jsonValue) {
+		JsonValue responseNames = jsonValue.get(ExtParamsKey.DEVICE_NAME);
+		String nameDevice = "";
+		for (int i = 0; i < responseNames.size; i++) {
+			if (!responseNames.getString(i).equalsIgnoreCase("")
+					&& !responseNames.getString(i).equalsIgnoreCase("null")) {
+				nameDevice += responseNames.getString(i);
+				if (i < responseNames.size - 1) {
+					nameDevice += ",";
+				}
+			}
+		}
+		if (String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
+				.equalsIgnoreCase(",")) {
+			nameDevice = nameDevice.substring(0, nameDevice.length() - 2);
+		}
+		return nameDevice;
 	}
 
 }

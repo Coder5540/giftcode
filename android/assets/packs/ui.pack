@@ -87,51 +87,44 @@ Logout
   orig: 100, 100
   offset: 0, 0
   index: -1
+close
+  rotate: false
+  xy: 507, 409
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
 icon-user
   rotate: false
-  xy: 507, 415
+  xy: 609, 415
   size: 80, 94
   orig: 80, 94
   offset: 0, 0
   index: -1
 money_icon
   rotate: false
-  xy: 589, 429
+  xy: 691, 429
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
   index: -1
 phone-icon
   rotate: false
-  xy: 671, 429
+  xy: 773, 429
   size: 80, 80
   orig: 80, 80
   offset: 0, 0
   index: -1
 loading
   rotate: false
-  xy: 753, 437
+  xy: 855, 437
   size: 72, 72
   orig: 72, 72
   offset: 0, 0
   index: -1
 icono_page
   rotate: false
-  xy: 827, 445
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-icono_info
-  rotate: false
-  xy: 893, 445
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-icono_setting
-  rotate: false
-  xy: 959, 445
+  xy: 929, 445
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -157,11 +150,18 @@ unactive
   orig: 60, 60
   offset: 0, 0
   index: -1
-block
+icono_info
   rotate: false
-  xy: 507, 353
-  size: 60, 60
-  orig: 60, 60
+  xy: 507, 343
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+icono_setting
+  rotate: false
+  xy: 477, 277
+  size: 64, 64
+  orig: 64, 64
   offset: 0, 0
   index: -1
 ninepatch5
@@ -171,7 +171,28 @@ ninepatch5
   orig: 32, 72
   offset: 0, 0
   index: -1
+block
+  rotate: false
+  xy: 573, 347
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
 icon-search
+  rotate: false
+  xy: 635, 363
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+user_manager
+  rotate: false
+  xy: 477, 225
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+icon_submenu
   rotate: false
   xy: 329, 87
   size: 50, 50
@@ -192,46 +213,32 @@ ninepatch_none
   orig: 40, 40
   offset: 0, 0
   index: -1
-user_manager
+next_down
   rotate: false
-  xy: 477, 301
-  size: 50, 50
-  orig: 50, 50
-  offset: 0, 0
-  index: -1
-icon_submenu
-  rotate: false
-  xy: 477, 249
-  size: 50, 50
-  orig: 50, 50
+  xy: 543, 291
+  size: 30, 50
+  orig: 30, 50
   offset: 0, 0
   index: -1
 fix
   rotate: false
-  xy: 529, 302
+  xy: 575, 296
   size: 50, 49
   orig: 50, 49
   offset: 0, 0
   index: -1
-next_down
+down
   rotate: false
-  xy: 529, 250
-  size: 30, 50
-  orig: 30, 50
+  xy: 477, 343
+  size: 20, 20
+  orig: 20, 20
   offset: 0, 0
   index: -1
 next_up
   rotate: false
-  xy: 569, 363
+  xy: 529, 225
   size: 30, 50
   orig: 30, 50
-  offset: 0, 0
-  index: -1
-textfield
-  rotate: false
-  xy: 561, 250
-  size: 29, 50
-  orig: 29, 50
   offset: 0, 0
   index: -1
 icon khoa
@@ -241,32 +248,32 @@ icon khoa
   orig: 25, 28
   offset: 0, 0
   index: -1
+textfield
+  rotate: false
+  xy: 363, 161
+  size: 29, 50
+  orig: 29, 50
+  offset: 0, 0
+  index: -1
 selectboxback
   rotate: false
-  xy: 382, 208
+  xy: 995, 476
   size: 27, 33
   orig: 27, 33
   offset: 0, 0
   index: -1
-icon_user
-  rotate: false
-  xy: 411, 211
-  size: 22, 30
-  orig: 22, 30
-  offset: 0, 0
-  index: -1
-down
-  rotate: false
-  xy: 435, 221
-  size: 20, 20
-  orig: 20, 20
-  offset: 0, 0
-  index: -1
 textfieldshadow
   rotate: false
-  xy: 457, 221
+  xy: 363, 139
   size: 20, 20
   orig: 20, 20
+  offset: 0, 0
+  index: -1
+icon_user
+  rotate: false
+  xy: 995, 444
+  size: 22, 30
+  orig: 22, 30
   offset: 0, 0
   index: -1
 rec_vien
@@ -278,7 +285,7 @@ rec_vien
   index: -1
 bg_white
   rotate: false
-  xy: 753, 434
+  xy: 691, 426
   size: 1, 1
   orig: 1, 1
   offset: 0, 0

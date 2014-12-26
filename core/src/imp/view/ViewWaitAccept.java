@@ -34,6 +34,7 @@ import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.Loading;
+import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class ViewWaitAccept extends View {
@@ -268,7 +269,7 @@ public class ViewWaitAccept extends View {
 
 	@Override
 	public void hide(OnCompleteListener listener) {
-		super.hide(listener);
+		TraceView.instance.removeView(this.getName());
 		getViewController().removeView(getName());
 	}
 }

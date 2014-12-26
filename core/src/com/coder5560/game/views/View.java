@@ -84,9 +84,13 @@ public class View extends Table implements IViews {
 		setViewState(ViewState.HIDE);
 		setTouchable(Touchable.disabled);
 		TraceView.instance.removeView(this.getName());
+		try{
 		((TopBarView) getViewController().getView(StringSystem.VIEW_ACTION_BAR))
 				.setTopName(getViewController().getView(
 						TraceView.instance.getLastView()).getLabel());
+		}catch(Exception e){
+			e.printStackTrace();
+		};
 	}
 
 	@Override

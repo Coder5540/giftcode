@@ -675,6 +675,11 @@ public class ViewLogTransferMoney extends View {
 		super.hide(listener);
 	}
 
+	public void setDate(int datebefore) {
+		  dateFrom.setDate(DateTime.getDateBefor("dd", datebefore),
+		    DateTime.getDateBefor("MM", datebefore),
+		    DateTime.getDateBefor("yyyy", datebefore));
+		 }
 	@Override
 	public String getLabel() {
 		if (typeView == TYPE_SEND) {

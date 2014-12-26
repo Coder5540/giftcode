@@ -192,10 +192,8 @@ public class ViewCapTienDaiLy extends View {
 								.getString(ExtParamsKey.CURRENCY);
 						final String email = content
 								.getString(ExtParamsKey.EMAIL);
-						final String deviceId = content
-								.getString(ExtParamsKey.DEVICE_ID);
-						final String deviceName = content
-								.getString(ExtParamsKey.DEVICE_NAME);
+						final String deviceId = Factory.getDeviceID(content);
+						final String deviceName = Factory.getDeviceName(content);
 						int state = content.getInt(ExtParamsKey.STATE);
 						final String realState;
 						if (state == 0) {
@@ -214,7 +212,7 @@ public class ViewCapTienDaiLy extends View {
 								super.clicked(event, x, y);
 								String[] info = { nameDaily, address, level,
 										phone, sdtGt, money + " " + currency,
-										email, deviceId, deviceName, realState };
+								email, deviceId, deviceName, realState };
 								viewDetail.money = money;
 								viewDetail.agencyReceive = phone;
 								viewDetail.setInfo(info);
@@ -268,10 +266,8 @@ public class ViewCapTienDaiLy extends View {
 				String currency = responeGetDaily
 						.getString(ExtParamsKey.CURRENCY);
 				String email = responeGetDaily.getString(ExtParamsKey.EMAIL);
-				String deviceId = responeGetDaily
-						.getString(ExtParamsKey.DEVICE_ID);
-				String deviceName = responeGetDaily
-						.getString(ExtParamsKey.DEVICE_NAME);
+				String deviceId = Factory.getDeviceID(responeGetDaily);
+				String deviceName = Factory.getDeviceName(responeGetDaily);
 				int state = responeGetDaily.getInt(ExtParamsKey.STATE);
 				String stringState;
 				if (state == 0) {

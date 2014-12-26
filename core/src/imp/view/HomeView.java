@@ -64,6 +64,27 @@ public class HomeView extends View {
 			}
 		}
 	}
+	@Override
+	public String getLabel() {
+		return super.getLabel();
+	}
+//	public void buildBypermission() {
+//		int[] permission = UserInfo.getInstance().getPermission().permission;
+//		for (int i = 0; i < permission.length; i++) {
+//			if (UserInfo.getInstance().getPermission().isHasPermission(i)
+//					&& !getString(i).equalsIgnoreCase("")) {
+//				IconFunction iconFunction = new IconFunction(
+//						getViewController(), 220, 220, new Texture(
+//								Gdx.files.internal("Img/Add-User-icon.png")),
+//								getString(i));
+//				content.add(iconFunction).pad(20);
+//				if (content.getChildren().size % 2 == 0
+//						&& content.getChildren().size > 0) {
+//					content.row();
+//				}
+//			}
+//		}
+//	}
 
 	private String getString(int i) {
 		if (i == 0)
@@ -86,7 +107,6 @@ public class HomeView extends View {
 			return StringSystem.FUNCTION_GIFT_CODE_LIST_GIFTCODE;
 		return "";
 	}
-
 	@Override
 	public void show(OnCompleteListener listener) {
 		super.show(listener);
@@ -193,6 +213,9 @@ class IconFunction extends Group {
 		});
 		valid();
 	}
+	
+	
+	
 
 	public void valid() {
 		icon.setPosition(bg.getWidth() / 2 - icon.getWidth() / 2,

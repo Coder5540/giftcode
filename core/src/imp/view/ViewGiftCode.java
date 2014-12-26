@@ -40,19 +40,19 @@ import com.coder5560.game.views.View;
 
 public class ViewGiftCode extends View {
 
-	private Group groupPartner;
-	private PartnerPicker partnerGiftCode;
-	private PartnerPicker partnerState;
-	private Label lbTitle;
+	private Group			groupPartner;
+	private PartnerPicker	partnerGiftCode;
+	private PartnerPicker	partnerState;
+	private Label			lbTitle;
 
-	private AbstractTable tableNormal;
-	private AbstractTable tableUsed;
-	private Page page;
+	private AbstractTable	tableNormal;
+	private AbstractTable	tableUsed;
+	private Page			page;
 
-	private JsonValue responeNormal;
-	private JsonValue responeReturn;
-	private JsonValue responeUsed;
-	private Table tbContent;
+	private JsonValue		responeNormal;
+	private JsonValue		responeReturn;
+	private JsonValue		responeUsed;
+	private Table			tbContent;
 
 	public void buildComponent() {
 		this.top();
@@ -297,13 +297,12 @@ public class ViewGiftCode extends View {
 		}
 	}
 
-	
 	@Override
 	public void back() {
 		super.back();
 		getViewController().removeView(getName());
 	}
-	
+
 	private void configContent(final AbstractTable table) {
 		tbContent.clear();
 		if (table.equals(tableNormal)) {
@@ -331,6 +330,11 @@ public class ViewGiftCode extends View {
 		table.setScrollY(0);
 		tbContent.add(table).padTop(10).height(580).row();
 		tbContent.add(page);
+	}
+
+	@Override
+	public String getLabel() {
+		return "Danh sách Giftcode";
 	}
 
 	class GetGiftCodeUsed implements HttpResponseListener {

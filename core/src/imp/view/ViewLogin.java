@@ -66,7 +66,7 @@ public class ViewLogin extends View {
 		Image titleLogin = new Image(Assets.instance.getRegion("8B8 GIFT CODE"));
 		titleLogin.setSize(400, 40);
 		titleLogin.setPosition(getWidth() / 2 - titleLogin.getWidth() / 2,
-				getHeight() - titleLogin.getHeight() - 180);
+				4* getHeight()/5 );
 		addActor(titleLogin);
 		titleLogin.addListener(new ClickListener() {
 			@Override
@@ -90,9 +90,10 @@ public class ViewLogin extends View {
 		tfName.setSize(370, 60);
 		tfPass.setSize(370, 60);
 		tfName.setPosition(Constants.WIDTH_SCREEN / 2 - tfName.getWidth() / 2,
-				440);
+				titleLogin.getY() - tfName.getHeight() - 120);
 		tfName.setText(AppPreference.instance.getName());
-		tfPass.setPosition(tfName.getX(), 360);
+		tfPass.setPosition(tfName.getX(), tfName.getY() - tfPass.getHeight()
+				- 40);
 		tfName.setOnscreenKeyboard(AbstractGameScreen.keyboard);
 		tfPass.setOnscreenKeyboard(AbstractGameScreen.keyboard);
 		tfName.addListener(new InputListener() {
@@ -169,7 +170,7 @@ public class ViewLogin extends View {
 		Label btnForgotPass = new Label("Quên mật khẩu ?", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, fontType.Light),
 				new Color(0, 191 / 255f, 1, 1)));
-		btnForgotPass.setPosition(btOk.getX(), 200);
+		btnForgotPass.setPosition(btOk.getX(), btOk.getY() - 70);
 		btnForgotPass.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -188,7 +189,8 @@ public class ViewLogin extends View {
 			}
 		};
 		btnRegister.setPosition(
-				btOk.getX() + btOk.getWidth() - btnRegister.getWidth(), 200);
+				btOk.getX() + btOk.getWidth() - btnRegister.getWidth(),
+				btnForgotPass.getY());
 		btnRegister.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -232,7 +234,7 @@ public class ViewLogin extends View {
 				return null;
 			}
 		};
-		btnActive.setPosition(btOk.getX(), 150);
+		btnActive.setPosition(btOk.getX(), btnForgotPass.getY() - 40);
 		btnActive.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -333,6 +335,8 @@ public class ViewLogin extends View {
 					@Override
 					public void done() {
 						mainMenu.hide(null);
+						getViewController().getView(StringSystem.VIEW_LOGIN)
+								.hide(null);
 					}
 				});
 

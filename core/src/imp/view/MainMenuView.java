@@ -2,6 +2,7 @@ package imp.view;
 
 import utils.elements.Img;
 import utils.factory.AppPreference;
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
 import utils.factory.Log;
 import utils.factory.StringSystem;
@@ -216,10 +217,34 @@ public class MainMenuView extends View {
 				UserInfo.currency = responeInfoDaily
 						.getString(ExtParamsKey.CURRENCY);
 				UserInfo.email = responeInfoDaily.getString(ExtParamsKey.EMAIL);
-				UserInfo.imeiDevice = responeInfoDaily
-						.getString(ExtParamsKey.DEVICE_ID);
-				UserInfo.nameDevice = responeInfoDaily
-						.getString(ExtParamsKey.DEVICE_NAME);
+
+				 UserInfo.imeiDevice = Factory.getDeviceID(responeInfoDaily);
+				 UserInfo.nameDevice = Factory.getDeviceName(responeInfoDaily);
+
+//				JsonValue responeDevices = responeInfoDaily
+//						.get(ExtParamsKey.DEVICE_ID);
+//				JsonValue responeNames = responeInfoDaily
+//						.get(ExtParamsKey.DEVICE_NAME);
+//				UserInfo.imeiDevices.clear();
+//				UserInfo.imeiDevice = "";
+//
+//				for (int i = 0; i < responeDevices.size; i++) {
+//					UserInfo.imeiDevices.add(responeDevices.getString(i));
+//					UserInfo.imeiDevice += responeDevices.getString(i);
+//					if (i < responeDevices.size - 1) {
+//						UserInfo.imeiDevice += ",";
+//					}
+//				}
+//				UserInfo.nameDevices.clear();
+//				UserInfo.nameDevice = "";
+//				for (int i = 0; i < responeNames.size; i++) {
+//					UserInfo.nameDevices.add(responeNames.getString(i));
+//					UserInfo.nameDevice += responeNames.getString(i);
+//					if (i < responeNames.size - 1) {
+//						UserInfo.nameDevice += ",";
+//					}
+//				}
+
 				UserInfo.state = responeInfoDaily.getInt(ExtParamsKey.STATE);
 
 				menu.setUserName(UserInfo.fullName);

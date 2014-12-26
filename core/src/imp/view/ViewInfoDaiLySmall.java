@@ -22,11 +22,11 @@ import com.coder5560.game.views.View;
 
 public class ViewInfoDaiLySmall extends View {
 
-	TextfieldStatic lbTfTitle[];
-	TextfieldStatic lbTfInfo[];
-	Image bg;
-	Image btnClose;
-	Label lbTitle;
+	TextfieldStatic	lbTfTitle[];
+	TextfieldStatic	lbTfInfo[];
+	Image			bg;
+	Image			btnClose;
+	Label			lbTitle;
 
 	public ViewInfoDaiLySmall() {
 		this.top();
@@ -165,6 +165,7 @@ public class ViewInfoDaiLySmall extends View {
 				Actions.hide()));
 		addAction(Actions.fadeOut(0.2f, Interpolation.fade));
 	}
+
 	@Override
 	public void back() {
 		super.back();
