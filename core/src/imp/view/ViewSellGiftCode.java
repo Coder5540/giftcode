@@ -265,6 +265,7 @@ public class ViewSellGiftCode extends View {
 				UserInfo.money = responeReturn
 						.getInt(ExtParamsKey.UPDATE_MONEY);
 				updateInfo();
+				hideButton();
 			} else {
 			}
 			responeReturn = null;

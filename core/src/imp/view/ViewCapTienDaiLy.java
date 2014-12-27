@@ -49,15 +49,15 @@ import com.coder5560.game.views.View;
 
 public class ViewCapTienDaiLy extends View {
 
-	private ViewDetail		viewDetail;
-	private CustomTextField	tfPerson;
+	private ViewDetail viewDetail;
+	private CustomTextField tfPerson;
 
-	private AbstractTable	tableDaily;
-	private Page			page;
+	private AbstractTable tableDaily;
+	private Page page;
 
-	private JsonValue		responeGetDaily;
-	private JsonValue		responeGetDailyLower;
-	private JsonValue		responeCheck;
+	private JsonValue responeGetDaily;
+	private JsonValue responeGetDailyLower;
+	private JsonValue responeCheck;
 
 	@Override
 	public String getLabel() {
@@ -193,7 +193,8 @@ public class ViewCapTienDaiLy extends View {
 						final String email = content
 								.getString(ExtParamsKey.EMAIL);
 						final String deviceId = Factory.getDeviceID(content);
-						final String deviceName = Factory.getDeviceName(content);
+						final String deviceName = Factory
+								.getDeviceName(content);
 						int state = content.getInt(ExtParamsKey.STATE);
 						final String realState;
 						if (state == 0) {
@@ -210,9 +211,15 @@ public class ViewCapTienDaiLy extends View {
 							public void clicked(InputEvent event, float x,
 									float y) {
 								super.clicked(event, x, y);
-								String[] info = { nameDaily, address, level,
-										phone, sdtGt, money + " " + currency,
-								email, deviceId, deviceName, realState };
+								String[] info = {
+										nameDaily,
+										address,
+										level,
+										phone,
+										sdtGt,
+										Factory.getDotMoney(money) + " "
+												+ currency, email, deviceId,
+										deviceName, realState };
 								viewDetail.money = money;
 								viewDetail.agencyReceive = phone;
 								viewDetail.setInfo(info);
@@ -279,8 +286,9 @@ public class ViewCapTienDaiLy extends View {
 				}
 
 				String[] info = { nameDaily, address, capDaily,
-						tfPerson.getText(), sdtGt, money + " " + currency,
-						email, deviceId, deviceName, stringState };
+						tfPerson.getText(), sdtGt,
+						Factory.getDotMoney(money) + " " + currency, email,
+						deviceId, deviceName, stringState };
 				viewDetail.money = money;
 				viewDetail.agencyReceive = tfPerson.getText();
 				viewDetail.setInfo(info);
@@ -368,16 +376,14 @@ public class ViewCapTienDaiLy extends View {
 
 	class ViewDetail extends View {
 
-		Table				tbContent;
-		ScrollPane			scroll;
-		Label[]				lbTitle;
-		TextfieldStatic[]	lbInfo;
-		String				agencyReceive;
-		int					money;
-		Image				bg;
-		boolean				isSend	= false;
+		Label[] lbTitle;
+		TextfieldStatic[] lbInfo;
+		String agencyReceive;
+		int money;
+		Image bg;
+		boolean isSend = false;
 
-		ViewSendMoney		viewSendMoney;
+		ViewSendMoney viewSendMoney;
 
 		public ViewDetail() {
 			setVisible(false);
@@ -390,14 +396,13 @@ public class ViewCapTienDaiLy extends View {
 			Label lbHeader = new Label("Thông tin đại lý", new LabelStyle(
 					Assets.instance.fontFactory.getFont(30, fontType.Medium),
 					Color.BLUE));
-			lbTitle = new Label[12];
+			lbTitle = new Label[10];
 			lbInfo = new TextfieldStatic[10];
 
 			String[] title = { "Tên đại lý", "Địa chỉ đại lý", "Cấp đại lý",
 					"Số điện thoại đại lý", "Số điện thoại người giới thiệu",
 					"Số tiền trong tài khoản", "Email", "Imei thiết bị",
-					"Tên thiết bị", "Trạng thái", "Số tiền cần chuyển",
-					"Ghi chú" };
+					"Tên thiết bị", "Trạng thái" };
 			for (int i = 0; i < lbTitle.length; i++) {
 				lbTitle[i] = new Label("", new LabelStyle(
 						Assets.instance.fontFactory.getFont(20,
@@ -446,18 +451,13 @@ public class ViewCapTienDaiLy extends View {
 				}
 			});
 
-			tbContent = new Table();
-			scroll = new ScrollPane(tbContent);
-
 			this.addActor(bg);
-			this.add(scroll);
-			tbContent.add(lbHeader).padTop(10).colspan(3).padBottom(20).row();
+			this.add(lbHeader).padTop(10).colspan(3).padBottom(20).row();
 			for (int i = 0; i < 10; i++) {
-				tbContent.add(lbTitle[i]).width(180).padTop(5);
-				tbContent.add(lbInfo[i]).padLeft(5).padTop(5).colspan(2).left()
-						.row();
+				this.add(lbTitle[i]).width(180).padTop(5);
+				this.add(lbInfo[i]).padLeft(5).padTop(5).left().row();
 			}
-			tbContent.add(tbButton).padTop(20).colspan(3);
+			this.add(tbButton).padTop(20).colspan(3);
 			viewSendMoney = new ViewSendMoney();
 			this.addActor(viewSendMoney);
 		}
@@ -465,9 +465,9 @@ public class ViewCapTienDaiLy extends View {
 		void setInfo(String[] info) {
 			for (int i = 0; i < lbInfo.length; i++) {
 				lbInfo[i].setContent(info[i]);
-				tbContent.getCell(lbInfo[i]).height(lbInfo[i].getHeight());
+				getCell(lbInfo[i]).height(lbInfo[i].getHeight());
 			}
-			tbContent.invalidate();
+			invalidate();
 		}
 
 		@Override
@@ -505,10 +505,10 @@ public class ViewCapTienDaiLy extends View {
 		}
 
 		class ViewSendMoney extends View {
-			JsonValue		responeSendMoney;
-			TextfieldStatic	tfSMoney;
-			CustomTextField	tfMoney;
-			TextArea		taNote;
+			JsonValue responeSendMoney;
+			TextfieldStatic tfSMoney;
+			CustomTextField tfMoney;
+			TextArea taNote;
 
 			public ViewSendMoney() {
 				this.top();
@@ -532,8 +532,9 @@ public class ViewCapTienDaiLy extends View {
 						Assets.instance.fontFactory.getFont(20,
 								fontType.Regular), Color.GRAY));
 
-				tfSMoney = new TextfieldStatic(UserInfo.money + " "
-						+ UserInfo.currency, Color.BLACK, 270);
+				tfSMoney = new TextfieldStatic(
+						Factory.getDotMoney(UserInfo.money) + " "
+								+ UserInfo.currency, Color.BLACK, 270);
 
 				tfMoney = new CustomTextField("",
 						Style.ins.getTextFieldStyle(8,
@@ -592,22 +593,26 @@ public class ViewCapTienDaiLy extends View {
 									"Ghi chú không được chứa ký tự đặc biệt",
 									Toast.LENGTH_SHORT);
 						} else {
-							if (Integer.parseInt(tfMoney.getText()) > UserInfo.money) {
-								Toast.makeText(
-										getStage(),
-										"Số tiền chuyển phải nhỏ hơn số tiền của bạn",
-										Toast.LENGTH_SHORT);
-							} else {
-								AbstractGameScreen.keyboard.hide();
-								DialogCustom dl = new DialogCustom("");
-								dl.text("Bạn có chắc chắn muốn chuyển "
-										+ tfMoney.getText() + " "
-										+ UserInfo.currency + " cho "
-										+ agencyReceive);
-								dl.button("Ok", new Runnable() {
-									@Override
-									public void run() {
-										Loading.ins.show(ViewDetail.this);
+							if (UserInfo.getInstance().getRoleId() != 0) {
+								if (Integer.parseInt(tfMoney.getText()) > UserInfo.money) {
+									Toast.makeText(
+											getStage(),
+											"Số tiền chuyển phải nhỏ hơn số tiền của bạn",
+											Toast.LENGTH_SHORT);
+									return;
+								}
+							}
+							AbstractGameScreen.keyboard.hide();
+							DialogCustom dl = new DialogCustom("");
+							dl.text("Bạn có chắc chắn muốn chuyển "
+									+ tfMoney.getText() + " "
+									+ UserInfo.currency + " cho "
+									+ agencyReceive);
+							dl.button("Ok", new Runnable() {
+								@Override
+								public void run() {
+									Loading.ins.show(ViewDetail.this);
+									if (UserInfo.getInstance().getRoleId() != 0) {
 										Request.getInstance().sendMoney(
 												AppPreference.instance.name,
 												AppPreference.instance.pass,
@@ -616,17 +621,27 @@ public class ViewCapTienDaiLy extends View {
 												UserInfo.currency,
 												taNote.getText(),
 												new SendMoney());
+									} else {
+										Request.getInstance()
+												.sendMoneyFromAdmin(
+														AppPreference.instance.name,
+														AppPreference.instance.pass,
+														agencyReceive,
+														tfMoney.getText(),
+														UserInfo.currency,
+														taNote.getText(),
+														new SendMoney());
 									}
+								}
 
-								});
-								dl.button("Hủy", new Runnable() {
-									@Override
-									public void run() {
+							});
+							dl.button("Hủy", new Runnable() {
+								@Override
+								public void run() {
 
-									}
-								});
-								dl.show(getStage());
-							}
+								}
+							});
+							dl.show(getStage());
 						}
 					}
 				});
@@ -641,8 +656,10 @@ public class ViewCapTienDaiLy extends View {
 
 				this.addActor(bg);
 				this.add(lbHeader).padTop(10).colspan(3).row();
-				this.add(lbMoney).width(180).padTop(15);
-				this.add(tfSMoney).padTop(15).colspan(2).left().row();
+				if (UserInfo.getInstance().getRoleId() != 0) {
+					this.add(lbMoney).width(180).padTop(15);
+					this.add(tfSMoney).padTop(15).colspan(2).left().row();
+				}
 				this.add(lbMoneySend).width(180).padTop(5);
 				this.add(tfMoney).left().width(200).padTop(5).height(35);
 				this.add(lbCurrency).left().padTop(5).row();
@@ -663,11 +680,16 @@ public class ViewCapTienDaiLy extends View {
 						int moneyTrans = responeSendMoney
 								.getInt(ExtParamsKey.MONEY_TRANSFER);
 						money += moneyTrans;
-						lbInfo[5].setContent(money + " " + UserInfo.currency);
-						UserInfo.money = responeSendMoney
-								.getInt(ExtParamsKey.MONEY_UPDATE);
-						tfSMoney.setContent(UserInfo.money + " "
+						lbInfo[5].setContent(Factory.getDotMoney(money) + " "
 								+ UserInfo.currency);
+						if (UserInfo.getInstance().getRoleId() != 0) {
+							UserInfo.money = responeSendMoney
+									.getInt(ExtParamsKey.MONEY_UPDATE);
+							tfSMoney.setContent(Factory
+									.getDotMoney(UserInfo.money)
+									+ " "
+									+ UserInfo.currency);
+						}
 					}
 					String mess = responeSendMoney
 							.getString(ExtParamsKey.MESSAGE);

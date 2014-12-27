@@ -32,11 +32,11 @@ import com.coder5560.game.views.View;
 
 public class ViewAdminActive extends View {
 
-	private JsonValue		respone;
-	private JsonValue		responeLock;
-	private JsonValue		responeUnlock;
-	Table					content	= new Table();
-	private AbstractTable	tableContent;
+	private JsonValue respone;
+	private JsonValue responeLock;
+	private JsonValue responeUnlock;
+	Table content = new Table();
+	private AbstractTable tableContent;
 
 	@Override
 	public String getLabel() {
@@ -50,11 +50,12 @@ public class ViewAdminActive extends View {
 		addActor(bg);
 
 		float[] widthCol = { 150, 150, 150, 200, 100, 200, 170, 170, 170, 170,
-				210 };
+				170, 170, 210 };
 		tableContent = new AbstractTable(new Table(), widthCol);
 		String[] title = { "Số điện thoại", "Họ tên", "Số tiền", "Giới thiệu",
-				"Cấp", "Địa chỉ", "Email", "Tên thiết bị", "Imei thiết bị",
-				"Tình trạng", "" };
+				"Cấp", "Địa chỉ", "Email", "Thiết bị hoạt động",
+				"Imei hoạt động", "Thiết bị khóa", "Imei khóa", "Tình trạng",
+				"" };
 		tableContent.setTitle(title);
 
 		this.add(tableContent).padTop(5).width(getWidth())
@@ -68,6 +69,7 @@ public class ViewAdminActive extends View {
 							Constants.WIDTH_SCREEN - 30,
 							Constants.HEIGHT_SCREEN
 									- Constants.HEIGHT_ACTIONBAR * 3));
+			view.buildComponent();
 		}
 		return this;
 	}
@@ -106,6 +108,8 @@ public class ViewAdminActive extends View {
 										infoUser.getString(ExtParamsKey.EMAIL),
 										Factory.getDeviceName(infoUser),
 										Factory.getDeviceID(infoUser),
+										Factory.getDeviceNameBlock(infoUser),
+										Factory.getDeviceIDBlock(infoUser),
 										infoUser.getString(ExtParamsKey.STATE) }) {
 							@Override
 							public void click() {
@@ -125,7 +129,7 @@ public class ViewAdminActive extends View {
 															* 3));
 								}
 
-								View view = ((ViewInfoDaiLySmall) getViewController()
+								ViewInfoDaiLySmall view = ((ViewInfoDaiLySmall) getViewController()
 										.getView(
 												ViewInfoDaiLySmall.class
 														.getName()))
@@ -139,30 +143,47 @@ public class ViewAdminActive extends View {
 												infoUser.getString(ExtParamsKey.EMAIL),
 												Factory.getDeviceName(infoUser),
 												Factory.getDeviceID(infoUser),
+												Factory.getDeviceNameBlock(infoUser),
+												Factory.getDeviceIDBlock(infoUser),
+
 												infoUser.getString(ExtParamsKey.STATE));
-								TextButton btnLock = new TextButton("Khóa",
-										this.btLock.getStyle());
-								btnLock.addListener(new ClickListener() {
+								// TextButton btnLock = new TextButton("Khóa",
+								// this.btLock.getStyle());
+								// btnLock.addListener(new ClickListener() {
+								// @Override
+								// public void clicked(InputEvent event,
+								// float x, float y) {
+								// onBtnLockClicked(phone, infoUser);
+								// }
+								// });
+								// view.add(btnLock).width(160).height(50).pad(30);
+								//
+								// TextButton btnUnlock = new TextButton(
+								// "Mở khóa", this.btLock.getStyle());
+								// btnUnlock.addListener(new ClickListener() {
+								// @Override
+								// public void clicked(InputEvent event,
+								// float x, float y) {
+								// onBtnUnlockClicked(phone, infoUser);
+								// }
+								// });
+								// view.add(btnUnlock).width(160).height(50)
+								// .pad(30);
+
+								view.addButton("Khóa", new ClickListener() {
 									@Override
 									public void clicked(InputEvent event,
 											float x, float y) {
 										onBtnLockClicked(phone, infoUser);
 									}
 								});
-								view.add(btnLock).width(160).height(50).pad(30);
-
-								TextButton btnUnlock = new TextButton(
-										"Mở khóa", this.btLock.getStyle());
-								btnUnlock.addListener(new ClickListener() {
+								view.addButton("Mở khóa", new ClickListener() {
 									@Override
 									public void clicked(InputEvent event,
 											float x, float y) {
 										onBtnUnlockClicked(phone, infoUser);
 									}
 								});
-								view.add(btnUnlock).width(160).height(50)
-										.pad(30);
-
 							}
 						};
 						tableContent.addItem(newItem);
@@ -172,6 +193,13 @@ public class ViewAdminActive extends View {
 							public void clicked(InputEvent event, float x,
 									float y) {
 								onBtnLockClicked(phone, infoUser);
+							}
+						});
+						newItem.btUnlock.addListener(new ClickListener() {
+							@Override
+							public void clicked(InputEvent event, float x,
+									float y) {
+								onBtnUnlockClicked(phone, infoUser);
 							}
 						});
 					}
@@ -249,9 +277,9 @@ public class ViewAdminActive extends View {
 		toBack();
 	}
 
-	String			blockName	= "";
-	Array<String>	IDs			= new Array<String>();
-	Array<String>	Names		= new Array<String>();
+	String blockName = "";
+	Array<String> IDs = new Array<String>();
+	Array<String> Names = new Array<String>();
 
 	void onBtnLockClicked(String phone, JsonValue infoUser) {
 		Array<String> imeis = new Array<String>();
@@ -324,7 +352,7 @@ public class ViewAdminActive extends View {
 						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
 		blockView.buildComponent();
 		blockView.show(null);
-		blockView.setOnSelectListener(onSelectLock);
+		blockView.setOnSelectListener(onSelectUnLock);
 	}
 
 	public void updateLock() {
@@ -384,122 +412,94 @@ public class ViewAdminActive extends View {
 		}
 	}
 
-	OnSelectListener	onSelectLock	= new OnSelectListener() {
+	OnSelectListener onSelectLock = new OnSelectListener() {
 
-											@Override
-											public void onSelect(final int i) {
-												final DialogCustom dia = new DialogCustom(
-														"");
-												dia.text("Bạn có chắc chắn khóa thiết bị "
-														+ Names.get(i)
-														+ " có IMEI : "
-														+ IDs.get(i)
-														+ " không?");
-												dia.button("Ok",
-														new Runnable() {
-															@Override
-															public void run() {
-																try {
-																	Loading.ins
-																			.show(ViewAdminActive.this);
-																	getViewController()
-																			.removeView(
-																					"block");
-																	Request.getInstance()
-																			.lockLoginDevice(
-																					UserInfo.phone,
-																					blockName,
-																					IDs.get(i),
-																					Names.get(i),
-																					new HttpResponseListener() {
+		@Override
+		public void onSelect(final int i) {
+			final DialogCustom dia = new DialogCustom("");
+			dia.text("Bạn có chắc chắn khóa thiết bị " + Names.get(i)
+					+ " có IMEI : " + IDs.get(i) + " không?");
+			dia.button("Ok", new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Loading.ins.show(ViewAdminActive.this);
+						getViewController().removeView("block");
+						Request.getInstance().lockLoginDevice(UserInfo.phone,
+								blockName, IDs.get(i), Names.get(i),
+								new HttpResponseListener() {
 
-																						@Override
-																						public void handleHttpResponse(
-																								HttpResponse httpResponse) {
-																							Loading.ins
-																									.hide();
-																							responeLock = new JsonReader()
-																									.parse(httpResponse
-																											.getResultAsString());
-																						}
+									@Override
+									public void handleHttpResponse(
+											HttpResponse httpResponse) {
+										Loading.ins.hide();
+										responeLock = new JsonReader()
+												.parse(httpResponse
+														.getResultAsString());
+									}
 
-																						@Override
-																						public void failed(
-																								Throwable t) {
+									@Override
+									public void failed(Throwable t) {
 
-																						}
+									}
 
-																						@Override
-																						public void cancelled() {
+									@Override
+									public void cancelled() {
 
-																						}
-																					});
-																} catch (Exception e) {
-																	e.printStackTrace();
-																}
-															}
-														});
-												dia.button("Hủy");
-												dia.show(getStage());
-											}
-										};
-	OnSelectListener	onSelectUnLock	= new OnSelectListener() {
+									}
+								});
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			dia.button("Hủy");
+			dia.show(getStage());
+		}
+	};
+	OnSelectListener onSelectUnLock = new OnSelectListener() {
 
-											@Override
-											public void onSelect(final int i) {
-												final DialogCustom dia = new DialogCustom(
-														"");
-												dia.text("Bạn có chắc chắn mở khóa thiết bị "
-														+ Names.get(i)
-														+ " có IMEI : "
-														+ IDs.get(i)
-														+ " không?");
-												dia.button("Ok",
-														new Runnable() {
-															@Override
-															public void run() {
-																try {
-																	Loading.ins
-																			.show(ViewAdminActive.this);
-																	getViewController()
-																			.removeView(
-																					"block");
-																	Request.getInstance()
-																			.unLockLoginDevice(
-																					UserInfo.phone,
-																					blockName,
-																					IDs.get(i),
-																					Names.get(i),
-																					new HttpResponseListener() {
+		@Override
+		public void onSelect(final int i) {
+			final DialogCustom dia = new DialogCustom("");
+			dia.text("Bạn có chắc chắn mở khóa thiết bị " + Names.get(i)
+					+ " có IMEI : " + IDs.get(i) + " không?");
+			dia.button("Ok", new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Loading.ins.show(ViewAdminActive.this);
+						getViewController().removeView("block");
+						Request.getInstance().unLockLoginDevice(UserInfo.phone,
+								blockName, IDs.get(i), Names.get(i),
+								new HttpResponseListener() {
 
-																						@Override
-																						public void handleHttpResponse(
-																								HttpResponse httpResponse) {
-																							Loading.ins
-																									.hide();
-																							responeUnlock = new JsonReader()
-																									.parse(httpResponse
-																											.getResultAsString());
-																						}
+									@Override
+									public void handleHttpResponse(
+											HttpResponse httpResponse) {
+										Loading.ins.hide();
+										responeUnlock = new JsonReader()
+												.parse(httpResponse
+														.getResultAsString());
+									}
 
-																						@Override
-																						public void failed(
-																								Throwable t) {
+									@Override
+									public void failed(Throwable t) {
 
-																						}
+									}
 
-																						@Override
-																						public void cancelled() {
+									@Override
+									public void cancelled() {
 
-																						}
-																					});
-																} catch (Exception e) {
-																	e.printStackTrace();
-																}
-															}
-														});
-												dia.button("Hủy");
-												dia.show(getStage());
-											}
-										};
+									}
+								});
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			dia.button("Hủy");
+			dia.show(getStage());
+		}
+	};
 }

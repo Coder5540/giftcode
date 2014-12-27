@@ -1,5 +1,7 @@
 package imp.view;
 
+import imp.view.HomeViewV2.getMoneyInfoListener;
+
 import java.util.ArrayList;
 
 import utils.elements.ItemDatePartner;
@@ -9,6 +11,7 @@ import utils.factory.AppPreference;
 import utils.factory.DateTime;
 import utils.factory.FontFactory.fontType;
 import utils.factory.StringSystem;
+import utils.factory.StringUtil;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
@@ -59,11 +62,13 @@ public class ViewLogChart extends View {
 	public static final int	TYPE_RECEIVE_MONEY		= 1;
 	public static final int	TYPE_GIFTCODE			= 2;
 
+	String					response				= "";
+	boolean					isLoadTotal				= false;
 	String					responese				= "";
 	boolean					isLoad					= false;
 	ScrollPane				scroll;
 	Table					content;
-
+	Group					gTop;
 	DatePicker				dateFrom;
 	DatePicker				dateTo;
 	CustomTextField			tfSearch;
@@ -81,13 +86,22 @@ public class ViewLogChart extends View {
 	boolean					isChangeFun;
 	int						stateFun;
 
+	Label					titleView;
+
+	Table					gBottom;
+	Image					icon;
+	Label					lbTitle;
+	Label					lbContent;
+
+	long					totalMoney				= 0;
+
 	public ViewLogChart buildComponent(int type) {
 		this.typeView = type;
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
 		bg.setSize(getWidth(), getHeight());
 		addActor(bg);
 
-		Group gTop = new Group();
+		gTop = new Group();
 		gTop.setSize(getWidth(), 110);
 		Image bgTop = new Image(new NinePatch(
 				Assets.instance.ui.reg_ninepatch3, 6, 6, 6, 6));
@@ -141,7 +155,6 @@ public class ViewLogChart extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
 				iconextendDate.getColor().a = 0.5f;
 				if (isExtend) {
 					gExtendDate.clearActions();
@@ -167,7 +180,6 @@ public class ViewLogChart extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
 				iconextendDate.getColor().a = 0.25f;
 				return super.touchDown(event, x, y, pointer, button);
 			}
@@ -175,7 +187,6 @@ public class ViewLogChart extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
 				iconextendDate.getColor().a = 0.5f;
 				if (isExtend) {
 					gExtendDate.clearActions();
@@ -309,12 +320,8 @@ public class ViewLogChart extends View {
 			}
 		});
 		gTop.addActor(bgTop);
-		// gTop.addActor(tfSearch);
-		// gTop.addActor(partner);
-		// gTop.addActor(partnerFun);
 		gTop.addActor(btnXem);
 		gTop.addActor(gExtendDate);
-		// gTop.addActor(bgDatetime);
 		gTop.addActor(dateFrom);
 		gTop.addActor(dateTo);
 		gTop.addActor(bgiconextendDate);
@@ -325,49 +332,83 @@ public class ViewLogChart extends View {
 		top();
 		add(gTop).width(gTop.getWidth()).padLeft(-3).row();
 
-		Label title = new Label("Báo cáo doanh thu", Style.ins.getLabelStyle(
-				25, fontType.Regular, Color.GRAY));
-		add(title).padTop(20).center().row();
+		titleView = new Label("Báo cáo doanh thu", Style.ins.getLabelStyle(25,
+				fontType.Regular, Color.GRAY));
+		add(titleView).padTop(15).center().row();
+
+		gBottom = new Table();
+		gBottom.setBounds(0, 0, getWidth(), 60);
+		gBottom.setBackground(new NinePatchDrawable(new NinePatch(
+				Assets.instance.ui.reg_ninepatch4, 6, 6, 6, 6)));
 
 		content = new Table();
 		scroll = new ScrollPane(content);
-		scroll.setBounds(0, 0, getWidth(), 3 * getHeight() / 4 + 50);
+		scroll.setBounds(0, 0, getWidth(), getHeight() - gTop.getHeight()
+				- gBottom.getHeight() - titleView.getHeight());
 		content.left();
 		add(scroll).padTop(5).width(scroll.getWidth())
 				.height(scroll.getHeight());
-		scroll.addListener(new ClickListener() {
-			@Override
-			public boolean touchDown(InputEvent event, float x, float y,
-					int pointer, int button) {
-				return super.touchDown(event, x, y, pointer, button);
-			}
-		});
+
+		addActor(gBottom);
+
 		return this;
 	}
 
-	@Override
-	public void show(OnCompleteListener listener) {
-		// TODO Auto-generated method stub
-		getListTotalMoney();
-		super.show(listener);
+	public void setTitleView(String title) {
+		titleView.setText(title);
+	}
+
+	public void setTotalMoney(long money) {
+		totalMoney = money;
 	}
 
 	@Override
 	public void back() {
-		super.back();
+		// TODO Auto-generated method stub
 		getViewController().removeView(getName());
+		super.back();
+	}
+
+	@Override
+	public void show(OnCompleteListener listener) {
+		getListTotalMoney();
+		super.show(listener);
+	}
+
+	void getTotalMoneyInfo() {
+		Request.getInstance().getTotalMoneyInfo(AppPreference.instance.name,
+				new getMoneyInfoListener());
 	}
 
 	void getListTotalMoney() {
-		System.out.println(dateFrom.getDate());
 		Request.getInstance().getListTotalMoney(AppPreference.instance.name,
 				dateFrom.getDate(), dateTo.getDate(),
 				new getTotalMoneyListener());
+		gBottom.setVisible(false);
 		Loading.ins.show(this);
 	}
 
 	@Override
 	public void update(float delta) {
+
+		if (isLoadTotal) {
+			JsonValue json = (new JsonReader()).parse(response);
+			boolean result = json.getBoolean(ExtParamsKey.RESULT);
+			String message = json.getString(ExtParamsKey.MESSAGE);
+			if (result) {
+				if (typeView == TYPE_RECEIVE_MONEY) {
+					totalMoney = json.getLong(ExtParamsKey.MONEY_RECEIVE);
+				} else if (typeView == TYPE_SEND_MONEY) {
+					totalMoney = json.getLong(ExtParamsKey.MONEY_TRANSFER);
+				} else if (typeView == TYPE_GIFTCODE) {
+					totalMoney = json.getLong(ExtParamsKey.MONEY_GIFT_CODE);
+				}
+			} else {
+				Toast.makeText(_stage, message, 3f);
+			}
+			isLoadTotal = false;
+		}
+
 		if (isLoad) {
 			JsonValue json = (new JsonReader()).parse(responese);
 			boolean result = json.getBoolean(ExtParamsKey.RESULT);
@@ -375,8 +416,9 @@ public class ViewLogChart extends View {
 			if (result) {
 				Toast.makeText(getStage(), message, 3f);
 				content.clear();
+				gBottom.clear();
 				ColumnChartView columnchart = new ColumnChartView(
-						3 * getHeight() / 4);
+						scroll.getHeight() - 50);
 				JsonValue arr = json.get(ExtParamsKey.LIST);
 				int size = arr.size;
 				ArrayList<String> titledown = new ArrayList<String>();
@@ -396,29 +438,16 @@ public class ViewLogChart extends View {
 					dir.add("Tiền bán GiftCode");
 					color.add(new Color(124 / 255f, 252 / 255f, 0 / 255f, 1));
 				}
-
-				// if (UserInfo.getInstance().getRoleId() == 0) {
-				// dir.add("Tiền đã chuyển");
-				// color.add(new Color(255 / 255f, 48 / 255f, 48 / 255f, 1));
-				// columnchart.numbertype = 1;
-				// } else if (UserInfo.getInstance().getRoleId() == 3) {
-				// columnchart.numbertype = 2;
-				// dir.add("Tiền đã nhận");
-				// color.add(new Color(72 / 255f, 118 / 255f, 255 / 255f, 1));
-				// } else {
-				// columnchart.numbertype = 3;
-				// dir.add("Tiền đã chuyển");
-				// color.add(new Color(255 / 255f, 48 / 255f, 48 / 255f, 1));
-				// dir.add("Tiền đã nhận");
-				// color.add(new Color(72 / 255f, 118 / 255f, 255 / 255f, 1));
-				// dir.add("Tiền bán GiftCode");
-				// color.add(new Color(124 / 255f, 252 / 255f, 0 / 255f, 1));
-				// }
 				if (size == 0) {
 					Toast.makeText(getStage(), "Không có dữ liệu", 3);
 					isLoad = false;
 					return;
 				}
+
+				long totalMoneySend = 0;
+				long totalMoneyReceive = 0;
+				long totalMoneyGiftCode = 0;
+
 				for (int i = 0; i < size; i++) {
 					JsonValue content = arr.get(i);
 					final String date = content.getString(ExtParamsKey.DATE);
@@ -428,6 +457,7 @@ public class ViewLogChart extends View {
 						if (UserInfo.getInstance().getRoleId() != 3) {
 							long money_send = Math.abs(content
 									.getLong(ExtParamsKey.MONEY_TRANSFER));
+							totalMoneySend += money_send;
 							ColumnChartComponent colSend = new ColumnChartComponent();
 							colSend.addListener(new ClickListener() {
 								@Override
@@ -465,7 +495,7 @@ public class ViewLogChart extends View {
 								}
 							});
 							colSend.addColumnComponent(new ColumnComponent(
-									(int) money_send, color.get(0)));
+									money_send, color.get(0)));
 							colGroup.addComponent(colSend);
 						}
 					}
@@ -473,9 +503,10 @@ public class ViewLogChart extends View {
 						if (UserInfo.getInstance().getRoleId() != 0) {
 							long money_receive = Math.abs(content
 									.getLong(ExtParamsKey.MONEY_RECEIVE));
+							totalMoneyReceive += money_receive;
 							ColumnChartComponent colReceive = new ColumnChartComponent();
 							colReceive.addColumnComponent(new ColumnComponent(
-									(int) money_receive, color.get(0)));
+									money_receive, color.get(0)));
 							colReceive.addListener(new ClickListener() {
 								@Override
 								public void clicked(InputEvent event, float x,
@@ -520,9 +551,10 @@ public class ViewLogChart extends View {
 						if (UserInfo.getInstance().getRoleId() != 0) {
 							long money_giftcode = Math.abs(content
 									.getLong(ExtParamsKey.MONEY_GIFT_CODE));
+							totalMoneyGiftCode += money_giftcode;
 							ColumnChartComponent colGiftCode = new ColumnChartComponent();
 							colGiftCode.addColumnComponent(new ColumnComponent(
-									(int) money_giftcode, color.get(0)));
+									money_giftcode, color.get(0)));
 							colGiftCode.addListener(new ClickListener() {
 								@Override
 								public void clicked(InputEvent event, float x,
@@ -568,6 +600,38 @@ public class ViewLogChart extends View {
 				columnchart.columnChart.offsetX = 30;
 				columnchart.validateComponent(widthCol, titledown, dir, color);
 				content.add(columnchart);
+
+				String title = "";
+				if (typeView == TYPE_SEND_MONEY) {
+					title = "Tổng tiền: "
+							+ StringUtil.getDotMoney(totalMoneySend)
+							+ UserInfo.currency + "/"
+							+ StringUtil.getDotMoney(totalMoney)
+							+ UserInfo.currency;
+				} else if (typeView == TYPE_RECEIVE_MONEY) {
+					title = "Tổng tiền: "
+							+ StringUtil.getDotMoney(totalMoneyReceive)
+							+ UserInfo.currency + "/"
+							+ StringUtil.getDotMoney(totalMoney)
+							+ UserInfo.currency;
+				} else {
+					title = "Tổng tiền: "
+							+ StringUtil.getDotMoney(totalMoneyGiftCode)
+							+ UserInfo.currency + "/"
+							+ StringUtil.getDotMoney(totalMoney)
+							+ UserInfo.currency;
+				}
+				Image icon = new Image(new Texture(
+						Gdx.files.internal("Img/icon_tong.png")));
+				icon.setSize(40, 40);
+
+				Label lbTitle = new Label(title, Style.ins.getLabelStyle(20,
+						fontType.Regular, Color.BLACK));
+
+				gBottom.top().left();
+				gBottom.add(icon);
+				gBottom.add(lbTitle).padLeft(2);
+				gBottom.setVisible(true);
 			} else {
 				Toast.makeText(getStage(), message, 3f);
 			}
@@ -583,6 +647,29 @@ public class ViewLogChart extends View {
 		public void handleHttpResponse(HttpResponse httpResponse) {
 			responese = httpResponse.getResultAsString();
 			isLoad = true;
+		}
+
+		@Override
+		public void failed(Throwable t) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void cancelled() {
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+
+	class getMoneyInfoListener implements HttpResponseListener {
+
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			// TODO Auto-generated method stub
+			response = httpResponse.getResultAsString();
+			isLoadTotal = true;
 		}
 
 		@Override

@@ -137,12 +137,12 @@ public class ListMenu extends ScrollPane {
 				.isHasPermission(
 						PermissionConfig.PERMISSION_BAN_GIFTCODE.ordinal()))
 			itemGiftCode.addComponent(sellGiftCode);
-		// if (UserInfo
-		// .getInstance()
-		// .getPermission()
-		// .isHasPermission(
-		// PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
-		// itemGiftCode.addComponent(listGiftcode);
+//		 if (UserInfo
+//		 .getInstance()
+//		 .getPermission()
+//		 .isHasPermission(
+//		 PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
+		 itemGiftCode.addComponent(listGiftcode);
 	}
 
 	private void createItemHistory(ItemMenu itemLog) {

@@ -45,12 +45,8 @@ public class Page extends Table {
 		data = new ArrayList<ItemTable>();
 
 		ButtonStyle nextStyle = new ButtonStyle();
-		// nextStyle.up = new TextureRegionDrawable(
-		// Assets.instance.uiP.icon_next_up);
 		nextStyle.up = new TextureRegionDrawable(
 				Assets.instance.getRegion("next_up"));
-		// nextStyle.down = new TextureRegionDrawable(
-		// Assets.instance.uiP.icon_next_down);
 		nextStyle.down = new TextureRegionDrawable(
 				Assets.instance.getRegion("next_down"));
 		btNext = new Button(nextStyle);
@@ -71,18 +67,9 @@ public class Page extends Table {
 			}
 		});
 
-		ButtonStyle backStyle = new ButtonStyle();
-		// backStyle.up = new TextureRegionDrawable(
-		// Assets.instance.uiP.icon_next_up);
-		backStyle.up = new TextureRegionDrawable(
-				Assets.instance.getRegion("next_up"));
-		// backStyle.down = new TextureRegionDrawable(
-		// Assets.instance.uiP.icon_next_down);
-		backStyle.down = new TextureRegionDrawable(
-				Assets.instance.getRegion("next_down"));
-		btBack = new Button(backStyle);
+		btBack = new Button(nextStyle);
 		btBack.setTransform(true);
-		btBack.setOrigin(10, 15);
+		btBack.setOrigin(23, 17);
 		btBack.setRotation(180);
 		btBack.addListener(new ClickListener() {
 			@Override
@@ -114,11 +101,11 @@ public class Page extends Table {
 			currentPage.focus(true);
 		}
 		if (pageNumber > 1) {
-			this.add(btBack).padLeft(10).width(20).height(30);
+			this.add(btBack).padLeft(10).padRight(10).width(25).height(34);
 		}
 		this.add(scrollPage);
 		if (pageNumber > 1) {
-			this.add(btNext).padRight(10).width(20).height(30);
+			this.add(btNext).padRight(10).padLeft(10).width(25).height(34);
 		}
 	}
 

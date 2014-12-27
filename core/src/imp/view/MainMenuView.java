@@ -1,5 +1,6 @@
 package imp.view;
 
+import sun.applet.Main;
 import utils.elements.Img;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
@@ -52,6 +53,7 @@ public class MainMenuView extends View {
 	private boolean			ignoreUpdateMove	= true;
 	public static boolean	isLoadUserData		= false;
 	private JsonValue		responeInfoDaily;
+	public boolean			block				= false;
 
 	public MainMenuView buildComponent() {
 		Color colorBg = new Color(100 / 255f, 100 / 255f, 100 / 255f, 1f);
@@ -83,13 +85,21 @@ public class MainMenuView extends View {
 
 	}
 
+	public void setBlock(boolean block) {
+		this.block = block;
+		if (block)
+			menu.setTouchable(Touchable.disabled);
+		if (!block)
+			menu.setTouchable(Touchable.enabled);
+
+	}
+
 	void buildContent(Table content) {
 		float heightLogout = 60;
 
 		menu = new ListMenu(getViewController(), new Table(), new Rectangle(0,
 				heightLogout, content.getWidth(), content.getHeight()
 						- heightLogout));
-
 		menu.setOnActiveUserClicked(onActiveUserClicked);
 		menu.setOnBlockUserClicked(onBlockUserClicked);
 		menu.setOnUnActiveUserClicked(onUnActiveUserClicked);
@@ -193,6 +203,7 @@ public class MainMenuView extends View {
 		super.hide(listener);
 		tranBg.setVisible(false);
 		setIgnoreUpdateMove(false);
+
 		content.addAction(Actions.sequence(Actions.moveTo(-content.getWidth(),
 				0, 0.5f, Interpolation.pow5Out), Actions.run(new Runnable() {
 			@Override
@@ -209,6 +220,7 @@ public class MainMenuView extends View {
 	public void update(float delta) {
 		if (responeInfoDaily != null) {
 			Loading.ins.hide();
+			Log.d(responeInfoDaily.toString());
 			boolean result = responeInfoDaily.getBoolean(ExtParamsKey.RESULT);
 			if (result) {
 				UserInfo.fullName = responeInfoDaily
@@ -554,6 +566,8 @@ public class MainMenuView extends View {
 																													- Constants.HEIGHT_ACTIONBAR));
 
 																					viewInfoDaiLy
+																							.buildComponent();
+																					viewInfoDaiLy
 																							.show(null);
 																				} else {
 																					getViewController()
@@ -707,7 +721,8 @@ public class MainMenuView extends View {
 																											- Constants.HEIGHT_ACTIONBAR));
 																					viewLog.buildComponent(ViewLogChart.TYPE_RECEIVE_MONEY);
 																					viewLog.show(null);
-																				}																			}
+																				}
+																			}
 																		});
 															}
 														};
@@ -936,7 +951,7 @@ public class MainMenuView extends View {
 																											- Constants.HEIGHT_ACTIONBAR));
 																					viewLog.buildComponent(ViewLogChart.TYPE_GIFTCODE);
 																					viewLog.show(null);
-																				}				
+																				}
 																			}
 																		});
 															}

@@ -35,6 +35,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.listener.OnResponseListener;
@@ -50,7 +51,7 @@ public class ViewLogin extends View {
 	private JsonValue		respone;
 	Label					btnRegister, btnActive;
 	CustomDialog			dialogConfirm;
-//	View					view;
+	View					view;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -280,11 +281,18 @@ public class ViewLogin extends View {
 		addActor(btnActive);
 		addActor(btnForgotPass);
 
-		//
-//		buildView();
+		// buildViewTest();
 		return this;
 	}
-	
+
+	private void buildViewTest() {
+		view = new ViewUserManager();
+		view.build(getStage(), getViewController(), "aa", new Rectangle(0, 0,
+				Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
+		((ViewUserManager) view).buildComponent();
+		view.hide(null);
+
+	}
 
 	public void registerKeyboard(final TextField tf, String tfname, int config) {
 		AbstractGameScreen.keyboard.registerTextField(tf, tfname, config,
@@ -293,14 +301,11 @@ public class ViewLogin extends View {
 
 	@Override
 	public void update(float deltaTime) {
-//		if(view != null && view.getViewState() == ViewState.HIDE){
-//			view.show(null);
-//			return;
-//		}
-		
-		
-		
-		
+		if (view != null && view.getViewState() == ViewState.HIDE) {
+			view.show(null);
+			return;
+		}
+
 		if (respone != null) {
 			Loading.ins.hide();
 			Boolean isSuccess = respone.getBoolean(ExtParamsKey.RESULT);
@@ -308,6 +313,7 @@ public class ViewLogin extends View {
 			Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
 			if (isSuccess) {
 				JsonValue per = respone.get(ExtParamsKey.PERMISSION);
+				UserInfo.phone = tfName.getText();
 				for (int i = 0; i < per.size; i++) {
 					int index = per.getInt(i);
 					UserInfo.getInstance().setPermisstion(index);
@@ -338,29 +344,74 @@ public class ViewLogin extends View {
 				int id = respone.getInt(ExtParamsKey.ROLE_ID);
 				AppPreference.instance.type = id;
 				AppPreference.instance.flush();
+				if (id == RoleID.USER_MANAGER) {
+					ViewUserManager view = new ViewUserManager();
+					view.build(getStage(), getViewController(),
+							StringSystem.VIEW_HOME, new Rectangle(0, 0,
+									Constants.WIDTH_SCREEN,
+									Constants.HEIGHT_SCREEN
+											- Constants.HEIGHT_ACTIONBAR));
+					view.buildComponent();
+					view.show(new OnCompleteListener() {
+						@Override
+						public void onError() {
+						}
 
-				ViewLogMoneyChart viewLogMoneyChart = new ViewLogMoneyChart();
-				viewLogMoneyChart.build(getStage(), getViewController(),
-						StringSystem.VIEW_HOME,
-						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
-								Constants.HEIGHT_SCREEN));
-				viewLogMoneyChart.buildComponent();
-				viewLogMoneyChart.show(
+						@Override
+						public void done() {
+							mainMenu.hide(null);
+							mainMenu.getUserData();
+				getViewController()
+									.getView(StringSystem.VIEW_LOGIN)
+									.hide(null);
+						}
+					});
+				} else {
+//					ViewLogMoneyChart viewLogMoneyChart = new ViewLogMoneyChart();
+//					viewLogMoneyChart.build(getStage(), getViewController(),
+//							StringSystem.VIEW_HOME, new Rectangle(0, 0,
+//									Constants.WIDTH_SCREEN,
+//									Constants.HEIGHT_SCREEN));
+//					viewLogMoneyChart.buildComponent();
+//					viewLogMoneyChart.show(
+//
+//					new OnCompleteListener() {
+//						@Override
+//						public void onError() {
+//						}
+//
+//						@Override
+//						public void done() {
+//							mainMenu.hide(null);
+//							mainMenu.getUserData();
+//							getViewController()
+//									.getView(StringSystem.VIEW_LOGIN)
+//									.hide(null);
+//						}
+//					});
+					HomeViewV2 homeViewV2 = new HomeViewV2();
+					homeViewV2.build(getStage(), getViewController(),
+							StringSystem.VIEW_HOME, new Rectangle(0, 0,
+									Constants.WIDTH_SCREEN,
+									Constants.HEIGHT_SCREEN- Constants.HEIGHT_ACTIONBAR));
+					homeViewV2.buildComponent();
+					homeViewV2.show(
 
-				new OnCompleteListener() {
-					@Override
-					public void onError() {
-					}
+					new OnCompleteListener() {
+						@Override
+						public void onError() {
+						}
 
-					@Override
-					public void done() {
-						mainMenu.hide(null);
-						mainMenu.getUserData();
-						getViewController().getView(StringSystem.VIEW_LOGIN)
-								.hide(null);
-					}
-				});
-
+						@Override
+						public void done() {
+							mainMenu.hide(null);
+							mainMenu.getUserData();
+							getViewController()
+									.getView(StringSystem.VIEW_LOGIN)
+									.hide(null);
+						}
+					});
+				}
 			} else {
 				// login success but the device is not active. show dialog
 				// confirm
@@ -410,11 +461,11 @@ public class ViewLogin extends View {
 
 	public void back() {
 		Log.d("Call back on Login View");
-		// if(view != null && view.getViewState() == ViewState.SHOW){
-		// view.hide(null);
-		// return;
-		// }
-		
+		if (view != null && view.getViewState() == ViewState.SHOW) {
+			view.hide(null);
+			return;
+		}
+
 	};
 
 	private void switchView() {

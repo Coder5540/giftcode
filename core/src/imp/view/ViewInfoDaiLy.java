@@ -6,6 +6,8 @@ import utils.networks.UserInfo;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
@@ -15,10 +17,18 @@ import com.coder5560.game.views.View;
 
 public class ViewInfoDaiLy extends View {
 
-	TextfieldStatic	lbTfTitle[];
-	TextfieldStatic	lbTfInfo[];
+	TextfieldStatic lbTfTitle[];
+	TextfieldStatic lbTfInfo[];
 
-	public ViewInfoDaiLy() {
+	ScrollPane scroll;
+	Table content;
+
+	public void buildComponent() {
+		content = new Table();
+		content.setWidth(getWidth());
+		scroll = new ScrollPane(content);
+		scroll.setSize(getWidth(), getHeight() - 200);
+
 		Loading.ins.hide();
 		this.top();
 		setBackground(new NinePatchDrawable(new NinePatch(
@@ -71,11 +81,12 @@ public class ViewInfoDaiLy extends View {
 		Label lbTitle = new Label("Thông tin đại lý", new LabelStyle(
 				Assets.instance.fontFactory.getFont(30, fontType.Medium),
 				Color.BLUE));
-		this.add(lbTitle).padTop(10).padBottom(10).colspan(2).row();
+		this.add(lbTitle).padTop(10).padBottom(10).row();
 		for (int i = 0; i < 10; i++) {
-			this.add(lbTfTitle[i]).padTop(5);
-			this.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
+			content.add(lbTfTitle[i]).padTop(5);
+			content.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
 		}
+		this.add(scroll).width(getWidth()).height(scroll.getHeight());
 	}
 
 	@Override

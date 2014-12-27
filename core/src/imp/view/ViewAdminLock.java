@@ -63,6 +63,7 @@ public class ViewAdminLock extends View {
 							Constants.WIDTH_SCREEN - 30,
 							Constants.HEIGHT_SCREEN
 									- Constants.HEIGHT_ACTIONBAR * 3));
+			view.buildComponent();
 		}
 		return this;
 	}

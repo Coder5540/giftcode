@@ -61,6 +61,10 @@ public class StringSystem {
 
 	public static final String	VIEW_LOG_GIFTCODE_CHART				= "VIEW_LOG_GIFTCODE_CHART";
 
+	public static final String	VIEW_LOG_MONEY_GIFTCODE_CHART		= "VIEW_LOG_MONEY_GIFTCODE_CHART";
+
+	public static final String	VIEW_HOME_V2						= "VIEW_HOME_V2";
+
 	// ====================== Variable for View Trace===========================
 	public static String		APP_ID								= "394360317378935";
 	public static String		MAIN_ACTIVITY						= "com.aia.hichef.HiChefAndroid";

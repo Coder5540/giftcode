@@ -39,4 +39,8 @@ public class CommandRequest {
 	public static final String	GET_MONEY_GIFT_CODE_LOG		= "get_money_gift_code_log";
 	public static final String	GET_MONEY_GIFT_CODE_LOG_SUB	= "get_money_gift_code_log_sub";
 	public static final String	UNLOCK_LOGIN_DEVICE			= "remove_lock_login_device";
+	public static final String	GET_ALL_AGENCY				= "get_all_agency";
+	public static final String	CHANGE_AGENCY_ROLE			= "change_agency_role";
+	public static final String	TOTAL_MONEY_OVERVIEW		= "total_money_overview";
+	public static final String	TRANSFER_MONEY_FROM_ADMIN	= "transfer_money_from_admin";
 }

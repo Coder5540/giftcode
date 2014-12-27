@@ -1,7 +1,11 @@
 package imp.view;
 
 import utils.factory.FontFactory.fontType;
+import utils.factory.Factory;
+import utils.factory.PlatformResolver.OnResultListener;
 import utils.factory.Style;
+import utils.listener.OnClickListener;
+import utils.networks.ExtParamsKey;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -11,12 +15,17 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnCompleteListener;
+import com.coder5560.game.listener.OnResponseListener;
 import com.coder5560.game.ui.TextfieldStatic;
 import com.coder5560.game.views.View;
 
@@ -27,9 +36,17 @@ public class ViewInfoDaiLySmall extends View {
 	Image			bg;
 	Image			btnClose;
 	Label			lbTitle;
+	ScrollPane		scroll;
+	Table			content, btn;
 
-	public ViewInfoDaiLySmall() {
+	public void buildComponent() {
 		this.top();
+		content = new Table();
+		content.setWidth(getWidth());
+		scroll = new ScrollPane(content);
+		scroll.setSize(getWidth(), getHeight() - 200);
+		btn = new Table();
+
 		bg = new Image(Assets.instance.ui.reg_ninepatch);
 		bg.setColor(Color.BLACK);
 		bg.getColor().a = 0.6f;
@@ -63,8 +80,8 @@ public class ViewInfoDaiLySmall extends View {
 
 		addActor(btnClose);
 
-		lbTfTitle = new TextfieldStatic[10];
-		lbTfInfo = new TextfieldStatic[10];
+		lbTfTitle = new TextfieldStatic[12];
+		lbTfInfo = new TextfieldStatic[12];
 
 		lbTfTitle[0] = new TextfieldStatic("Tên đại lý",
 				Style.ins.getLabelStyle(15), Color.BLACK, 190);
@@ -84,10 +101,14 @@ public class ViewInfoDaiLySmall extends View {
 				Style.ins.getLabelStyle(15), Color.BLACK, 190);
 		lbTfTitle[8] = new TextfieldStatic("Tên thiết bị",
 				Style.ins.getLabelStyle(15), Color.BLACK, 190);
-		lbTfTitle[9] = new TextfieldStatic("Trạng thái",
+		lbTfTitle[9] = new TextfieldStatic("Imei bị khóa",
+				Style.ins.getLabelStyle(15), Color.BLACK, 190);
+		lbTfTitle[10] = new TextfieldStatic("Tên bị khóa",
+				Style.ins.getLabelStyle(15), Color.BLACK, 190);
+		lbTfTitle[11] = new TextfieldStatic("Trạng thái",
 				Style.ins.getLabelStyle(15), Color.BLACK, 190);
 
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < lbTfInfo.length; i++)
 			lbTfInfo[i] = new TextfieldStatic("", Style.ins.getLabelStyle(15),
 					Color.BLACK, 190);
 
@@ -97,21 +118,36 @@ public class ViewInfoDaiLySmall extends View {
 				Assets.instance.fontFactory.getFont(30, fontType.Medium),
 				Color.BLUE));
 		this.add(lbTitle).padTop(10).padBottom(10).colspan(2).row();
-		for (int i = 0; i < 10; i++) {
-			this.add(lbTfTitle[i]).padTop(5);
-			this.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
+		for (int i = 0; i < lbTfInfo.length; i++) {
+			content.add(lbTfTitle[i]).padTop(5);
+			content.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
 		}
+		this.add(scroll).width(getWidth()).height(scroll.getHeight());
 		setTransform(true);
 	}
 
-	public View show(String... info) {
+	public ViewInfoDaiLySmall show(JsonValue infoUser) {
+		String[] a = new String[] {
+				infoUser.getString(ExtParamsKey.AGENCY_NAME),
+				infoUser.getString(ExtParamsKey.FULL_NAME),
+				Factory.getStrMoney(infoUser.getInt(ExtParamsKey.AMOUNT)) + " "
+						+ infoUser.getString(ExtParamsKey.CURRENCY),
+				infoUser.getString(ExtParamsKey.REF_CODE),
+				infoUser.getString(ExtParamsKey.ROLE_NAME),
+				infoUser.getString(ExtParamsKey.ADDRESS),
+				infoUser.getString(ExtParamsKey.EMAIL),
+				Factory.getDeviceName(infoUser), Factory.getDeviceID(infoUser),
+				Factory.getDeviceNameBlock(infoUser),
+				Factory.getDeviceIDBlock(infoUser),
+				infoUser.getString(ExtParamsKey.STATE) };
+		show(a);
+		return this;
+	}
+
+	public ViewInfoDaiLySmall show(String... info) {
 		clear();
+		content.clear();
 		addActor(btnClose);
-		this.add(lbTitle).padTop(10).padBottom(10).colspan(2).row();
-		for (int i = 0; i < 10; i++) {
-			this.add(lbTfTitle[i]).padTop(5);
-			this.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
-		}
 
 		setOrigin(Align.center);
 		getStage().addActor(bg);
@@ -123,16 +159,27 @@ public class ViewInfoDaiLySmall extends View {
 		btnClose.setScale(1);
 		setPosition(Constants.WIDTH_SCREEN / 2, Constants.HEIGHT_SCREEN / 2,
 				Align.center);
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < info.length; i++)
 			lbTfInfo[i].setContent(info[i]);
-		int state = Integer.parseInt(info[9]);
+		int state = Integer.parseInt(info[info.length - 1]);
 		if (state == 0) {
-			lbTfInfo[9].setContent("Chưa kích hoạt");
+			lbTfInfo[info.length - 1].setContent("Chưa kích hoạt");
 		} else if (state == 1) {
-			lbTfInfo[9].setContent("Hoạt động bình thường");
+			lbTfInfo[info.length - 1].setContent("Hoạt động bình thường");
 		} else {
-			lbTfInfo[9].setContent("Bị khóa");
+			lbTfInfo[info.length - 1].setContent("Bị khóa");
 		}
+
+		this.add(lbTitle).padTop(10).padBottom(10).row();
+		for (int i = 0; i < info.length; i++) {
+			content.add(lbTfTitle[i]).padTop(5);
+			content.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
+		}
+		this.add(scroll).width(getWidth()).height(scroll.getHeight());
+		row();
+		this.add(btn).width(getWidth()).height(50).padTop(30);
+		numButton++;
+
 		super.show(null);
 		clearActions();
 		setScale(0.8f);
@@ -140,6 +187,24 @@ public class ViewInfoDaiLySmall extends View {
 		addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.fade));
 		addAction(Actions.fadeIn(0.2f, Interpolation.fade));
 		return this;
+	}
+
+	int	numButton	= 0;
+
+	public void addButton(String text, ClickListener listener) {
+		TextButton btn = new TextButton(text, Style.ins.textButtonStyle);
+		btn.addListener(listener);
+		if (btn.getLabel().getTextBounds().width > 100)
+			this.btn.add(btn).padTop(5).padLeft(8).padRight(8)
+					.width(btn.getLabel().getTextBounds().width + 10)
+					.height(50);
+		else
+			this.btn.add(btn).padTop(5).padLeft(8).padRight(8).width(100)
+					.height(50);
+		numButton++;
+		if (numButton % 3 == 1)
+			this.btn.row();
+
 	}
 
 	@Override
@@ -164,13 +229,14 @@ public class ViewInfoDaiLySmall extends View {
 				Actions.scaleTo(0.5f, 0.5f, 0.2f, Interpolation.fade),
 				Actions.hide()), Actions.fadeOut(0.2f, Interpolation.fade)),
 				Actions.run(new Runnable() {
-
 					@Override
 					public void run() {
 						if (listener != null)
 							listener.done();
 					}
 				})));
+		btn.clear();
+		numButton = 0;
 	}
 
 	@Override
@@ -178,4 +244,5 @@ public class ViewInfoDaiLySmall extends View {
 		super.back();
 		getViewController().removeView(getName());
 	}
+
 }

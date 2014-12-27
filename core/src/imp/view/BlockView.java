@@ -28,21 +28,21 @@ import com.coder5560.game.views.View;
 public class BlockView extends View {
 
 	// public static final int LOCK_ACCOUNT = 0;
-	public static final int	LOCK_DEVICE_1	= 0;
-	public static final int	LOCK_DEVICE_2	= 1;
-	public static final int	LOCK_DEVICE_3	= 2;
+	public static final int LOCK_DEVICE_1 = 0;
+	public static final int LOCK_DEVICE_2 = 1;
+	public static final int LOCK_DEVICE_3 = 2;
 
-	Image					bg;
-	Table					content;
-	String					phone;
-	Array<String>			imeis;
-	OnSelectListener		onSelectListener;
+	Image bg;
+	Table content;
+	String phone;
+	Array<String> imeis;
+	OnSelectListener onSelectListener;
 	/*
 	 * == 1 : khoa
 	 * 
 	 * == 2 : mo khoa
 	 */
-	int						type			= 1;
+	int type = 1;
 
 	public BlockView(int type, String phone, Array<String> imeis) {
 		super();
@@ -110,7 +110,7 @@ public class BlockView extends View {
 
 		for (int i = 0; i < imeis.size; i++) {
 			final int index = i;
-			CustomTextButton customTextImei = getTextButton(imeis.get(0),
+			CustomTextButton customTextImei = getTextButton(imeis.get(i),
 					style, Style.ins.np2, Color.GREEN, Color.BLACK,
 					new OnClickListener() {
 						@Override

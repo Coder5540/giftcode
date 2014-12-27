@@ -14,6 +14,7 @@ import com.aia.appsreport.component.table.AbstractTable;
 import com.aia.appsreport.component.table.ItemGiftCodeNormal;
 import com.aia.appsreport.component.table.ItemGiftCodeUsed;
 import com.aia.appsreport.component.table.ItemTable;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.Color;
@@ -40,19 +41,22 @@ import com.coder5560.game.views.View;
 
 public class ViewGiftCode extends View {
 
-	private Group			groupPartner;
-	private PartnerPicker	partnerGiftCode;
-	private PartnerPicker	partnerState;
-	private Label			lbTitle;
+	private Group groupPartner;
+	private PartnerPicker partnerGiftCode;
+	private PartnerPicker partnerState;
+	private Label lbTitle;
 
-	private AbstractTable	tableNormal;
-	private AbstractTable	tableUsed;
-	private Page			page;
+	private AbstractTable tableNormal;
+	private AbstractTable tableUsed;
+	private Page page;
 
-	private JsonValue		responeNormal;
-	private JsonValue		responeReturn;
-	private JsonValue		responeUsed;
-	private Table			tbContent;
+	private ItemGiftCodeNormal currentItem;
+
+	private JsonValue responeNormal;
+	private JsonValue responeReturn;
+	private JsonValue responeChangeState;
+	private JsonValue responeUsed;
+	private Table tbContent;
 
 	public void buildComponent() {
 		this.top();
@@ -114,16 +118,17 @@ public class ViewGiftCode extends View {
 				Color.BLUE));
 		lbTitle.setVisible(false);
 
-		float[] widthColNormal = { 50, 120, 100, 150, 150, 150, 120 };
+		float[] widthColNormal = { 50, 150, 120, 100, 150, 150, 150, 260 };
 		tableNormal = new AbstractTable(new Table(), widthColNormal);
-		String[] titleNormal = { "STT", "Gift code", "Tiền", "Tiền trong game",
-				"Ngày hết hạn", "Trạng thái", "" };
+		String[] titleNormal = { "STT", "ID", "Gift code", "Tiền",
+				"Tiền trong game", "Ngày hết hạn", "Trạng thái", "" };
 		tableNormal.setTitle(titleNormal);
 
-		float[] widthColUsed = { 50, 120, 100, 150, 150, 150, 150, 150 };
+		float[] widthColUsed = { 50, 150, 120, 100, 150, 150, 150, 150, 150 };
 		tableUsed = new AbstractTable(new Table(), widthColUsed);
-		String[] titleUsed = { "STT", "Gift code", "Tiền", "Tiền trong game",
-				"Ngày hết hạn", "Ngày sử dụng", "Người nạp", "Trạng thái" };
+		String[] titleUsed = { "STT", "ID", "Gift code", "Tiền",
+				"Tiền trong game", "Ngày hết hạn", "Ngày sử dụng", "Người nạp",
+				"Trạng thái" };
 		tableUsed.setTitle(titleUsed);
 
 		page = new Page(getWidth(), 60);
@@ -159,23 +164,56 @@ public class ViewGiftCode extends View {
 						int money_in_game = content
 								.getInt(ExtParamsKey.MONEY_IN_GAME);
 						long time = content.getLong(ExtParamsKey.DATE_EXPIRE);
-						int isSold = content.getInt(ExtParamsKey.IS_SOLD);
+						final int isSold = content.getInt(ExtParamsKey.IS_SOLD);
 						String state;
-						if (isSold == 0) {
-							state = "Chưa bán";
-						} else {
-							state = "Đã bán";
-						}
-
 						final String id = content.getString(ExtParamsKey.ID);
 						final ItemGiftCodeNormal item = new ItemGiftCodeNormal(
-								tableNormal, new String[] {
+								tableNormal, isSold, new String[] {
 										"" + (i + 1),
+										id,
 										giftCode,
 										money + " " + currency,
 										"" + money_in_game,
 										DateTime.getStringDate(time,
-												DateTime.FORMAT), state });
+												DateTime.FORMAT) });
+						item.btCopy.addListener(new ClickListener() {
+							@Override
+							public void clicked(InputEvent event, float x,
+									float y) {
+								super.clicked(event, x, y);
+								Gdx.app.getClipboard().setContents(
+										"CODE : " + giftCode + " ID : " + id);
+								Toast.makeText(getStage(),
+										"Đã copy vào bộ nhớ đệm",
+										Toast.LENGTH_SHORT);
+							}
+						});
+						if (isSold == 0) {
+							item.btSell.addListener(new ClickListener() {
+								@Override
+								public void clicked(InputEvent event, float x,
+										float y) {
+									super.clicked(event, x, y);
+									DialogCustom dl = new DialogCustom("");
+									dl.text("Bạn có chắc chắn muốn đã bán Gift Code này");
+									dl.button("Ok", new Runnable() {
+										@Override
+										public void run() {
+											Loading.ins.show(ViewGiftCode.this);
+											currentItem = item;
+											Request.getInstance()
+													.setStateGiftCode(
+															AppPreference.instance.name,
+															giftCode,
+															1,
+															new ChangeStateGiftCode());
+										}
+									});
+									dl.button("Hủy");
+									dl.show(getStage());
+								}
+							});
+						}
 
 						item.btReturn.addListener(new ClickListener() {
 							@Override
@@ -250,9 +288,11 @@ public class ViewGiftCode extends View {
 						} else {
 							state = "Trả lại";
 						}
+						final String id = content.getString(ExtParamsKey.ID);
 						ItemGiftCodeUsed item = new ItemGiftCodeUsed(tableUsed,
 								new String[] {
 										"" + (i + 1),
+										id,
 										giftCode,
 										money + "" + currency,
 										"" + money_in_game,
@@ -278,6 +318,17 @@ public class ViewGiftCode extends View {
 				Toast.makeText(_stage, mess, Toast.LENGTH_SHORT);
 			}
 			responeUsed = null;
+		}
+
+		if (responeChangeState != null) {
+			Loading.ins.hide();
+			boolean resut = responeChangeState.getBoolean(ExtParamsKey.RESULT);
+			if (resut) {
+				currentItem.changeStateSold();
+			}
+			String mess = responeChangeState.getString(ExtParamsKey.MESSAGE);
+			Toast.makeText(_stage, mess, Toast.LENGTH_SHORT);
+			responeChangeState = null;
 		}
 
 		if (responeReturn != null) {
@@ -317,8 +368,8 @@ public class ViewGiftCode extends View {
 				table.setScrollX(0);
 				table.setScrollY(0);
 				table.addAction(Actions.sequence(
-						Actions.alpha(0, 0.5f, Interpolation.exp5Out),
-						Actions.alpha(1, 0.5f, Interpolation.exp5Out)));
+						Actions.alpha(0, 0.2f, Interpolation.exp5Out),
+						Actions.alpha(1, 0.2f, Interpolation.exp5Out)));
 				table.removeAll();
 				for (int i = 0; i < page.getCurrentDataPage().size(); i++) {
 					ItemTable item = page.getCurrentDataPage().get(i);
@@ -382,6 +433,26 @@ public class ViewGiftCode extends View {
 		@Override
 		public void handleHttpResponse(HttpResponse httpResponse) {
 			responeReturn = (new JsonReader()).parse(httpResponse
+					.getResultAsString());
+		}
+
+		@Override
+		public void failed(Throwable t) {
+
+		}
+
+		@Override
+		public void cancelled() {
+
+		}
+
+	}
+
+	class ChangeStateGiftCode implements HttpResponseListener {
+
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			responeChangeState = (new JsonReader()).parse(httpResponse
 					.getResultAsString());
 		}
 

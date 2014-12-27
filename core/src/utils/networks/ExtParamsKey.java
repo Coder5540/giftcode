@@ -95,4 +95,5 @@ public class ExtParamsKey {
 	public static final String	ACTIVITY_TYPE				= "activity_type";
 	public static final String	MONEY_CHANGE				= "money_change";
 	public static final String	MONEY_RECEIVE				= "money_receive";
+	public static final String	MONEY_REMAIN				= "money_remain";
 }

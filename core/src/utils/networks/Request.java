@@ -499,21 +499,22 @@ public class Request {
 										+ ConnectionConfig.CLIENT_KEY)).build(),
 				listener);
 	}
+
 	public void unLockLoginDevice(String agencyAdmin, String agencyBlock,
 			String deviceID, String deviceName, HttpResponseListener listener) {
 		Log.d(agencyAdmin + " " + agencyBlock + " " + deviceID + " "
 				+ deviceName);
 		post(CommandRequest.UNLOCK_LOGIN_DEVICE,
 				ParamsBuilder
-				.builder()
-				.add(ExtParamsKey.AGENCY_ADMIN, agencyAdmin)
-				.add(ExtParamsKey.AGENCY_BLOCK, agencyBlock)
-				.add(ExtParamsKey.DEVICE_ID, deviceID)
-				.add(ExtParamsKey.DEVICE_NAME, deviceName)
-				.add(ExtParamsKey.SIGNATURE,
-						hash(agencyAdmin + deviceID + deviceName
-								+ ConnectionConfig.CLIENT_KEY)).build(),
-								listener);
+						.builder()
+						.add(ExtParamsKey.AGENCY_ADMIN, agencyAdmin)
+						.add(ExtParamsKey.AGENCY_BLOCK, agencyBlock)
+						.add(ExtParamsKey.DEVICE_ID, deviceID)
+						.add(ExtParamsKey.DEVICE_NAME, deviceName)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyAdmin + deviceID + deviceName
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
 	}
 
 	public void getListMoney(String agencyName, HttpResponseListener listener) {
@@ -569,5 +570,57 @@ public class Request {
 				listener);
 	}
 
+	public void getAllAgency(String agency_name, int role_id,
+			HttpResponseListener listener) {
+		post(CommandRequest.GET_ALL_AGENCY,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agency_name)
+						.add(ExtParamsKey.ROLE_ID, role_id)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agency_name + role_id
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
 
+	public void changeAgencyRoleName(String agency_name, int new_role_id,
+			HttpResponseListener listener) {
+		post(CommandRequest.CHANGE_AGENCY_ROLE,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agency_name)
+						.add(ExtParamsKey.ROLE_ID, new_role_id)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agency_name + new_role_id
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
+
+	public void getTotalMoneyInfo(String name, HttpResponseListener listener) {
+		post(CommandRequest.TOTAL_MONEY_OVERVIEW,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, name)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(name + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void sendMoneyFromAdmin(String name, String pass,
+			String receiveName, String amount, String currency, String note,
+			HttpResponseListener listener) {
+		post(CommandRequest.TRANSFER_MONEY_FROM_ADMIN,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_TRANSFER, name)
+						.add(ExtParamsKey.PASSWORD, pass)
+						.add(ExtParamsKey.AGENCY_RECEIVE, receiveName)
+						.add(ExtParamsKey.AMOUNT, amount)
+						.add(ExtParamsKey.CURRENCY, currency)
+						.add(ExtParamsKey.NOTE, note)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(name + pass + receiveName
+										+ ConnectionConfig.CLIENT_KEY)).build(),
+				listener);
+	}
 }

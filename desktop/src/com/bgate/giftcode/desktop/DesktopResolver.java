@@ -61,7 +61,7 @@ public class DesktopResolver implements PlatformResolver {
 
 	@Override
 	public String getCountryCode() {
-		return "+84";
+		return "84";
 	}
 
 }

@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.enums.Direct;
 
 public class Factory {
-	public static TextInputHelper	helper;
+	public static TextInputHelper helper;
 
 	public static int getNext(int curentValue, int min, int max) {
 		curentValue = clamp(curentValue, min, max);
@@ -43,30 +43,30 @@ public class Factory {
 
 	public static Vector2 getPosition(Rectangle bounds, Direct direct) {
 		switch (direct) {
-			case TOP_LEFT:
-				return new Vector2(bounds.x, bounds.y + bounds.height);
-			case TOP_RIGHT:
-				return new Vector2(bounds.x + bounds.width, bounds.y
-						+ bounds.height);
-			case TOP:
-				return new Vector2(bounds.x + bounds.width / 2, bounds.y
-						+ bounds.height);
-			case BOTTOM:
-				return new Vector2(bounds.x + bounds.width / 2, bounds.y);
-			case BOTTOM_LEFT:
-				return new Vector2(bounds.x, bounds.y);
-			case BOTTOM_RIGHT:
-				return new Vector2(bounds.x + bounds.width, bounds.y);
-			case MIDDLE:
-				return new Vector2(bounds.x + bounds.width / 2, bounds.y
-						+ bounds.height / 2);
-			case MIDDLE_LEFT:
-				return new Vector2(bounds.x, bounds.y + bounds.height / 2);
-			case MIDDLE_RIGHT:
-				return new Vector2(bounds.x + bounds.width, bounds.y
-						+ bounds.height / 2);
-			default:
-				return new Vector2();
+		case TOP_LEFT:
+			return new Vector2(bounds.x, bounds.y + bounds.height);
+		case TOP_RIGHT:
+			return new Vector2(bounds.x + bounds.width, bounds.y
+					+ bounds.height);
+		case TOP:
+			return new Vector2(bounds.x + bounds.width / 2, bounds.y
+					+ bounds.height);
+		case BOTTOM:
+			return new Vector2(bounds.x + bounds.width / 2, bounds.y);
+		case BOTTOM_LEFT:
+			return new Vector2(bounds.x, bounds.y);
+		case BOTTOM_RIGHT:
+			return new Vector2(bounds.x + bounds.width, bounds.y);
+		case MIDDLE:
+			return new Vector2(bounds.x + bounds.width / 2, bounds.y
+					+ bounds.height / 2);
+		case MIDDLE_LEFT:
+			return new Vector2(bounds.x, bounds.y + bounds.height / 2);
+		case MIDDLE_RIGHT:
+			return new Vector2(bounds.x + bounds.width, bounds.y
+					+ bounds.height / 2);
+		default:
+			return new Vector2();
 		}
 	}
 
@@ -157,7 +157,7 @@ public class Factory {
 
 	public static String getDotMoney(int money) {
 		String str = "";
-		while (money > 1000) {
+		while (money >= 1000) {
 			int temp = money % 1000;
 			if (temp < 10)
 				str = ".00" + money % 1000 + str;
@@ -198,8 +198,8 @@ public class Factory {
 		return substr;
 	}
 
-	static String	monthNames[]	= { "Jan", "Feb", "Mar", "Apr", "May",
-			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	static String monthNames[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
 	@SuppressWarnings("deprecation")
 	public static String getTime(long time) {
@@ -240,8 +240,9 @@ public class Factory {
 				}
 			}
 		}
-		if (!imeiDevice.equalsIgnoreCase("")&&String.valueOf(imeiDevice.charAt(imeiDevice.length() - 1))
-				.equalsIgnoreCase(",")) {
+		if (!imeiDevice.equalsIgnoreCase("")
+				&& String.valueOf(imeiDevice.charAt(imeiDevice.length() - 1))
+						.equalsIgnoreCase(",")) {
 			imeiDevice = imeiDevice.substring(0, imeiDevice.length() - 2);
 		}
 		return imeiDevice;
@@ -259,13 +260,55 @@ public class Factory {
 				}
 			}
 		}
-		if (!nameDevice.equalsIgnoreCase("")&& String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
-				.equalsIgnoreCase(",")) {
+		if (!nameDevice.equalsIgnoreCase("")
+				&& String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
+						.equalsIgnoreCase(",")) {
 			nameDevice = nameDevice.substring(0, nameDevice.length() - 2);
 		}
 		return nameDevice;
 	}
-	public static String getListByKey(String parameterKey,JsonValue jsonValue) {
+
+	public static String getDeviceIDBlock(JsonValue jsonValue) {
+		JsonValue responeDevices = jsonValue.get(ExtParamsKey.DEVICE_ID_BLOCK);
+		String imeiDevice = "";
+		for (int i = 0; i < responeDevices.size; i++) {
+			if (!responeDevices.getString(i).equalsIgnoreCase("")
+					&& !responeDevices.getString(i).equalsIgnoreCase("null")) {
+				imeiDevice += responeDevices.getString(i);
+				if (i < responeDevices.size - 1) {
+					imeiDevice += ",";
+				}
+			}
+		}
+		if (!imeiDevice.equalsIgnoreCase("")
+				&& String.valueOf(imeiDevice.charAt(imeiDevice.length() - 1))
+						.equalsIgnoreCase(",")) {
+			imeiDevice = imeiDevice.substring(0, imeiDevice.length() - 2);
+		}
+		return imeiDevice;
+	}
+
+	public static String getDeviceNameBlock(JsonValue jsonValue) {
+		JsonValue responseNames = jsonValue.get(ExtParamsKey.DEVICE_NAME_BLOCK);
+		String nameDevice = "";
+		for (int i = 0; i < responseNames.size; i++) {
+			if (!responseNames.getString(i).equalsIgnoreCase("")
+					&& !responseNames.getString(i).equalsIgnoreCase("null")) {
+				nameDevice += responseNames.getString(i);
+				if (i < responseNames.size - 1) {
+					nameDevice += ",";
+				}
+			}
+		}
+		if (!nameDevice.equalsIgnoreCase("")
+				&& String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
+						.equalsIgnoreCase(",")) {
+			nameDevice = nameDevice.substring(0, nameDevice.length() - 2);
+		}
+		return nameDevice;
+	}
+
+	public static String getListByKey(String parameterKey, JsonValue jsonValue) {
 		JsonValue responseNames = jsonValue.get(parameterKey);
 		String nameDevice = "";
 		for (int i = 0; i < responseNames.size; i++) {
@@ -277,8 +320,9 @@ public class Factory {
 				}
 			}
 		}
-		if (!nameDevice.equalsIgnoreCase("")&& String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
-				.equalsIgnoreCase(",")) {
+		if (!nameDevice.equalsIgnoreCase("")
+				&& String.valueOf(nameDevice.charAt(nameDevice.length() - 1))
+						.equalsIgnoreCase(",")) {
 			nameDevice = nameDevice.substring(0, nameDevice.length() - 2);
 		}
 		return nameDevice;

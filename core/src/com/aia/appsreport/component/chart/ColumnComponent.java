@@ -39,6 +39,25 @@ public class ColumnComponent extends Group {
 			lbvalue.setText(strValue);
 		}
 	}
+	
+	public ColumnComponent(long value, Color color) {
+		this.value = value;
+		style = new LabelStyle(Assets.instance.fontFactory.getFont(20,
+				fontType.Regular), Color.BLACK);
+		bg = new Image(new NinePatch(new TextureRegion(new Texture(
+				Gdx.files.internal("Img/ninepatch_vien.png"))), 1, 1, 1, 1));
+		bg.setColor(color);
+		lbvalue = new Label(value + "", style);
+		addActor(bg);
+		addActor(lbvalue);
+		bg.setPosition(getX(), getY());
+		if (value == 0) {
+			lbvalue.setText("");
+		} else {
+			String strValue = StringUtil.getStrMoney(value);
+			lbvalue.setText(strValue);
+		}
+	}
 
 	@Override
 	public void setSize(float width, float height) {
