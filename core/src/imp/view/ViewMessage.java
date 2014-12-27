@@ -62,7 +62,6 @@ public class ViewMessage extends View {
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, Color.WHITE)));
 		top();
-		debug();
 		add(lbShortDescription).expand().fill().align(Align.top).padLeft(20)
 				.padTop(20).padRight(20);
 		row();

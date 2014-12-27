@@ -1,6 +1,7 @@
 package imp.view;
 
 import utils.factory.AppPreference;
+import utils.factory.Factory;
 import utils.factory.Log;
 import utils.factory.PlatformResolver.OnResultListener;
 import utils.networks.ExtParamsKey;
@@ -29,12 +30,12 @@ import com.coder5560.game.views.View;
 
 public class ViewAdminRequest extends View {
 
-	private JsonValue respone, responeGetActiveCode;
-	Table content = new Table();
-	private AbstractTable tableContent;
-	String activeCode = "";
-	String phone = "";
-	boolean isSend = false, isFailGetActive = false;
+	private JsonValue		respone, responeGetActiveCode;
+	Table					content		= new Table();
+	private AbstractTable	tableContent;
+	String					activeCode	= "";
+	String					phone		= "";
+	boolean					isSend		= false, isFailGetActive = false;
 
 	@Override
 	public String getLabel() {
@@ -137,8 +138,8 @@ public class ViewAdminRequest extends View {
 										infoUser.getString(ExtParamsKey.ROLE_NAME),
 										infoUser.getString(ExtParamsKey.ADDRESS),
 										infoUser.getString(ExtParamsKey.EMAIL),
-										infoUser.getString(ExtParamsKey.DEVICE_NAME),
-										infoUser.getString(ExtParamsKey.DEVICE_ID),
+										(Factory.getDeviceName(infoUser)),
+										(Factory.getDeviceID(infoUser)),
 										infoUser.getString(ExtParamsKey.STATE) }) {
 							@Override
 							public void click() {
@@ -154,8 +155,8 @@ public class ViewAdminRequest extends View {
 												infoUser.getString(ExtParamsKey.REF_CODE),
 												infoUser.getString(ExtParamsKey.AMOUNT),
 												infoUser.getString(ExtParamsKey.EMAIL),
-												infoUser.getString(ExtParamsKey.DEVICE_ID),
-												infoUser.getString(ExtParamsKey.DEVICE_NAME),
+												(Factory.getDeviceName(infoUser)),
+												(Factory.getDeviceID(infoUser)),
 												infoUser.getString(ExtParamsKey.STATE));
 								TextButton btnActive = new TextButton(
 										"Kích hoạt", this.btSet.getStyle());

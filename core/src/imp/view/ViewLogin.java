@@ -49,6 +49,7 @@ public class ViewLogin extends View {
 	private CustomTextField	tfName;
 	private CustomTextField	tfPass;
 	private JsonValue		respone;
+	private JsonValue		responeInfoDaily;
 	Label					btnRegister, btnActive;
 	CustomDialog			dialogConfirm;
 	View					view;
@@ -320,12 +321,10 @@ public class ViewLogin extends View {
 				}
 				int role_id = respone.getInt(ExtParamsKey.ROLE_ID);
 				UserInfo.getInstance().setRoleId(role_id);
-				// HomeView homeView = new HomeView();
-				// homeView.build(getStage(), getViewController(),
-				// StringSystem.VIEW_HOME, new Rectangle(0, 0,
-				// Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
-				// - Constants.HEIGHT_ACTIONBAR));
-				// homeView.buildComponent();
+				int id = respone.getInt(ExtParamsKey.ROLE_ID);
+				AppPreference.instance.type = id;
+				AppPreference.instance.flush();
+				
 				TopBarView topBarView = new TopBarView();
 				topBarView.build(getStage(), getViewController(),
 						StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
@@ -341,9 +340,7 @@ public class ViewLogin extends View {
 						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
 								Constants.HEIGHT_SCREEN));
 				mainMenu.buildComponent();
-				int id = respone.getInt(ExtParamsKey.ROLE_ID);
-				AppPreference.instance.type = id;
-				AppPreference.instance.flush();
+
 				if (id == RoleID.USER_MANAGER) {
 					ViewUserManager view = new ViewUserManager();
 					view.build(getStage(), getViewController(),
@@ -361,39 +358,18 @@ public class ViewLogin extends View {
 						public void done() {
 							mainMenu.hide(null);
 							mainMenu.getUserData();
-				getViewController()
+							getViewController()
 									.getView(StringSystem.VIEW_LOGIN)
 									.hide(null);
 						}
 					});
 				} else {
-//					ViewLogMoneyChart viewLogMoneyChart = new ViewLogMoneyChart();
-//					viewLogMoneyChart.build(getStage(), getViewController(),
-//							StringSystem.VIEW_HOME, new Rectangle(0, 0,
-//									Constants.WIDTH_SCREEN,
-//									Constants.HEIGHT_SCREEN));
-//					viewLogMoneyChart.buildComponent();
-//					viewLogMoneyChart.show(
-//
-//					new OnCompleteListener() {
-//						@Override
-//						public void onError() {
-//						}
-//
-//						@Override
-//						public void done() {
-//							mainMenu.hide(null);
-//							mainMenu.getUserData();
-//							getViewController()
-//									.getView(StringSystem.VIEW_LOGIN)
-//									.hide(null);
-//						}
-//					});
 					HomeViewV2 homeViewV2 = new HomeViewV2();
 					homeViewV2.build(getStage(), getViewController(),
 							StringSystem.VIEW_HOME, new Rectangle(0, 0,
 									Constants.WIDTH_SCREEN,
-									Constants.HEIGHT_SCREEN- Constants.HEIGHT_ACTIONBAR));
+									Constants.HEIGHT_SCREEN
+											- Constants.HEIGHT_ACTIONBAR));
 					homeViewV2.buildComponent();
 					homeViewV2.show(
 
@@ -412,6 +388,7 @@ public class ViewLogin extends View {
 						}
 					});
 				}
+
 			} else {
 				// login success but the device is not active. show dialog
 				// confirm
@@ -452,6 +429,37 @@ public class ViewLogin extends View {
 			}
 			respone = null;
 		}
+
+		if (responeInfoDaily != null) {
+			Loading.ins.hide();
+			Log.d(responeInfoDaily.toString());
+			boolean result = responeInfoDaily.getBoolean(ExtParamsKey.RESULT);
+			if (result) {
+				UserInfo.fullName = responeInfoDaily
+						.getString(ExtParamsKey.FULL_NAME);
+				UserInfo.address = responeInfoDaily
+						.getString(ExtParamsKey.ADDRESS);
+				UserInfo.level = responeInfoDaily
+						.getString(ExtParamsKey.ROLE_NAME);
+				UserInfo.phone = AppPreference.instance.getName();
+				UserInfo.phoneNGT = responeInfoDaily
+						.getString(ExtParamsKey.REF_CODE);
+				UserInfo.money = responeInfoDaily.getInt(ExtParamsKey.AMOUNT);
+				UserInfo.currency = responeInfoDaily
+						.getString(ExtParamsKey.CURRENCY);
+				UserInfo.email = responeInfoDaily.getString(ExtParamsKey.EMAIL);
+
+				UserInfo.imeiDevice = Factory.getDeviceID(responeInfoDaily);
+				UserInfo.nameDevice = Factory.getDeviceName(responeInfoDaily);
+
+				UserInfo.state = responeInfoDaily.getInt(ExtParamsKey.STATE);
+			}
+			updateData();
+			responeInfoDaily = null;
+		}
+	}
+
+	private void updateData() {
 	}
 
 	@Override
@@ -526,6 +534,28 @@ public class ViewLogin extends View {
 														public void cancelled() {
 															Log.d("On Login Cancel :",
 																	"Login is cancel");
+														}
+													};
+
+	HttpResponseListener	onGetinfoListener		= new HttpResponseListener() {
+
+														@Override
+														public void handleHttpResponse(
+																HttpResponse httpResponse) {
+															responeInfoDaily = (new JsonReader())
+																	.parse(httpResponse
+																			.getResultAsString());
+														}
+
+														@Override
+														public void failed(
+																Throwable t) {
+
+														}
+
+														@Override
+														public void cancelled() {
+
 														}
 													};
 

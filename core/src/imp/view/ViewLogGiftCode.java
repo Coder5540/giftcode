@@ -53,47 +53,49 @@ import com.coder5560.game.views.View;
 
 public class ViewLogGiftCode extends View {
 
-	AbstractTable content;
-	Page pages;
-	boolean isLoad = true;
+	AbstractTable		content;
+	Page				pages;
+	boolean				isLoad					= true;
 
-	DatePicker dateFrom;
-	DatePicker dateTo;
-	CustomTextField tfSearch;
-	PartnerPicker partner;
-	PartnerPicker partnerFun;
-	TextButton btnXem;
-	Group gExtendDate;
-	boolean isExtend = false;
-	Image iconsortby;
+	DatePicker			dateFrom;
+	DatePicker			dateTo;
+	CustomTextField		tfSearch;
+	PartnerPicker		partner;
+	PartnerPicker		partnerFun;
+	TextButton			btnXem;
+	Group				gExtendDate;
+	boolean				isExtend				= false;
+	Image				iconsortby;
 
-	Actor colHoten;
-	Actor colThoigian;
-	int sortby;
-	int sorttype;
-	static final int HOTEN = 1;
-	static final int THOIGIAN = 2;
-	static final int TOPDOWN = 1;
-	static final int BOTTOMUP = 2;
+	Actor				colHoten;
+	Actor				colThoigian;
+	int					sortby;
+	int					sorttype;
+	static final int	HOTEN					= 1;
+	static final int	THOIGIAN				= 2;
+	static final int	TOPDOWN					= 1;
+	static final int	BOTTOMUP				= 2;
 
-	float widthCol[] = { 50, 150, 200, 200, 220, 220, 220, 150, 150 };
-	String title[] = { "STT", "Số điện thoại", "Họ tên", "Hoạt động",
-			"Số tiền trước giao dịch", "Số tiền sau giao dịch",
-			"Số tiền giao dịch", "Đơn vị", "Thời gian" };
+	float				widthCol[]				= { 50, 150, 200, 200, 220,
+			220, 220, 150, 150					};
+	String				title[]					= { "STT", "Số điện thoại",
+			"Họ tên", "Hoạt động", "Số tiền trước giao dịch",
+			"Số tiền sau giao dịch", "Số tiền giao dịch", "Đơn vị", "Thời gian" };
 
-	boolean isLoadByName;
-	String responseByName;
-	boolean isLoadByRoleId;
-	String reponseByRoleId;
+	boolean				isLoadByName;
+	String				responseByName;
+	boolean				isLoadByRoleId;
+	String				reponseByRoleId;
 
-	boolean isChange;
-	String stateofpartnerFun = "0";
-	String laststateofpartnerFun = "0";
+	boolean				isChange;
+	String				stateofpartnerFun		= "0";
+	String				laststateofpartnerFun	= "0";
 
-	Image iconextendDate;
-	PartnerSelectBox quickDatePicker;
-	boolean isChangeFun;
-	int stateFun;
+	Image				iconextendDate;
+	PartnerSelectBox	quickDatePicker;
+	boolean				isChangeFun;
+	int					stateFun;
+	private String		username;
 
 	// int typeView;
 	// public static int TYPE_SEND = 0;
@@ -311,6 +313,10 @@ public class ViewLogGiftCode extends View {
 		if (UserInfo.getInstance().getRoleId() == 3) {
 			partnerFun.addPartner(0, "Cá nhân", "1");
 			stateofpartnerFun = "-1";
+		}
+		if (UserInfo.getInstance().getRoleId() == 4) {
+			partnerFun.addPartner(0, username, "4");
+			stateofpartnerFun = "4";
 		} else {
 			stateofpartnerFun = "0";
 			partnerFun.addPartner(0, "Tất cả", "0");
@@ -358,6 +364,11 @@ public class ViewLogGiftCode extends View {
 				if (stateofpartnerFun.equals("1")) {
 					Request.getInstance().getLogMoneyGiftCodeByName(
 							AppPreference.instance.name, dateFrom.getDate(),
+							dateTo.getDate(), new getListByName());
+					Loading.ins.show(ViewLogGiftCode.this);
+				}else if (stateofpartnerFun.equals("4")) {
+					Request.getInstance().getLogMoneyGiftCodeByName(
+							username, dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
 					Loading.ins.show(ViewLogGiftCode.this);
 				} else if (stateofpartnerFun.equals("0")) {
@@ -627,6 +638,11 @@ public class ViewLogGiftCode extends View {
 					AppPreference.instance.name, dateFrom.getDate(),
 					dateTo.getDate(), new getListByRoleId());
 			Loading.ins.show(this);
+		}else if (UserInfo.getInstance().getRoleId() == 4) {
+			Request.getInstance().getLogMoneyGiftCodeByName(
+					username, dateFrom.getDate(),
+					dateTo.getDate(), new getListByRoleId());
+			Loading.ins.show(this);
 		} else {
 			if (partnerFun.getPartnerId() == 1) {
 				Request.getInstance().getLogMoneyGiftCodeByName(
@@ -645,8 +661,14 @@ public class ViewLogGiftCode extends View {
 
 	@Override
 	public void hide(OnCompleteListener listener) {
-		toBack();
 		super.hide(listener);
+	}
+	
+	@Override
+	public void back() {
+		// TODO Auto-generated method stub
+		super.back();
+		getViewController().removeView(getName());
 	}
 
 	@Override
@@ -695,5 +717,10 @@ public class ViewLogGiftCode extends View {
 		public void cancelled() {
 			// TODO Auto-generated method stub
 		}
+	}
+
+	public void setUserName(String username) {
+		this.username = username;
+		partnerFun.getSelected().name = username;
 	}
 }

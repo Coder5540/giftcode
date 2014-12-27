@@ -1,7 +1,5 @@
 package imp.view;
 
-import org.w3c.dom.UserDataHandler;
-
 import utils.elements.Img;
 import utils.factory.FontFactory.fontType;
 import utils.factory.Log;
@@ -14,7 +12,6 @@ import utils.networks.UserInfo;
 import utils.screen.Toast;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.Color;
@@ -40,7 +37,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.RoleID;
-import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.views.IViewController;
 import com.coder5560.game.views.View;
@@ -337,11 +333,13 @@ public class ViewUserManager extends View {
 											- Constants.HEIGHT_ACTIONBAR));
 					homeViewV2.buildComponent();
 					homeViewV2.setUserName(user.phone);
+					Log.d("User Phone " + user.phone);
 					homeViewV2.show(null);
 				} else {
 					HomeViewV2 homeViewV2 = (HomeViewV2) getViewController()
 							.getView(StringSystem.VIEW_HOME_V2);
 					homeViewV2.setUserName(user.phone);
+					Log.d("User Phone 2 :" + user.phone);
 					homeViewV2.show(null);
 				}
 			}

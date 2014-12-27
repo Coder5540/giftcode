@@ -36,6 +36,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.listener.OnClickListener;
 import com.coder5560.game.views.IViewController;
 
@@ -137,12 +138,14 @@ public class ListMenu extends ScrollPane {
 				.isHasPermission(
 						PermissionConfig.PERMISSION_BAN_GIFTCODE.ordinal()))
 			itemGiftCode.addComponent(sellGiftCode);
-//		 if (UserInfo
-//		 .getInstance()
-//		 .getPermission()
-//		 .isHasPermission(
-//		 PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
-		 itemGiftCode.addComponent(listGiftcode);
+		// if (UserInfo
+		// .getInstance()
+		// .getPermission()
+		// .isHasPermission(
+		// PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
+		if (UserInfo.getInstance().getRoleId() != RoleID.USER_MANAGER) {
+			itemGiftCode.addComponent(listGiftcode);
+		}
 	}
 
 	private void createItemHistory(ItemMenu itemLog) {

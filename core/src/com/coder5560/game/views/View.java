@@ -39,7 +39,7 @@ public class View extends Table implements IViews {
 
 	@Override
 	public String getLabel() {
-		return "8B8 Gift Code";
+		return "Bài 69 Giftcode";
 	}
 
 	@Override

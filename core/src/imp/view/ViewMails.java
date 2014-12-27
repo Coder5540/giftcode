@@ -150,7 +150,7 @@ public class ViewMails extends View {
 		super.back();
 		getViewController().removeView(getName());
 		((TopBarView) getViewController().getView(StringSystem.VIEW_ACTION_BAR))
-				.setTopName("8B8 Gift Code");
+				.setTopName("Bài 69 Giftcode");
 	}
 
 	public boolean isDoneAction() {

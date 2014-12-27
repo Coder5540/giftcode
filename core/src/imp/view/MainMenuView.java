@@ -1,6 +1,5 @@
 package imp.view;
 
-import sun.applet.Main;
 import utils.elements.Img;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
@@ -86,11 +85,11 @@ public class MainMenuView extends View {
 	}
 
 	public void setBlock(boolean block) {
-		this.block = block;
-		if (block)
-			menu.setTouchable(Touchable.disabled);
-		if (!block)
-			menu.setTouchable(Touchable.enabled);
+		// this.block = block;
+		// if (block)
+		// menu.setTouchable(Touchable.disabled);
+		// if (!block)
+		// menu.setTouchable(Touchable.enabled);
 
 	}
 

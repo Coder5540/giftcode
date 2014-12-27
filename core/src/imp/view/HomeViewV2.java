@@ -17,8 +17,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -37,7 +39,7 @@ public class HomeViewV2 extends View {
 	boolean	isLoad		= false;
 
 	Table	content;
-	String	name		= "";
+	String	username		= "";
 
 	public HomeViewV2 buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
@@ -53,7 +55,11 @@ public class HomeViewV2 extends View {
 	}
 
 	public void setUserName(String name) {
-		this.name = name;
+		this.username = name;
+	}
+	 
+	public String getUserName(){
+		return this.username;
 	}
 
 	void addItem(String title, String content, ItemListener listener) {
@@ -64,9 +70,11 @@ public class HomeViewV2 extends View {
 				.padTop(5).row();
 	}
 
+	Actor	actorExit	= new Actor();
+
 	@Override
 	public void update(float delta) {
-		// TODO Auto-generated method stub
+		actorExit.act(delta);
 		if (isLoad) {
 			content.clear();
 			padTop(5);
@@ -83,8 +91,8 @@ public class HomeViewV2 extends View {
 				long tiencon = json.getLong(ExtParamsKey.MONEY_REMAIN);
 				if (tiendanhan >= 0 && UserInfo.getInstance().getRoleId() != 0) {
 					addItem("Tổng tiền đã nhận",
-							StringUtil.getDotMoney(tiendanhan) + " "+ UserInfo.currency,
-							new ItemListener() {
+							StringUtil.getDotMoney(tiendanhan) + " "
+									+ UserInfo.currency, new ItemListener() {
 								@Override
 								public void onItemClick() {
 
@@ -106,7 +114,9 @@ public class HomeViewV2 extends View {
 										viewLogReceiveChart
 												.buildComponent(ViewLogChart.TYPE_RECEIVE_MONEY);
 									}
-
+									((ViewLogChart) getViewController()
+											.getView(
+													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)).setUserName(username);
 									((ViewLogChart) getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
@@ -124,8 +134,8 @@ public class HomeViewV2 extends View {
 				}
 				if (tiendacap >= 0 && UserInfo.getInstance().getRoleId() != 3) {
 					addItem("Tổng tiền chuyển",
-							StringUtil.getDotMoney(tiendacap) + " "+ UserInfo.currency,
-							new ItemListener() {
+							StringUtil.getDotMoney(tiendacap) + " "
+									+ UserInfo.currency, new ItemListener() {
 								@Override
 								public void onItemClick() {
 									if (getViewController()
@@ -148,6 +158,9 @@ public class HomeViewV2 extends View {
 									}
 									((ViewLogChart) getViewController()
 											.getView(
+													StringSystem.VIEW_LOG_SEND_MONEY_CHART)).setUserName(username);
+									((ViewLogChart) getViewController()
+											.getView(
 													StringSystem.VIEW_LOG_SEND_MONEY_CHART))
 											.setTitleView("Thống kê tiền đã chuyển");
 									((ViewLogChart) getViewController()
@@ -163,8 +176,8 @@ public class HomeViewV2 extends View {
 							});
 				}
 				addItem("Tổng tiền sinh GiftCode",
-						StringUtil.getDotMoney(tiendasudung) + " "+ UserInfo.currency,
-						new ItemListener() {
+						StringUtil.getDotMoney(tiendasudung) + " "
+								+ UserInfo.currency, new ItemListener() {
 							@Override
 							public void onItemClick() {
 								if (getViewController()
@@ -187,6 +200,9 @@ public class HomeViewV2 extends View {
 								}
 								((ViewLogChart) getViewController()
 										.getView(
+												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART)).setUserName(username);
+								((ViewLogChart) getViewController()
+										.getView(
 												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART))
 										.setTitleView("Thống kê tiền GiftCode");
 								((ViewLogChart) getViewController()
@@ -199,8 +215,8 @@ public class HomeViewV2 extends View {
 										.show(null);
 							}
 						});
-				addItem("Tổng tiền còn lại",
-						StringUtil.getDotMoney(tiencon) + " "+ UserInfo.currency, null);
+				addItem("Tổng tiền còn lại", StringUtil.getDotMoney(tiencon)
+						+ " " + UserInfo.currency, null);
 			} else {
 				Toast.makeText(getStage(), message, 3f);
 			}
@@ -218,7 +234,7 @@ public class HomeViewV2 extends View {
 	}
 
 	void getTotalMoneyInfo() {
-		Request.getInstance().getTotalMoneyInfo(AppPreference.instance.name,
+		Request.getInstance().getTotalMoneyInfo(username,
 				new getMoneyInfoListener());
 	}
 
@@ -273,6 +289,15 @@ public class HomeViewV2 extends View {
 
 	@Override
 	public void back() {
+		if (getName().equalsIgnoreCase(StringSystem.VIEW_HOME)) {
+			if (actorExit.getActions().size > 0) {
+				Gdx.app.exit();
+			} else {
+				Toast.makeText(getStage(), "Nhấn thêm lần nữa để thoát !", 0.3f);
+				actorExit.addAction(Actions.delay(1f));
+			}
+			return;
+		}
 		super.back();
 		getViewController().removeView(getName());
 	}

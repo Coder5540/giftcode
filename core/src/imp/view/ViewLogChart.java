@@ -94,6 +94,7 @@ public class ViewLogChart extends View {
 	Label					lbContent;
 
 	long					totalMoney				= 0;
+	String username = "";
 
 	public ViewLogChart buildComponent(int type) {
 		this.typeView = type;
@@ -353,6 +354,10 @@ public class ViewLogChart extends View {
 
 		return this;
 	}
+	
+	public void setUserName(String name){
+		this.username = name;
+	}
 
 	public void setTitleView(String title) {
 		titleView.setText(title);
@@ -376,12 +381,12 @@ public class ViewLogChart extends View {
 	}
 
 	void getTotalMoneyInfo() {
-		Request.getInstance().getTotalMoneyInfo(AppPreference.instance.name,
+		Request.getInstance().getTotalMoneyInfo(username,
 				new getMoneyInfoListener());
 	}
 
 	void getListTotalMoney() {
-		Request.getInstance().getListTotalMoney(AppPreference.instance.name,
+		Request.getInstance().getListTotalMoney(username,
 				dateFrom.getDate(), dateTo.getDate(),
 				new getTotalMoneyListener());
 		gBottom.setVisible(false);
@@ -489,6 +494,8 @@ public class ViewLogChart extends View {
 										viewLogTransferMoney.setFun(1);
 									}
 									((ViewLogTransferMoney) _viewController
+											.getView(StringSystem.VIEW_LOG_SEND_MONEY)).setUserName(username);
+									((ViewLogTransferMoney) _viewController
 											.getView(StringSystem.VIEW_LOG_SEND_MONEY))
 											.show(null);
 									super.clicked(event, x, y);
@@ -538,6 +545,8 @@ public class ViewLogChart extends View {
 										viewLogTransferMoney.setFun(1);
 									}
 									((ViewLogTransferMoney) _viewController
+											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY)).setUserName(username);
+									((ViewLogTransferMoney) _viewController
 											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 											.show(null);
 									super.clicked(event, x, y);
@@ -583,6 +592,8 @@ public class ViewLogChart extends View {
 										viewlogGiftCode.setDate(date);
 										viewlogGiftCode.setFun(1);
 									}
+									((ViewLogGiftCode) _viewController
+											.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE)).setUserName(username);
 									((ViewLogGiftCode) _viewController
 											.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
 											.show(null);

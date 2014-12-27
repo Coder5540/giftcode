@@ -42,6 +42,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.DatePicker;
@@ -53,54 +54,57 @@ import com.coder5560.game.views.View;
 
 public class ViewLogTransferMoney extends View {
 
-	AbstractTable content;
-	Page pages;
-	boolean isLoad = true;
+	AbstractTable		content;
+	Page				pages;
+	boolean				isLoad					= true;
 
-	DatePicker dateFrom;
-	DatePicker dateTo;
-	CustomTextField tfSearch;
-	PartnerPicker partner;
-	PartnerPicker partnerFun;
-	TextButton btnXem;
-	Group gExtendDate;
-	boolean isExtend = false;
-	Image iconsortby;
+	DatePicker			dateFrom;
+	DatePicker			dateTo;
+	CustomTextField		tfSearch;
+	PartnerPicker		partner;
+	PartnerPicker		partnerFun;
+	TextButton			btnXem;
+	Group				gExtendDate;
+	boolean				isExtend				= false;
+	Image				iconsortby;
 
-	Actor colHoten;
-	Actor colThoigian;
-	int sortby;
-	int sorttype;
-	static final int HOTEN = 1;
-	static final int THOIGIAN = 2;
-	static final int TOPDOWN = 1;
-	static final int BOTTOMUP = 2;
+	Actor				colHoten;
+	Actor				colThoigian;
+	int					sortby;
+	int					sorttype;
+	static final int	HOTEN					= 1;
+	static final int	THOIGIAN				= 2;
+	static final int	TOPDOWN					= 1;
+	static final int	BOTTOMUP				= 2;
 
-	float widthCol[] = { 50, 150, 200, 200, 220, 220, 220, 150, 200, 270, 300,
-			150 };
-	String title[] = { "STT", "Số điện thoại", "Họ tên", "Loại giao dịch",
-			"Số tiền trước giao dịch", "Số tiền sau giao dịch",
-			"Số tiền giao dịch", "Đơn vị", "Người giao dịch",
-			"Số điện thoại người giao dịch", "Nội dung", "Thời gian" };
+	float				widthCol[]				= { 50, 150, 200, 200, 220,
+			220, 220, 150, 200, 270, 300, 150	};
+	String				title[]					= { "STT", "Số điện thoại",
+			"Họ tên", "Loại giao dịch", "Số tiền trước giao dịch",
+			"Số tiền sau giao dịch", "Số tiền giao dịch", "Đơn vị",
+			"Người giao dịch", "Số điện thoại người giao dịch", "Nội dung",
+			"Thời gian"						};
 
-	boolean isLoadByName;
-	String responseByName;
-	boolean isLoadByRoleId;
-	String reponseByRoleId;
+	boolean				isLoadByName;
+	String				responseByName;
+	boolean				isLoadByRoleId;
+	String				reponseByRoleId;
 
-	boolean isChange;
-	String stateofpartnerFun = "0";
-	String laststateofpartnerFun = "0";
+	boolean				isChange;
+	String				stateofpartnerFun		= "0";
+	String				laststateofpartnerFun	= "0";
 
-	Image iconextendDate;
-	PartnerSelectBox quickDatePicker;
-	boolean isChangeFun;
-	int stateFun;
+	Image				iconextendDate;
+	PartnerSelectBox	quickDatePicker;
+	boolean				isChangeFun;
+	int					stateFun;
 
-	int typeView;
-	public static int TYPE_SEND = 0;
-	public static int TYPE_RECEIVE = 1;
-	public static int TYPE_ALL = -1;
+	int					typeView;
+	public static int	TYPE_SEND				= 0;
+	public static int	TYPE_RECEIVE			= 1;
+	public static int	TYPE_ALL				= -1;
+
+	String				username				= "";
 
 	public ViewLogTransferMoney buildComponent(int type) {
 		this.typeView = type;
@@ -311,9 +315,12 @@ public class ViewLogTransferMoney extends View {
 		partnerFun.setSize(2 * getWidth() / 5, 38);
 		partnerFun.setPosition(getWidth() / 2 - partnerFun.getWidth() / 2,
 				dateFrom.getY() - 5 - partnerFun.getHeight());
-		if (UserInfo.getInstance().getRoleId() == 3) {
+		if (UserInfo.getInstance().getRoleId() == RoleID.AGENCY_LEVEL2) {
 			partnerFun.addPartner(0, "Cá nhân", "1");
 			stateofpartnerFun = "-1";
+		} else if (UserInfo.getInstance().getRoleId() == RoleID.USER_MANAGER) {
+			partnerFun.addPartner(0, username, "4");
+			stateofpartnerFun = "4";
 		} else {
 			stateofpartnerFun = "0";
 			partnerFun.addPartner(0, "Tất cả", "0");
@@ -361,6 +368,11 @@ public class ViewLogTransferMoney extends View {
 				if (stateofpartnerFun.equals("1")) {
 					Request.getInstance().getLogMoneyByName(typeView,
 							AppPreference.instance.name, dateFrom.getDate(),
+							dateTo.getDate(), new getListByName());
+					Loading.ins.show(ViewLogTransferMoney.this);
+				}else if (stateofpartnerFun.equals("4")) {
+					Request.getInstance().getLogMoneyByName(typeView,
+							username, dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
 					Loading.ins.show(ViewLogTransferMoney.this);
 				} else if (stateofpartnerFun.equals("0")) {
@@ -492,15 +504,20 @@ public class ViewLogTransferMoney extends View {
 		return this;
 	}
 
+	public void setUserName(String name) {
+		this.username = name;
+		partnerFun.getSelected().name = name;
+	}
+
 	public void setDate(String date) {
 		dateFrom.setDate(date);
 		dateTo.setDate(date);
 	}
 
 	public void setFun(int select) {
-		if(UserInfo.getInstance().getRoleId() == 3){
+		if (UserInfo.getInstance().getRoleId() == 3 || UserInfo.getInstance().getRoleId() == 4) {
 			partnerFun.setSelectedIndex(0);
-		}else{
+		} else {
 			partnerFun.setSelectedIndex(1);
 		}
 	}
@@ -672,10 +689,15 @@ public class ViewLogTransferMoney extends View {
 
 	@Override
 	public void show(OnCompleteListener listener) {
-		if (UserInfo.getInstance().getRoleId() == 3) {
+		if (UserInfo.getInstance().getRoleId() == RoleID.AGENCY_LEVEL2) {
 			Request.getInstance().getLogMoneyByName(typeView,
 					AppPreference.instance.name, dateFrom.getDate(),
 					dateTo.getDate(), new getListByRoleId());
+			Loading.ins.show(this);
+		} else if (UserInfo.getInstance().getRoleId() == RoleID.USER_MANAGER) {
+			Request.getInstance()
+					.getLogMoneyByName(typeView, username, dateFrom.getDate(),
+							dateTo.getDate(), new getListByRoleId());
 			Loading.ins.show(this);
 		} else {
 			if (partnerFun.getPartnerId() == 1) {
@@ -695,8 +717,14 @@ public class ViewLogTransferMoney extends View {
 
 	@Override
 	public void hide(OnCompleteListener listener) {
-		toBack();
 		super.hide(listener);
+	}
+	
+	@Override
+	public void back() {
+		// TODO Auto-generated method stub
+		super.back();
+		getViewController().removeView(getName());
 	}
 
 	@Override
