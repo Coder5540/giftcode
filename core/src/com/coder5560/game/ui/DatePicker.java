@@ -159,8 +159,8 @@ public class DatePicker extends Table {
 
 	private void registerKeyBoard(final TextField tf) {
 		error = false;
-		AbstractGameScreen.keyboard.registerTextField(tf,
-				KeyboardConfig.NUMBER, KeyboardConfig.SINGLE_LINE);
+//		AbstractGameScreen.keyboard.registerTextField(tf,
+//				KeyboardConfig.NUMBER, KeyboardConfig.SINGLE_LINE);
 		AbstractGameScreen.keyboard.show(true);
 		AbstractGameScreen.keyboard.setBackspaceComma(new OnBackSpaceComma() {
 			@Override

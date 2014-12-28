@@ -109,8 +109,8 @@ public class ViewAdminLock extends View {
 								new String[] {
 										infoUser.getString(ExtParamsKey.AGENCY_NAME),
 										infoUser.getString(ExtParamsKey.FULL_NAME),
-										Factory.getStrMoney(infoUser
-												.getInt(ExtParamsKey.AMOUNT))
+										Factory.getDotMoney(infoUser
+												.getLong(ExtParamsKey.AMOUNT))
 												+ " "
 												+ infoUser
 														.getString(ExtParamsKey.CURRENCY),

@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 
@@ -84,13 +85,15 @@ public class View extends Table implements IViews {
 		setViewState(ViewState.HIDE);
 		setTouchable(Touchable.disabled);
 		TraceView.instance.removeView(this.getName());
-		try{
-		((TopBarView) getViewController().getView(StringSystem.VIEW_ACTION_BAR))
-				.setTopName(getViewController().getView(
-						TraceView.instance.getLastView()).getLabel());
-		}catch(Exception e){
+		try {
+			((TopBarView) getViewController().getView(
+					StringSystem.VIEW_ACTION_BAR))
+					.setTopName(getViewController().getView(
+							TraceView.instance.getLastView()).getLabel());
+		} catch (Exception e) {
 			e.printStackTrace();
-		};
+		}
+		;
 	}
 
 	@Override
@@ -151,4 +154,10 @@ public class View extends Table implements IViews {
 		// TraceSystem.backView();
 		hide(null);
 	}
+
+	@Override
+	public void onGameEvent(GameEvent gameEvent) {
+
+	}
+
 }

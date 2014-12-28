@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.screens.GameScreen;
@@ -212,6 +213,13 @@ public class ViewController implements IViewController {
 
 	public void setPlatformResolver(PlatformResolver platformResolver) {
 		this.platformResolver = platformResolver;
+	}
+
+	@Override
+	public void notifyEvent(GameEvent gameEvent) {
+		for (int i = 0; i < views.size; i++) {
+			views.get(i).onGameEvent(gameEvent);
+		}
 	}
 
 }

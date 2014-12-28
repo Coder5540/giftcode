@@ -1,5 +1,6 @@
 package imp.view;
 
+import imp.view.MainMenuView.GetInfoDaily;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
@@ -46,13 +47,17 @@ import com.coder5560.game.views.View;
 
 public class ViewLogin extends View {
 
-	private CustomTextField	tfName;
-	private CustomTextField	tfPass;
-	private JsonValue		respone;
-	private JsonValue		responeInfoDaily;
-	Label					btnRegister, btnActive;
-	CustomDialog			dialogConfirm;
-	View					view;
+	private CustomTextField tfName;
+	private CustomTextField tfPass;
+	private JsonValue respone;
+	private JsonValue responeInfoDaily;
+	Label btnRegister, btnActive;
+	CustomDialog dialogConfirm;
+	View view;
+
+	boolean isHandlerResponseLogin = false;
+	boolean isHandlerResponseGetInfo = false;
+	int id = -1;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -296,8 +301,8 @@ public class ViewLogin extends View {
 	}
 
 	public void registerKeyboard(final TextField tf, String tfname, int config) {
-		AbstractGameScreen.keyboard.registerTextField(tf, tfname, config,
-				KeyboardConfig.SINGLE_LINE);
+//		AbstractGameScreen.keyboard.registerTextField(tf, tfname, config,
+//				KeyboardConfig.SINGLE_LINE);
 	}
 
 	@Override
@@ -308,7 +313,7 @@ public class ViewLogin extends View {
 		}
 
 		if (respone != null) {
-			Loading.ins.hide();
+			// Loading.ins.hide();
 			Boolean isSuccess = respone.getBoolean(ExtParamsKey.RESULT);
 			String mess = respone.getString(ExtParamsKey.MESSAGE);
 			Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
@@ -324,72 +329,76 @@ public class ViewLogin extends View {
 				int id = respone.getInt(ExtParamsKey.ROLE_ID);
 				AppPreference.instance.type = id;
 				AppPreference.instance.flush();
-				
-				TopBarView topBarView = new TopBarView();
-				topBarView.build(getStage(), getViewController(),
-						StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
-								Constants.HEIGHT_SCREEN
-										- Constants.HEIGHT_ACTIONBAR,
-								Constants.WIDTH_SCREEN,
-								Constants.HEIGHT_ACTIONBAR));
-				topBarView.buildComponent();
 
-				final MainMenuView mainMenu = new MainMenuView();
-				mainMenu.build(getStage(), getViewController(),
-						StringSystem.VIEW_MAIN_MENU,
-						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
-								Constants.HEIGHT_SCREEN));
-				mainMenu.buildComponent();
+				Request.getInstance().getInfoDaily(
+						AppPreference.instance.getName(), onGetinfoListener);
 
-				if (id == RoleID.USER_MANAGER) {
-					ViewUserManager view = new ViewUserManager();
-					view.build(getStage(), getViewController(),
-							StringSystem.VIEW_HOME, new Rectangle(0, 0,
-									Constants.WIDTH_SCREEN,
-									Constants.HEIGHT_SCREEN
-											- Constants.HEIGHT_ACTIONBAR));
-					view.buildComponent();
-					view.show(new OnCompleteListener() {
-						@Override
-						public void onError() {
-						}
-
-						@Override
-						public void done() {
-							mainMenu.hide(null);
-							mainMenu.getUserData();
-							getViewController()
-									.getView(StringSystem.VIEW_LOGIN)
-									.hide(null);
-						}
-					});
-				} else {
-					HomeViewV2 homeViewV2 = new HomeViewV2();
-					homeViewV2.build(getStage(), getViewController(),
-							StringSystem.VIEW_HOME, new Rectangle(0, 0,
-									Constants.WIDTH_SCREEN,
-									Constants.HEIGHT_SCREEN
-											- Constants.HEIGHT_ACTIONBAR));
-					homeViewV2.buildComponent();
-					homeViewV2.show(
-
-					new OnCompleteListener() {
-						@Override
-						public void onError() {
-						}
-
-						@Override
-						public void done() {
-							mainMenu.hide(null);
-							mainMenu.getUserData();
-							getViewController()
-									.getView(StringSystem.VIEW_LOGIN)
-									.hide(null);
-						}
-					});
-				}
+				// TopBarView topBarView = new TopBarView();
+				// topBarView.build(getStage(), getViewController(),
+				// StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
+				// Constants.HEIGHT_SCREEN
+				// - Constants.HEIGHT_ACTIONBAR,
+				// Constants.WIDTH_SCREEN,
+				// Constants.HEIGHT_ACTIONBAR));
+				// topBarView.buildComponent();
+				//
+				// final MainMenuView mainMenu = new MainMenuView();
+				// mainMenu.build(getStage(), getViewController(),
+				// StringSystem.VIEW_MAIN_MENU,
+				// new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+				// Constants.HEIGHT_SCREEN));
+				// mainMenu.buildComponent();
+				//
+				// if (id == RoleID.USER_MANAGER) {
+				// ViewUserManager view = new ViewUserManager();
+				// view.build(getStage(), getViewController(),
+				// StringSystem.VIEW_HOME, new Rectangle(0, 0,
+				// Constants.WIDTH_SCREEN,
+				// Constants.HEIGHT_SCREEN
+				// - Constants.HEIGHT_ACTIONBAR));
+				// view.buildComponent();
+				// view.show(new OnCompleteListener() {
+				// @Override
+				// public void onError() {
+				// }
+				//
+				// @Override
+				// public void done() {
+				// mainMenu.hide(null);
+				// mainMenu.getUserData();
+				// getViewController()
+				// .getView(StringSystem.VIEW_LOGIN)
+				// .hide(null);
+				// }
+				// });
+				// } else {
+				// HomeViewV2 homeViewV2 = new HomeViewV2();
+				// homeViewV2.build(getStage(), getViewController(),
+				// StringSystem.VIEW_HOME, new Rectangle(0, 0,
+				// Constants.WIDTH_SCREEN,
+				// Constants.HEIGHT_SCREEN
+				// - Constants.HEIGHT_ACTIONBAR));
+				// homeViewV2.buildComponent();
+				// homeViewV2.show(
+				//
+				// new OnCompleteListener() {
+				// @Override
+				// public void onError() {
+				// }
+				//
+				// @Override
+				// public void done() {
+				// mainMenu.hide(null);
+				// mainMenu.getUserData();
+				// getViewController()
+				// .getView(StringSystem.VIEW_LOGIN)
+				// .hide(null);
+				// }
+				// });
+				// }
 
 			} else {
+				Loading.ins.hide();
 				// login success but the device is not active. show dialog
 				// confirm
 				setTouchable(Touchable.enabled);
@@ -427,6 +436,7 @@ public class ViewLogin extends View {
 					}
 				});
 			}
+			isHandlerResponseLogin = true;
 			respone = null;
 		}
 
@@ -454,12 +464,75 @@ public class ViewLogin extends View {
 
 				UserInfo.state = responeInfoDaily.getInt(ExtParamsKey.STATE);
 			}
-			updateData();
 			responeInfoDaily = null;
+			isHandlerResponseGetInfo = true;
+		}
+
+		if (isHandlerResponseLogin && isHandlerResponseGetInfo) {
+			handlerCreatView();
+			isHandlerResponseGetInfo = false;
+			isHandlerResponseLogin = false;
 		}
 	}
 
-	private void updateData() {
+	private void handlerCreatView() {
+		TopBarView topBarView = new TopBarView();
+		topBarView.build(getStage(), getViewController(),
+				StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
+						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR,
+						Constants.WIDTH_SCREEN, Constants.HEIGHT_ACTIONBAR));
+		topBarView.buildComponent();
+
+		final MainMenuView mainMenu = new MainMenuView();
+		mainMenu.build(getStage(), getViewController(),
+				StringSystem.VIEW_MAIN_MENU, new Rectangle(0, 0,
+						Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
+		mainMenu.buildComponent();
+
+		if (UserInfo.getInstance().getRoleId() == RoleID.USER_MANAGER) {
+			ViewUserManager view = new ViewUserManager();
+			view.build(getStage(), getViewController(), StringSystem.VIEW_HOME,
+					new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+							Constants.HEIGHT_SCREEN
+									- Constants.HEIGHT_ACTIONBAR));
+			view.buildComponent();
+			view.show(new OnCompleteListener() {
+				@Override
+				public void onError() {
+				}
+
+				@Override
+				public void done() {
+					mainMenu.hide(null);
+					mainMenu.getUserData();
+					getViewController().getView(StringSystem.VIEW_LOGIN).hide(
+							null);
+				}
+			});
+		} else {
+			HomeViewV2 homeViewV2 = new HomeViewV2();
+			homeViewV2.build(getStage(), getViewController(),
+					StringSystem.VIEW_HOME, new Rectangle(0, 0,
+							Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
+									- Constants.HEIGHT_ACTIONBAR));
+			homeViewV2.buildComponent();
+			homeViewV2.show(
+
+			new OnCompleteListener() {
+				@Override
+				public void onError() {
+				}
+
+				@Override
+				public void done() {
+					mainMenu.hide(null);
+					mainMenu.getUserData();
+					getViewController().getView(StringSystem.VIEW_LOGIN).hide(
+							null);
+				}
+			});
+		}
+		Loading.ins.hide();
 	}
 
 	@Override
@@ -486,77 +559,64 @@ public class ViewLogin extends View {
 						.getDeviceName(), _loginListener);
 	}
 
-	HttpResponseListener	_registerDeviceListener	= new HttpResponseListener() {
+	HttpResponseListener _registerDeviceListener = new HttpResponseListener() {
 
-														@Override
-														public void handleHttpResponse(
-																HttpResponse httpResponse) {
-															JsonValue value = (new JsonReader())
-																	.parse(httpResponse
-																			.getResultAsString());
-															if (value
-																	.getBoolean(ExtParamsKey.RESULT))
-																switchView();
-														}
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			JsonValue value = (new JsonReader()).parse(httpResponse
+					.getResultAsString());
+			if (value.getBoolean(ExtParamsKey.RESULT))
+				switchView();
+		}
 
-														@Override
-														public void failed(
-																Throwable t) {
+		@Override
+		public void failed(Throwable t) {
 
-														}
+		}
 
-														@Override
-														public void cancelled() {
+		@Override
+		public void cancelled() {
 
-														}
-													};
+		}
+	};
 
-	HttpResponseListener	_loginListener			= new HttpResponseListener() {
+	HttpResponseListener _loginListener = new HttpResponseListener() {
 
-														@Override
-														public void handleHttpResponse(
-																HttpResponse httpResponse) {
-															respone = (new JsonReader())
-																	.parse(httpResponse
-																			.getResultAsString());
-															Log.d("OnLogin result",
-																	respone.toString());
-														}
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			respone = (new JsonReader())
+					.parse(httpResponse.getResultAsString());
+			Log.d("OnLogin result", respone.toString());
+		}
 
-														@Override
-														public void failed(
-																Throwable t) {
-															Log.d("On Login Fail :",
-																	t.getMessage());
-														}
+		@Override
+		public void failed(Throwable t) {
+			Log.d("On Login Fail :", t.getMessage());
+		}
 
-														@Override
-														public void cancelled() {
-															Log.d("On Login Cancel :",
-																	"Login is cancel");
-														}
-													};
+		@Override
+		public void cancelled() {
+			Log.d("On Login Cancel :", "Login is cancel");
+		}
+	};
 
-	HttpResponseListener	onGetinfoListener		= new HttpResponseListener() {
+	HttpResponseListener onGetinfoListener = new HttpResponseListener() {
 
-														@Override
-														public void handleHttpResponse(
-																HttpResponse httpResponse) {
-															responeInfoDaily = (new JsonReader())
-																	.parse(httpResponse
-																			.getResultAsString());
-														}
+		@Override
+		public void handleHttpResponse(HttpResponse httpResponse) {
+			responeInfoDaily = (new JsonReader()).parse(httpResponse
+					.getResultAsString());
+		}
 
-														@Override
-														public void failed(
-																Throwable t) {
+		@Override
+		public void failed(Throwable t) {
 
-														}
+		}
 
-														@Override
-														public void cancelled() {
+		@Override
+		public void cancelled() {
 
-														}
-													};
+		}
+	};
 
 }

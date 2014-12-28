@@ -36,9 +36,12 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.listener.OnCompleteListener;
+import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.views.IViewController;
+import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class ViewUserManager extends View {
@@ -130,7 +133,8 @@ public class ViewUserManager extends View {
 
 		ItemUser itemMoneyManager = new ItemUser(MONEYMANAGE_CLICK, 400, 60,
 				Assets.instance.ui.getRegUsermanagement(), "MoneyManager", " ("
-						+ listMoneyManager.size + ")", onClickListener, new Table());
+						+ listMoneyManager.size + ")", onClickListener,
+				new Table());
 		addItemUser(root, itemMoneyManager);
 		for (int i = 0; i < listMoneyManager.size; i++) {
 			SubItemUser subItemUser = new SubItemUser(itemMoneyManager,
@@ -266,6 +270,26 @@ public class ViewUserManager extends View {
 		}
 	}
 
+	public void onGameEvent(GameEvent gameEvent) {
+		if (gameEvent == GameEvent.ONBACK
+				&& TraceView.instance.getLastView().equalsIgnoreCase(getName())) {
+			Request.getInstance().getAllAgency(UserInfo.phone, -1,
+					onAllAgencyListener);
+		}
+		// if (gameEvent == GameEvent.ONREFRESH
+		// && TraceView.instance.getLastView().equalsIgnoreCase(getName())) {
+		// getViewController().getView(StringSystem.VIEW_HOME).show(null);
+		// // if (getViewController().isContainView(
+		// // ViewInfoDaiLySmall.class.getName())) {
+		// // getViewController().removeView(
+		// // ViewInfoDaiLySmall.class.getName());
+		// // }
+		// // if (getViewController().isContainView("viewchangerole")) {
+		// // getViewController().removeView("viewchangerole");
+		// // }
+		// }
+	};
+
 	OnClickListener	onClickListener	= new OnClickListener() {
 
 										@Override
@@ -314,7 +338,7 @@ public class ViewUserManager extends View {
 									- Constants.HEIGHT_ACTIONBAR * 3));
 			view.buildComponent();
 		}
-		int roleID = user.roleID;
+		final int roleID = user.roleID;
 		ViewInfoDaiLySmall view = ((ViewInfoDaiLySmall) getViewController()
 				.getView(ViewInfoDaiLySmall.class.getName()));
 		view.buildComponent();
@@ -333,12 +357,15 @@ public class ViewUserManager extends View {
 											- Constants.HEIGHT_ACTIONBAR));
 					homeViewV2.buildComponent();
 					homeViewV2.setUserName(user.phone);
+					Log.d("role_id : " + user.roleID);
+					homeViewV2.setRoleId(user.roleID);
 					Log.d("User Phone " + user.phone);
 					homeViewV2.show(null);
 				} else {
 					HomeViewV2 homeViewV2 = (HomeViewV2) getViewController()
 							.getView(StringSystem.VIEW_HOME_V2);
 					homeViewV2.setUserName(user.phone);
+					homeViewV2.setRoleId(user.roleID);
 					Log.d("User Phone 2 :" + user.phone);
 					homeViewV2.show(null);
 				}
@@ -347,48 +374,80 @@ public class ViewUserManager extends View {
 		view.addButton("Cấp quyền", new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				ViewChangeRole viewChangeRole = new ViewChangeRole(
-						new OnCompleteListener() {
+				onClickedChangeRole(user, roleID);
+			}
+		});
+	}
 
-							@Override
-							public void onError() {
-								if (getViewController().isContainView(
-										"viewchangerole"))
-									getViewController().removeView(
-											"viewchangerole");
-								Toast.makeText(getStage(),
-										"Hủy thay đổi quyền!",
-										Toast.LENGTH_SHORT);
-							}
+	private void onClickedChangeRole(final User user, int roleID) {
+		if (roleID == RoleID.MONEY_MANAGER) {
+			final DialogCustom dia = new DialogCustom("");
+			dia.text("Không thể thay đổi quyền của Money Manager");
+			dia.button("Ok", new Runnable() {
+				@Override
+				public void run() {
 
-							@Override
-							public void done() {
-								if (getViewController().isContainView(
-										"viewchangerole"))
-//									getViewController().getView(
-//											"viewchangerole").setViewState(
-//											ViewState.DISPOSE);
-									getViewController().removeView(
-											"viewchangerole");
-									
+				}
+			});
+			dia.show(getStage());
+			return;
+		}
+		if (roleID == RoleID.ADMIN) {
+			final DialogCustom dia = new DialogCustom("");
+			dia.text("Không thể thay đổi quyền của Admin");
+			dia.button("Ok", new Runnable() {
+				@Override
+				public void run() {
 
-								getViewController().getView(
-										ViewInfoDaiLySmall.class.getName())
-										.back();
-								Request.getInstance()
-										.getAllAgency(UserInfo.phone, -1,
-												onAllAgencyListener);
-								Toast.makeText(getStage(),
-										"Thay đổi quyền thành công !",
-										Toast.LENGTH_SHORT);
-							}
-						}, user.data);
-				viewChangeRole.build(getStage(), getViewController(),
-						"viewchangerole", new Rectangle(0, 0,
-								Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
-										- Constants.HEIGHT_ACTIONBAR));
-				viewChangeRole.buildComponent();
-				viewChangeRole.show(null);
+				}
+			});
+			dia.show(getStage());
+			return;
+		}
+
+		ViewChangeRole viewChangeRole = new ViewChangeRole(
+				new OnCompleteListener() {
+
+					@Override
+					public void onError() {
+						if (getViewController().isContainView("viewchangerole"))
+							getViewController().removeView("viewchangerole");
+						Toast.makeText(getStage(), "Hủy thay đổi quyền!",
+								Toast.LENGTH_SHORT);
+					}
+
+					@Override
+					public void done() {
+						if (getViewController().isContainView("viewchangerole"))
+							getViewController().removeView("viewchangerole");
+
+						getViewController().getView(
+								ViewInfoDaiLySmall.class.getName()).back();
+						Request.getInstance().getAllAgency(UserInfo.phone, -1,
+								onAllAgencyListener);
+						Toast.makeText(getStage(),
+								"Thay đổi quyền thành công !",
+								Toast.LENGTH_SHORT);
+					}
+				}, user.data, roleID);
+		viewChangeRole.build(getStage(), getViewController(), "viewchangerole",
+				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
+		viewChangeRole.buildComponent();
+		viewChangeRole.show(new OnCompleteListener() {
+
+			@Override
+			public void onError() {
+
+			}
+
+			@Override
+			public void done() {
+				if (!getViewController().isContainView(
+						ViewInfoDaiLySmall.class.getName())) {
+					getViewController().removeView(
+							ViewInfoDaiLySmall.class.getName());
+				}
 			}
 		});
 	}

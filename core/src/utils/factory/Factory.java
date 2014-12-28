@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.enums.Direct;
 
 public class Factory {
-	public static TextInputHelper helper;
+	public static TextInputHelper	helper;
 
 	public static int getNext(int curentValue, int min, int max) {
 		curentValue = clamp(curentValue, min, max);
@@ -43,30 +43,30 @@ public class Factory {
 
 	public static Vector2 getPosition(Rectangle bounds, Direct direct) {
 		switch (direct) {
-		case TOP_LEFT:
-			return new Vector2(bounds.x, bounds.y + bounds.height);
-		case TOP_RIGHT:
-			return new Vector2(bounds.x + bounds.width, bounds.y
-					+ bounds.height);
-		case TOP:
-			return new Vector2(bounds.x + bounds.width / 2, bounds.y
-					+ bounds.height);
-		case BOTTOM:
-			return new Vector2(bounds.x + bounds.width / 2, bounds.y);
-		case BOTTOM_LEFT:
-			return new Vector2(bounds.x, bounds.y);
-		case BOTTOM_RIGHT:
-			return new Vector2(bounds.x + bounds.width, bounds.y);
-		case MIDDLE:
-			return new Vector2(bounds.x + bounds.width / 2, bounds.y
-					+ bounds.height / 2);
-		case MIDDLE_LEFT:
-			return new Vector2(bounds.x, bounds.y + bounds.height / 2);
-		case MIDDLE_RIGHT:
-			return new Vector2(bounds.x + bounds.width, bounds.y
-					+ bounds.height / 2);
-		default:
-			return new Vector2();
+			case TOP_LEFT:
+				return new Vector2(bounds.x, bounds.y + bounds.height);
+			case TOP_RIGHT:
+				return new Vector2(bounds.x + bounds.width, bounds.y
+						+ bounds.height);
+			case TOP:
+				return new Vector2(bounds.x + bounds.width / 2, bounds.y
+						+ bounds.height);
+			case BOTTOM:
+				return new Vector2(bounds.x + bounds.width / 2, bounds.y);
+			case BOTTOM_LEFT:
+				return new Vector2(bounds.x, bounds.y);
+			case BOTTOM_RIGHT:
+				return new Vector2(bounds.x + bounds.width, bounds.y);
+			case MIDDLE:
+				return new Vector2(bounds.x + bounds.width / 2, bounds.y
+						+ bounds.height / 2);
+			case MIDDLE_LEFT:
+				return new Vector2(bounds.x, bounds.y + bounds.height / 2);
+			case MIDDLE_RIGHT:
+				return new Vector2(bounds.x + bounds.width, bounds.y
+						+ bounds.height / 2);
+			default:
+				return new Vector2();
 		}
 	}
 
@@ -135,44 +135,50 @@ public class Factory {
 		return false;
 	}
 
-	public static String getStrMoney(int money) {
-		String str = money + "";
-		if (money < 10000) {
-			str = money + "";
-		} else if (money < 1000000) {
-			int firstNumber = money / 1000;
-			int secondNumber = (money - firstNumber * 1000) / 100;
-			str = firstNumber + "." + secondNumber + "K";
-		} else if (money < 1000000000) {
-			int firstNumber = money / 1000000;
-			int secondNumber = (money - firstNumber * 1000000) / 100000;
-			str = firstNumber + "." + secondNumber + "M";
-		} else {
-			int firstNumber = money / 1000000000;
-			int secondNumber = (money - firstNumber * 1000000000) / 100000000;
-			str = firstNumber + "." + secondNumber + "B";
-		}
-		return str;
-	}
+//	public static String getStrMoney(int money) {
+//		String str = money + "";
+//		if (money < 10000) {
+//			str = money + "";
+//		} else if (money < 1000000) {
+//			int firstNumber = money / 1000;
+//			int secondNumber = (money - firstNumber * 1000) / 100;
+//			str = firstNumber + "." + secondNumber + "K";
+//		} else if (money < 1000000000) {
+//			int firstNumber = money / 1000000;
+//			int secondNumber = (money - firstNumber * 1000000) / 100000;
+//			str = firstNumber + "." + secondNumber + "M";
+//		} else {
+//			int firstNumber = money / 1000000000;
+//			int secondNumber = (money - firstNumber * 1000000000) / 100000000;
+//			str = firstNumber + "." + secondNumber + "B";
+//		}
+//		return str;
+//	}
+	
 
-	public static String getDotMoney(int money) {
+	public static String getDotMoney(long money) {
+		long tmpMoney = Math.abs(money);
 		String str = "";
-		while (money >= 1000) {
-			int temp = money % 1000;
+		while (tmpMoney >= 1000) {
+			long temp = tmpMoney % 1000;
 			if (temp < 10)
-				str = ".00" + money % 1000 + str;
+				str = ".00" + tmpMoney % 1000 + str;
 
 			else if (temp < 100)
-				str = ".0" + money % 1000 + str;
+				str = ".0" + tmpMoney % 1000 + str;
 
 			else
-				str = "." + money % 1000 + str;
-
-			money = money / 1000;
+				str = "." + tmpMoney % 1000 + str;
+			tmpMoney = tmpMoney / 1000;
 		}
-		return money + str;
-	}
 
+		return ((money >= 0) ? "" : "-") + tmpMoney + str;
+	}
+	
+	public static void main(String[] args) {
+		Log.d(""+ Factory.getDotMoney(1000000000l));
+	}
+	
 	public static int round(float a) {
 		int result = Math.round(a);
 		if (result < a) {
@@ -198,8 +204,8 @@ public class Factory {
 		return substr;
 	}
 
-	static String monthNames[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+	static String	monthNames[]	= { "Jan", "Feb", "Mar", "Apr", "May",
+			"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
 	@SuppressWarnings("deprecation")
 	public static String getTime(long time) {

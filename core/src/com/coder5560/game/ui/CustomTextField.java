@@ -1,6 +1,8 @@
 package com.coder5560.game.ui;
 
+import utils.keyboard.KeyboardConfig;
 import utils.keyboard.VirtualKeyboard;
+import utils.screen.AbstractGameScreen;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -14,6 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 public class CustomTextField extends TextField {
 
+	int type = KeyboardConfig.NORMAL;
+	int mode = KeyboardConfig.SINGLE_LINE;
+
 	public CustomTextField(String text, Skin skin, String styleName) {
 		super(text, skin, styleName);
 	}
@@ -24,6 +29,11 @@ public class CustomTextField extends TextField {
 
 	public CustomTextField(String text, TextFieldStyle style) {
 		super(text, style);
+	}
+
+	public void setConfig(int type, int mode) {
+		this.type = type;
+		this.mode = mode;
 	}
 
 	@Override
@@ -91,21 +101,26 @@ public class CustomTextField extends TextField {
 		@Override
 		public void clicked(InputEvent event, float x, float y) {
 			int count = getTapCount() % 4;
-			if (count == 0) clearSelection();
+			if (count == 0)
+				clearSelection();
 		}
+
 		@Override
 		public boolean touchDown(InputEvent event, float x, float y,
 				int pointer, int button) {
 			System.out.println(" x = " + x + ":" + "y = " + y);
 			super.touchDown(event, x - getStyle().background.getLeftWidth(), y,
 					pointer, button);
+			AbstractGameScreen.keyboard.registerTextField(CustomTextField.this,
+					type, mode);
 			System.out.println("cursor tf : " + getCursorPosition());
 			((VirtualKeyboard) getOnscreenKeyboard())
 					.setCursorPosition(getCursorPosition() - 1);
-			System.out.println(((VirtualKeyboard) getOnscreenKeyboard()).getCursorPosition());
+			System.out.println("keyborad : " + ((VirtualKeyboard) getOnscreenKeyboard())
+					.getCursorPosition());
 			return true;
-		}	
-		
+		}
+
 		@Override
 		public void touchUp(InputEvent event, float x, float y, int pointer,
 				int button) {
@@ -113,12 +128,12 @@ public class CustomTextField extends TextField {
 			super.touchUp(event, x - getStyle().background.getLeftWidth(), y,
 					pointer, button);
 		}
-		
+
 		@Override
 		public void touchDragged(InputEvent event, float x, float y, int pointer) {
 			// TODO Auto-generated method stub
-			super.touchDragged(event, x - getStyle().background.getLeftWidth(), y,
-					pointer);
+			super.touchDragged(event, x - getStyle().background.getLeftWidth(),
+					y, pointer);
 		}
 	}
 }

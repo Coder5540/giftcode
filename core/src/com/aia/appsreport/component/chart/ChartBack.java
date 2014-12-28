@@ -2,8 +2,9 @@ package com.aia.appsreport.component.chart;
 
 import java.util.ArrayList;
 
-import utils.factory.StringUtil;
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
+import utils.factory.StringUtil;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -76,7 +77,7 @@ public class ChartBack extends Table {
 		float temp = 0;
 		int index = 0;
 		while (temp < max + jump) {
-			String tempS = StringUtil.getStrMoney((int) temp);
+			String tempS = Factory.getDotMoney((long) temp);
 			Label value = new Label(tempS, styleRow);
 			value.setY(START_CHART_Y + dis * index - value.getHeight() / 2);
 			value.setX(5);
@@ -151,7 +152,7 @@ public class ChartBack extends Table {
 		float temp = 0;
 		int index = 0;
 		while (temp < max + jump) {
-			String tempS = StringUtil.getStrMoney((int) temp);
+			String tempS = Factory.getDotMoney((long) temp);
 			Label value = new Label(tempS, styleRow);
 			value.setY(START_CHART_Y + dis * index - value.getHeight() / 2);
 			value.setX(5);

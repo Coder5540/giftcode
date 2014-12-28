@@ -280,9 +280,9 @@ public class ViewLogMoneyChart extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AbstractGameScreen.keyboard.registerTextField(tfSearch,
-						"tfSearch", KeyboardConfig.NORMAL,
-						KeyboardConfig.SINGLE_LINE);
+//				AbstractGameScreen.keyboard.registerTextField(tfSearch,
+//						"tfSearch", KeyboardConfig.NORMAL,
+//						KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});

@@ -5,8 +5,8 @@ import utils.elements.PartnerPicker;
 import utils.elements.PartnerSelectBox;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
-import utils.factory.StringUtil;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
@@ -76,9 +76,9 @@ public class ViewLogGiftCode extends View {
 	static final int	TOPDOWN					= 1;
 	static final int	BOTTOMUP				= 2;
 
-	float				widthCol[]				= { 50, 150, 200, 200, 220,
+	float				widthCol[]				= { 250, 150, 200, 200, 220,
 			220, 220, 150, 150					};
-	String				title[]					= { "STT", "Số điện thoại",
+	String				title[]					= { "Code ID", "Số điện thoại",
 			"Họ tên", "Hoạt động", "Số tiền trước giao dịch",
 			"Số tiền sau giao dịch", "Số tiền giao dịch", "Đơn vị", "Thời gian" };
 
@@ -103,6 +103,7 @@ public class ViewLogGiftCode extends View {
 	// public static int TYPE_ALL = -1;
 
 	public ViewLogGiftCode buildComponent() {
+		username = AppPreference.instance.name;
 		top();
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
 				Color.WHITE));
@@ -156,7 +157,7 @@ public class ViewLogGiftCode extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
+
 				iconextendDate.getColor().a = 0.25f;
 				return super.touchDown(event, x, y, pointer, button);
 			}
@@ -164,7 +165,7 @@ public class ViewLogGiftCode extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
+
 				iconextendDate.getColor().a = 0.5f;
 				if (isExtend) {
 					gExtendDate.clearActions();
@@ -190,7 +191,7 @@ public class ViewLogGiftCode extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
+
 				iconextendDate.getColor().a = 0.25f;
 				return super.touchDown(event, x, y, pointer, button);
 			}
@@ -198,7 +199,7 @@ public class ViewLogGiftCode extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
+
 				iconextendDate.getColor().a = 0.5f;
 				if (isExtend) {
 					gExtendDate.clearActions();
@@ -244,7 +245,7 @@ public class ViewLogGiftCode extends View {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				// TODO Auto-generated method stub
+
 				gExtendDate.clearActions();
 				iconextendDate.clearActions();
 				gExtendDate.addAction(Actions.moveTo(0, dateFrom.getY(), 0.15f));
@@ -278,7 +279,7 @@ public class ViewLogGiftCode extends View {
 
 			@Override
 			public void onItemClick() {
-				// TODO Auto-generated method stub
+
 				gExtendDate.clearActions();
 				iconextendDate.clearActions();
 				gExtendDate.addAction(Actions.moveTo(0, dateFrom.getY(), 0.15f));
@@ -344,9 +345,9 @@ public class ViewLogGiftCode extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AbstractGameScreen.keyboard.registerTextField(tfSearch,
-						"tfSearch", KeyboardConfig.NORMAL,
-						KeyboardConfig.SINGLE_LINE);
+//				AbstractGameScreen.keyboard.registerTextField(tfSearch,
+//						"tfSearch", KeyboardConfig.NORMAL,
+//						KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
@@ -366,10 +367,10 @@ public class ViewLogGiftCode extends View {
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
 					Loading.ins.show(ViewLogGiftCode.this);
-				}else if (stateofpartnerFun.equals("4")) {
-					Request.getInstance().getLogMoneyGiftCodeByName(
-							username, dateFrom.getDate(),
-							dateTo.getDate(), new getListByName());
+				} else if (stateofpartnerFun.equals("4")) {
+					Request.getInstance().getLogMoneyGiftCodeByName(username,
+							dateFrom.getDate(), dateTo.getDate(),
+							new getListByName());
 					Loading.ins.show(ViewLogGiftCode.this);
 				} else if (stateofpartnerFun.equals("0")) {
 					Request.getInstance().getLogMoneyGiftCodeByRole(
@@ -425,7 +426,7 @@ public class ViewLogGiftCode extends View {
 
 			@Override
 			public void onItemClick() {
-				// TODO Auto-generated method stub
+
 				content.addAction(Actions.sequence(
 						Actions.alpha(0, 0.2f, Interpolation.exp5Out),
 						Actions.run(new Runnable() {
@@ -465,7 +466,12 @@ public class ViewLogGiftCode extends View {
 	}
 
 	public void setFun(int select) {
-		partnerFun.setSelectedIndex(1);
+		if (UserInfo.getInstance().getRoleId() == 3
+				|| UserInfo.getInstance().getRoleId() == 4) {
+			partnerFun.setSelectedIndex(0);
+		} else {
+			partnerFun.setSelectedIndex(1);
+		}
 	}
 
 	// 841278426508
@@ -487,16 +493,13 @@ public class ViewLogGiftCode extends View {
 						// int type = 0;
 						long money_before = content
 								.getLong(ExtParamsKey.MONEY_BEFORE);
-						String str_money_before = StringUtil
-								.getStrMoney((int) money_before);
+						String str_money_before = Factory.getDotMoney((long) money_before);
 						long money_after = content
 								.getLong(ExtParamsKey.MONEY_AFTER);
-						String str_money_after = StringUtil
-								.getStrMoney((int) money_after);
-						long money_change = content
-								.getLong(ExtParamsKey.MONEY_CHANGE);
-						String str_money_change = StringUtil
-								.getStrMoney((int) money_change);
+						String str_money_after = Factory.getDotMoney((long)  money_after);
+						long money_change = Math.abs(content
+								.getLong(ExtParamsKey.MONEY_CHANGE));
+						String str_money_change = Factory.getDotMoney((long) money_change);
 						String currency = content
 								.getString(ExtParamsKey.CURRENCY);
 						String date = DateTime.getStringDate(
@@ -513,7 +516,8 @@ public class ViewLogGiftCode extends View {
 						if (type == 1) {
 							loaigd = "Trả GiftCode";
 						}
-						ItemLog item = new ItemLog(this.content, (i + 1) + "",
+						String code_id = content.getString(ExtParamsKey.CODE_ID);
+						ItemLog item = new ItemLog(this.content, code_id,
 								agencyname, full_name, loaigd,
 								str_money_before, str_money_after,
 								str_money_change, currency, date);
@@ -614,7 +618,7 @@ public class ViewLogGiftCode extends View {
 
 								@Override
 								public void run() {
-									// TODO Auto-generated method stub
+
 									tfSearch.setVisible(false);
 									partner.addAction(Actions.moveTo(getWidth()
 											- partner.getWidth() - 30,
@@ -638,10 +642,10 @@ public class ViewLogGiftCode extends View {
 					AppPreference.instance.name, dateFrom.getDate(),
 					dateTo.getDate(), new getListByRoleId());
 			Loading.ins.show(this);
-		}else if (UserInfo.getInstance().getRoleId() == 4) {
-			Request.getInstance().getLogMoneyGiftCodeByName(
-					username, dateFrom.getDate(),
-					dateTo.getDate(), new getListByRoleId());
+		} else if (UserInfo.getInstance().getRoleId() == 4) {
+			Request.getInstance()
+					.getLogMoneyGiftCodeByName(username, dateFrom.getDate(),
+							dateTo.getDate(), new getListByRoleId());
 			Loading.ins.show(this);
 		} else {
 			if (partnerFun.getPartnerId() == 1) {
@@ -663,10 +667,10 @@ public class ViewLogGiftCode extends View {
 	public void hide(OnCompleteListener listener) {
 		super.hide(listener);
 	}
-	
+
 	@Override
 	public void back() {
-		// TODO Auto-generated method stub
+
 		super.back();
 		getViewController().removeView(getName());
 	}
@@ -686,14 +690,10 @@ public class ViewLogGiftCode extends View {
 
 		@Override
 		public void failed(Throwable t) {
-			// TODO Auto-generated method stub
-
 		}
 
 		@Override
 		public void cancelled() {
-			// TODO Auto-generated method stub
-
 		}
 
 	}
@@ -702,20 +702,17 @@ public class ViewLogGiftCode extends View {
 
 		@Override
 		public void handleHttpResponse(HttpResponse httpResponse) {
-			// TODO Auto-generated method stub
 			responseByName = httpResponse.getResultAsString();
 			isLoadByName = true;
 		}
 
 		@Override
 		public void failed(Throwable t) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void cancelled() {
-			// TODO Auto-generated method stub
 		}
 	}
 

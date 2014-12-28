@@ -39,110 +39,111 @@ public class VirtualKeyboard implements OnscreenKeyboard, InputProcessor {
 		Loading, Running
 	}
 
-	final float MAX_KEY_WIDTH = 150;
-	final float MAX_KEY_HEIGHT = 150;
+	final float						MAX_KEY_WIDTH				= 150;
+	final float						MAX_KEY_HEIGHT				= 150;
 
-	public static final String[][] DEFAULT_QWERTY = new String[][] {
+	public static final String[][]	DEFAULT_QWERTY				= new String[][] {
 			{ "q", "w", "e", "r", "t", "y", "u", "i", "o", "p" },
 			{ "a", "s", "d", "f", "g", "h", "j", "k", "l" },
 			{ "$Shift$", "z", "x", "c", "v", "b", "n", "m", "$Delete$" },
 			{ "$Close$", "$Mode$", "$Language$", "$Space$", ".", ",", "$Enter$" } };
 
-	public static final String[][] DEFAULT_NUMBERS = new String[][] {
+	public static final String[][]	DEFAULT_NUMBERS				= new String[][] {
 			{ "1", "2", "3", }, { "4", "5", "6", }, { "7", "8", "9", },
 			{ "*", "0", "#", }, { "$Mode$", "$Space$", "$Delete$", "$OK$" } };
 
-	public static final String[][] DEFAULT_NUMBERS_SYMBOLS_1 = new String[][] {
+	public static final String[][]	DEFAULT_NUMBERS_SYMBOLS_1	= new String[][] {
 			{ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" },
 			{ "!", "@", "#", "$", "%", "&", "*", "?", "/" },
 			{ "_", "\"", "\'", "(", ")", "-", "+", "=", "$Delete$" },
 			{ "$Close$", "$Mode1$", ";", "$Space$", ":", "$Mode2$", "$Enter$" } };
 
-	public static final String[][] DEFAULT_NUMBERS_SYMBOLS_2 = new String[][] {
+	public static final String[][]	DEFAULT_NUMBERS_SYMBOLS_2	= new String[][] {
 			{ "€", "¥", "£", "~", "`", "\\", "^", "[", "]", "¡" },
 			{ "¿", "{", "}", "<", ">", "|", "§", "«", "»" },
 			{ ":)", ";)", ":(", ":'(", ":o", ":P", ":$", ":S", "$Delete$" },
 			{ "$Close$", "$Mode1$", ",", "$Space$", ".", "$Mode2$", "$Enter$" } };
 
-	private static String[] _languageMode = { "EN", "VN" };
-	private static String[] _modeLabel = { "123#", "1/2", "2/2" };
+	private static String[]			_languageMode				= { "EN", "VN" };
+	private static String[]			_modeLabel					= { "123#",
+			"1/2", "2/2"										};
 
-	private BitmapFont _font;
-	private BitmapFont _modeFont;
-	private BitmapFont _popupFont;
-	private NinePatch _normalButton;
-	private NinePatch _pressedNormalButton;
-	private NinePatch _specialButton;
-	private NinePatch _pressedSpecialButton;
-	private NinePatch _popupButton;
-	private TextureRegion _background;
-	private TextureRegion _closeButton;
-	private TextureRegion _deleteButton;
-	private TextureRegion _enterButton;
-	private TextureRegion _okButton;
-	private TextureRegion _acShiftButton;
-	private TextureRegion _inShiftButton;
+	private BitmapFont				_font;
+	private BitmapFont				_modeFont;
+	private BitmapFont				_popupFont;
+	private NinePatch				_normalButton;
+	private NinePatch				_pressedNormalButton;
+	private NinePatch				_specialButton;
+	private NinePatch				_pressedSpecialButton;
+	private NinePatch				_popupButton;
+	private TextureRegion			_background;
+	private TextureRegion			_closeButton;
+	private TextureRegion			_deleteButton;
+	private TextureRegion			_enterButton;
+	private TextureRegion			_okButton;
+	private TextureRegion			_acShiftButton;
+	private TextureRegion			_inShiftButton;
 
-	private TextureAtlas _atlas;
-	private TextureAtlas _largeAtlas;
+	private TextureAtlas			_atlas;
+	private TextureAtlas			_largeAtlas;
 
-	private Sound _deleteFX;
-	private Sound _spaceFX;
-	private Sound _standardFX;
+	private Sound					_deleteFX;
+	private Sound					_spaceFX;
+	private Sound					_standardFX;
 
-	private int _language;
-	private int _currentMode;
-	private int _enterButtonDefaultIndex;
-	private int _enterButtonNumberIndex;
-	private int _maxLength = 1024;
-	private int _maxLine = 1024;
-	private int _type;
-	private int _mode;
+	private int						_language;
+	private int						_currentMode;
+	private int						_enterButtonDefaultIndex;
+	private int						_enterButtonNumberIndex;
+	private int						_maxLength					= 1024;
+	private int						_maxLine					= 1024;
+	private int						_type;
+	private int						_mode;
 
-	private KeyButton[] _currentKeyBoard;
-	private KeyButton[] _defaultQwerty;
-	private KeyButton[] _defaultNumbersSymbols1;
-	private KeyButton[] _defaultNumbersSymbols2;
+	private KeyButton[]				_currentKeyBoard;
+	private KeyButton[]				_defaultQwerty;
+	private KeyButton[]				_defaultNumbersSymbols1;
+	private KeyButton[]				_defaultNumbersSymbols2;
 
-	public static final int INSERT_CHAR = 1;
-	public static final int DELETE_CHAR = 2;
-	public static final int CHANGE_MODE = 3;
-	public static final int SHIFT = 4;
-	public static final int OK = 5;
-	public static final int SPACE = 6;
-	public static final int T9 = 7;
+	public static final int			INSERT_CHAR					= 1;
+	public static final int			DELETE_CHAR					= 2;
+	public static final int			CHANGE_MODE					= 3;
+	public static final int			SHIFT						= 4;
+	public static final int			OK							= 5;
+	public static final int			SPACE						= 6;
+	public static final int			T9							= 7;
 
-	private float _width;
-	private float _height;
-	private float _iconScale;
-	private float _begin;
-	private float _change;
-	private float _duration;
-	private float _time;
-	private float _screenWidth;
-	private float _screenHeight;
+	private float					_width;
+	private float					_height;
+	private float					_iconScale;
+	private float					_begin;
+	private float					_change;
+	private float					_duration;
+	private float					_time;
+	private float					_screenWidth;
+	private float					_screenHeight;
 
-	private int _shift = 0;
+	private int						_shift						= 0;
 
-	private boolean _animate = false;
-	private boolean _enableVietKey = true;
+	private boolean					_animate					= false;
+	private boolean					_enableVietKey				= true;
 
-	private Vector2 _pos;
-	private EditText _editText;
-	private TextField _textField;
-	private String _nameTextField = "";
-	private SimpleCharSequence _textBuffer;
-	private OnDoneListener _doneListener;
-	private OnHideListener _hideListener;
-	private OnBackSpaceComma _backspaceComma;
-	private TelexIM _telex;
+	private Vector2					_pos;
+	private EditText				_editText;
+	private TextField				_textField;
+	private String					_nameTextField				= "";
+	private SimpleCharSequence		_textBuffer;
+	private OnDoneListener			_doneListener;
+	private OnHideListener			_hideListener;
+	private OnBackSpaceComma		_backspaceComma;
+	private TelexIM					_telex;
 
-	private SpriteBatch _batch;
-	private OrthographicCamera _camera;
-	private Rectangle _viewport;
-	private Size _size;
-	private AssetManager _assetManager;
-	private State _state;
+	private SpriteBatch				_batch;
+	private OrthographicCamera		_camera;
+	private Rectangle				_viewport;
+	private Size					_size;
+	private AssetManager			_assetManager;
+	private State					_state;
 
 	public VirtualKeyboard(SpriteBatch batch) {
 		_pos = new Vector2();
@@ -226,9 +227,9 @@ public class VirtualKeyboard implements OnscreenKeyboard, InputProcessor {
 	}
 
 	public void setCursorPosition(int pos) {
-		if (isShowing()) {
-			_textBuffer.setCursor(pos);
-		}
+		// if (isShowing()) {
+		_textBuffer.setCursor(pos);
+		// }
 	}
 
 	public int getCursorPosition() {
@@ -1030,6 +1031,32 @@ public class VirtualKeyboard implements OnscreenKeyboard, InputProcessor {
 		}
 	}
 
+	// public void registerTextField(TextField textField, String nameTextField,
+	// int cursorPosition, int type, int mode) {
+	// if (!_nameTextField.equals(nameTextField)) {
+	// System.out.println("register keyboard");
+	// _nameTextField = nameTextField;
+	// setType(type);
+	// setMode(mode);
+	// _textField = textField;
+	// if (_textField.getText() != null) {
+	// CharArray array = new CharArray(_textField.getText()
+	// .toCharArray());
+	// Event event = new Event(Action.EDIT);
+	// event.data = array;
+	// event.cursor = cursorPosition;
+	// _textBuffer.clear();
+	// _textBuffer.setBuffer(array);
+	// _textBuffer.setCursor(array.size - 1);
+	// if (_textField.getMessageText() != null)
+	// _editText.setHint(_textField.getMessageText());
+	// else
+	// _editText.setHint("");
+	// _editText.dispatch(event);
+	// }
+	// }
+	// }
+
 	public void registerTextField(TextField textField, int type, int mode,
 			OnDoneListener _doneListener, OnHideListener _hideListener) {
 		setType(type);
@@ -1194,24 +1221,24 @@ public class VirtualKeyboard implements OnscreenKeyboard, InputProcessor {
 	}
 
 	private class KeyButton {
-		private NinePatch normalBack;
-		private NinePatch pressedBack;
-		private NinePatch popupBack;
-		private TextureRegion icon;
-		private TextureRegion subIcon;
-		private String name;
-		private boolean isPressed = false;
-		private Vector2 pos;
-		private Vector2 dimension;
-		private Rectangle bound;
-		private int keyCode;
-		private VirtualKeyboard parent;
-		private BitmapFont font;
-		private BitmapFont popupFont;
-		private float scale = 1;
+		private NinePatch		normalBack;
+		private NinePatch		pressedBack;
+		private NinePatch		popupBack;
+		private TextureRegion	icon;
+		private TextureRegion	subIcon;
+		private String			name;
+		private boolean			isPressed	= false;
+		private Vector2			pos;
+		private Vector2			dimension;
+		private Rectangle		bound;
+		private int				keyCode;
+		private VirtualKeyboard	parent;
+		private BitmapFont		font;
+		private BitmapFont		popupFont;
+		private float			scale		= 1;
 		@SuppressWarnings("unused")
-		private String word = "";
-		private long timePress;
+		private String			word		= "";
+		private long			timePress;
 
 		public KeyButton(String name, float x, float y, float width,
 				float height, VirtualKeyboard parent) {
@@ -1501,8 +1528,8 @@ public class VirtualKeyboard implements OnscreenKeyboard, InputProcessor {
 	}
 
 	protected class SimpleCharSequence implements CharSequence {
-		CharArray chars = new CharArray();
-		int cursor = -1;
+		CharArray	chars	= new CharArray();
+		int			cursor	= -1;
 
 		public void add(char c) {
 			if (_mode == KeyboardConfig.SINGLE_LINE && c == '\n')
@@ -1692,7 +1719,7 @@ public class VirtualKeyboard implements OnscreenKeyboard, InputProcessor {
 	public interface OnHideListener {
 		public void hide();
 	}
-	
+
 	public float getRealHeight() {
 		return _height * Constants.HEIGHT_SCREEN / Gdx.graphics.getHeight();
 	}

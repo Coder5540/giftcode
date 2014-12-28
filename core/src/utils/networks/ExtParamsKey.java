@@ -96,4 +96,5 @@ public class ExtParamsKey {
 	public static final String	MONEY_CHANGE				= "money_change";
 	public static final String	MONEY_RECEIVE				= "money_receive";
 	public static final String	MONEY_REMAIN				= "money_remain";
+	public static final String	CODE_ID	= "code_id";
 }

@@ -1,5 +1,7 @@
 package imp.view;
 
+import java.util.HashMap;
+
 import utils.elements.PartnerPicker;
 import utils.factory.FontFactory.fontType;
 import utils.factory.Style;
@@ -20,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.views.View;
 
@@ -29,16 +32,19 @@ public class ViewChangeRole extends View {
 	private JsonValue		responeChangeRole;
 	OnCompleteListener		onCompleteListener;
 	JsonValue				userData;
+	private int				currentRole;
 
 	public ViewChangeRole(OnCompleteListener onCompleteListener,
-			JsonValue userData) {
+			JsonValue userData, int currentRole) {
 		super();
+		this.currentRole = currentRole;
 		this.onCompleteListener = onCompleteListener;
 		this.userData = userData;
 	}
 
 	public void buildComponent() {
 		this.top();
+		createPattenRole();
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
 
@@ -49,12 +55,6 @@ public class ViewChangeRole extends View {
 		Label lbRole = new Label("Role : ", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, fontType.Regular),
 				Color.GRAY));
-
-		partnerRole = new PartnerPicker(Style.ins.selectBoxStyle);
-		partnerRole.addPartner(0, "Money Manager", "");
-		partnerRole.addPartner(1, "Admin", "");
-		partnerRole.addPartner(2, "Đại lý cấp 1", "");
-		partnerRole.addPartner(3, "Đại lý cấp 2", "");
 
 		Table tbButton = new Table();
 		TextButton btOk = new TextButton("Ok", Style.ins.textButtonStyle);
@@ -74,8 +74,7 @@ public class ViewChangeRole extends View {
 				public void clicked(InputEvent event, float x, float y) {
 					Request.getInstance().changeAgencyRoleName(
 							userData.getString(ExtParamsKey.AGENCY_NAME),
-							partnerRole.getSelectedIndex() ,
-							new ChangeRole());
+							getRoleSelected(), new ChangeRole());
 				}
 			});
 			btCancel.addListener(new ClickListener() {
@@ -86,7 +85,32 @@ public class ViewChangeRole extends View {
 			});
 
 		}
+	}
 
+	private int getRoleSelected() {
+		return  partnerRole.getSelectedIndex();
+	}
+
+	private void createPattenRole() {
+		partnerRole = new PartnerPicker(Style.ins.selectBoxStyle);
+		switch (currentRole) {
+			case RoleID.USER_MANAGER:
+				return;
+			case RoleID.AGENCY_LEVEL2:
+				partnerRole.addPartner(0, "Money Manager", "");
+				partnerRole.addPartner(1, "Admin", "");
+				partnerRole.addPartner(2, "Đại lý cấp 1", "");
+				break;
+			case RoleID.AGENCY_LEVEL1:
+				partnerRole.addPartner(0, "Money Manager", "");
+				partnerRole.addPartner(1, "Admin", "");
+				break;
+			case RoleID.ADMIN:
+				partnerRole.addPartner(0, "Money Manager", "");
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override

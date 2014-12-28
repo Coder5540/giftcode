@@ -1,5 +1,6 @@
 package com.aia.appsreport.component.chart;
 
+import utils.factory.Factory;
 import utils.factory.StringUtil;
 import utils.factory.FontFactory.fontType;
 
@@ -35,7 +36,7 @@ public class ColumnComponent extends Group {
 		if (value == 0) {
 			lbvalue.setText("");
 		} else {
-			String strValue = StringUtil.getStrMoney(value);
+			String strValue = Factory.getDotMoney((long)value);
 			lbvalue.setText(strValue);
 		}
 	}
@@ -54,7 +55,7 @@ public class ColumnComponent extends Group {
 		if (value == 0) {
 			lbvalue.setText("");
 		} else {
-			String strValue = StringUtil.getStrMoney(value);
+			String strValue = Factory.getDotMoney((long)value);
 			lbvalue.setText(strValue);
 		}
 	}

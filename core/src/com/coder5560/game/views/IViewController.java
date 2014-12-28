@@ -6,6 +6,7 @@ import utils.screen.GameCore;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.screens.GameScreen;
 
 public interface IViewController {
@@ -22,7 +23,7 @@ public interface IViewController {
 	public void removeView(String name);
 
 	public void toFront(String name);
-	
+
 	public IViews getView(String name);
 
 	/* return all the view in this stage */
@@ -50,5 +51,7 @@ public interface IViewController {
 	public void setPlatformResolver(PlatformResolver platformResolver);
 
 	public void resetAll();
+
+	public void notifyEvent(GameEvent gameEvent);
 
 }

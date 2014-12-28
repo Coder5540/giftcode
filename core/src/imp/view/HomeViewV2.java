@@ -1,9 +1,9 @@
 package imp.view;
 
 import utils.factory.AppPreference;
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
 import utils.factory.StringSystem;
-import utils.factory.StringUtil;
 import utils.factory.Style;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
@@ -29,9 +29,11 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.ItemListener;
 import com.coder5560.game.ui.Loading;
+import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class HomeViewV2 extends View {
@@ -39,7 +41,8 @@ public class HomeViewV2 extends View {
 	boolean	isLoad		= false;
 
 	Table	content;
-	String	username		= "";
+	String	username	= "";
+	int		role_id;
 
 	public HomeViewV2 buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
@@ -50,15 +53,21 @@ public class HomeViewV2 extends View {
 		content.setBounds(0, 0, getWidth(), getHeight());
 		content.top();
 		addActor(content);
+		role_id = UserInfo.getInstance().getRoleId();
 		setUserName(AppPreference.instance.name);
+
 		return this;
 	}
 
 	public void setUserName(String name) {
 		this.username = name;
 	}
-	 
-	public String getUserName(){
+
+	public void setRoleId(int role_id) {
+		this.role_id = role_id;
+	}
+
+	public String getUserName() {
 		return this.username;
 	}
 
@@ -89,9 +98,9 @@ public class HomeViewV2 extends View {
 				final long tiendasudung = json
 						.getLong(ExtParamsKey.MONEY_GIFT_CODE);
 				long tiencon = json.getLong(ExtParamsKey.MONEY_REMAIN);
-				if (tiendanhan >= 0 && UserInfo.getInstance().getRoleId() != 0) {
+				if (role_id != 0) {
 					addItem("Tổng tiền đã nhận",
-							StringUtil.getDotMoney(tiendanhan) + " "
+							Factory.getDotMoney(tiendanhan) + " "
 									+ UserInfo.currency, new ItemListener() {
 								@Override
 								public void onItemClick() {
@@ -116,7 +125,8 @@ public class HomeViewV2 extends View {
 									}
 									((ViewLogChart) getViewController()
 											.getView(
-													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)).setUserName(username);
+													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
+											.setUserName(username);
 									((ViewLogChart) getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
@@ -132,9 +142,10 @@ public class HomeViewV2 extends View {
 								}
 							});
 				}
-				if (tiendacap >= 0 && UserInfo.getInstance().getRoleId() != 3) {
-					addItem("Tổng tiền chuyển",
-							StringUtil.getDotMoney(tiendacap) + " "
+				System.out.println("TIEN DA CAP : " + tiendacap);
+				if (role_id != 3) {
+					addItem("Tổng tiền cấp",
+							Factory.getDotMoney(Math.abs(tiendacap)) + " "
 									+ UserInfo.currency, new ItemListener() {
 								@Override
 								public void onItemClick() {
@@ -158,7 +169,8 @@ public class HomeViewV2 extends View {
 									}
 									((ViewLogChart) getViewController()
 											.getView(
-													StringSystem.VIEW_LOG_SEND_MONEY_CHART)).setUserName(username);
+													StringSystem.VIEW_LOG_SEND_MONEY_CHART))
+											.setUserName(username);
 									((ViewLogChart) getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_SEND_MONEY_CHART))
@@ -175,8 +187,9 @@ public class HomeViewV2 extends View {
 								}
 							});
 				}
+
 				addItem("Tổng tiền sinh GiftCode",
-						StringUtil.getDotMoney(tiendasudung) + " "
+						Factory.getDotMoney(tiendasudung) + " "
 								+ UserInfo.currency, new ItemListener() {
 							@Override
 							public void onItemClick() {
@@ -200,7 +213,8 @@ public class HomeViewV2 extends View {
 								}
 								((ViewLogChart) getViewController()
 										.getView(
-												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART)).setUserName(username);
+												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART))
+										.setUserName(username);
 								((ViewLogChart) getViewController()
 										.getView(
 												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART))
@@ -215,8 +229,8 @@ public class HomeViewV2 extends View {
 										.show(null);
 							}
 						});
-				addItem("Tổng tiền còn lại", StringUtil.getDotMoney(tiencon)
-						+ " " + UserInfo.currency, null);
+				addItem("Tổng tiền còn lại", Factory.getDotMoney(tiencon) + " "
+						+ UserInfo.currency, null);
 			} else {
 				Toast.makeText(getStage(), message, 3f);
 			}
@@ -231,6 +245,14 @@ public class HomeViewV2 extends View {
 		// TODO Auto-generated method stub
 		getTotalMoneyInfo();
 		super.show(listener);
+	}
+
+	@Override
+	public void onGameEvent(GameEvent gameEvent) {
+		if (gameEvent == GameEvent.ONBACK
+				&& TraceView.instance.getLastView().equalsIgnoreCase(getName())) {
+			getTotalMoneyInfo();
+		}
 	}
 
 	void getTotalMoneyInfo() {
@@ -265,7 +287,7 @@ public class HomeViewV2 extends View {
 			addActor(lbtitle);
 			addActor(lbcontent);
 
-			if (listener != null) {
+			if (listener != null && UserInfo.getInstance().getRoleId() != 0) {
 				addListener(new ClickListener() {
 					@Override
 					public boolean touchDown(InputEvent event, float x,

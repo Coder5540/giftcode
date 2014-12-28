@@ -276,8 +276,8 @@ public class ViewRegister extends View {
 					scrTextField.setScrollY(Constants.HEIGHT_SCREEN / 2 + 50
 							- yDef);
 				}
-				AbstractGameScreen.keyboard.registerTextField(tf, config,
-						KeyboardConfig.SINGLE_LINE);
+//				AbstractGameScreen.keyboard.registerTextField(tf, config,
+//						KeyboardConfig.SINGLE_LINE);
 				return true;
 			}
 		});

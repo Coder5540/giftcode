@@ -130,7 +130,7 @@ public class ViewInfoDaiLySmall extends View {
 		String[] a = new String[] {
 				infoUser.getString(ExtParamsKey.AGENCY_NAME),
 				infoUser.getString(ExtParamsKey.FULL_NAME),
-				Factory.getStrMoney(infoUser.getInt(ExtParamsKey.AMOUNT)) + " "
+				Factory.getDotMoney(infoUser.getLong(ExtParamsKey.AMOUNT)) + " "
 						+ infoUser.getString(ExtParamsKey.CURRENCY),
 				infoUser.getString(ExtParamsKey.REF_CODE),
 				infoUser.getString(ExtParamsKey.ROLE_NAME),

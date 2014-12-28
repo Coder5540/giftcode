@@ -2,6 +2,7 @@ package com.coder5560.game.views;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 
@@ -22,9 +23,9 @@ public interface IViews {
 	 * this method will be called by controller. on listener will must set the
 	 * view state for this one. or it will be set "HIDE" automatically
 	 */
-	
+
 	public void hide(OnCompleteListener listener);
-	
+
 	public void setViewState(ViewState state);
 
 	public ViewState getViewState();
@@ -40,6 +41,7 @@ public interface IViews {
 	public Rectangle getBound();
 
 	public String getLabel();
+
 	/*
 	 * return true : means this view catch the leftSizeEvent and prevent view
 	 * controller call the left side by automatically
@@ -74,4 +76,5 @@ public interface IViews {
 	 */
 	public void back();
 
+	public void onGameEvent(GameEvent gameEvent);
 }

@@ -79,8 +79,8 @@ public class ViewCapTienDaiLy extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AbstractGameScreen.keyboard.registerTextField(tfPerson,
-						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
+//				AbstractGameScreen.keyboard.registerTextField(tfPerson,
+//						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
@@ -93,8 +93,8 @@ public class ViewCapTienDaiLy extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AbstractGameScreen.keyboard.registerTextField(tfMoney,
-						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
+//				AbstractGameScreen.keyboard.registerTextField(tfMoney,
+//						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
@@ -545,9 +545,9 @@ public class ViewCapTienDaiLy extends View {
 					@Override
 					public boolean touchDown(InputEvent event, float x,
 							float y, int pointer, int button) {
-						AbstractGameScreen.keyboard.registerTextField(tfMoney,
-								KeyboardConfig.NUMBER,
-								KeyboardConfig.SINGLE_LINE);
+//						AbstractGameScreen.keyboard.registerTextField(tfMoney,
+//								KeyboardConfig.NUMBER,
+//								KeyboardConfig.SINGLE_LINE);
 						return super.touchDown(event, x, y, pointer, button);
 					}
 				});
@@ -565,9 +565,9 @@ public class ViewCapTienDaiLy extends View {
 					@Override
 					public boolean touchDown(InputEvent event, float x,
 							float y, int pointer, int button) {
-						AbstractGameScreen.keyboard.registerTextField(taNote,
-								KeyboardConfig.NORMAL,
-								KeyboardConfig.MULTI_LINE);
+//						AbstractGameScreen.keyboard.registerTextField(taNote,
+//								KeyboardConfig.NORMAL,
+//								KeyboardConfig.MULTI_LINE);
 						return super.touchDown(event, x, y, pointer, button);
 					}
 				});

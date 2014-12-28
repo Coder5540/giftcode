@@ -13,16 +13,17 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnSelectListener;
 import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.ViewController;
 
 public class GameScreen extends AbstractGameScreen {
-	ViewController controller;
-	Image flash;
-	public GestureDetector gestureDetector;
-	UpdateHandlerList updateHandlerList;
+	ViewController			controller;
+	Image					flash;
+	public GestureDetector	gestureDetector;
+	UpdateHandlerList		updateHandlerList;
 
 	public GameScreen(GameCore game) {
 		super(game);
@@ -71,8 +72,8 @@ public class GameScreen extends AbstractGameScreen {
 		}
 	}
 
-	boolean isExit = false;
-	float timeExit = 0;
+	boolean	isExit		= false;
+	float	timeExit	= 0;
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -90,8 +91,10 @@ public class GameScreen extends AbstractGameScreen {
 				return true;
 			}
 			TraceView.instance.debug();
-			if (controller.getView(TraceView.instance.getLastView()) != null)
+			if (controller.getView(TraceView.instance.getLastView()) != null) {
 				controller.getView(TraceView.instance.getLastView()).back();
+				controller.notifyEvent(GameEvent.ONBACK);
+			}
 		}
 		return false;
 	}
@@ -103,11 +106,11 @@ public class GameScreen extends AbstractGameScreen {
 		Gdx.input.setInputProcessor(parent.inputMultiplexer);
 	}
 
-	OnSelectListener selectListener = new OnSelectListener() {
+	OnSelectListener	selectListener	= new OnSelectListener() {
 
-		@Override
-		public void onSelect(int i) {
-		}
-	};
+											@Override
+											public void onSelect(int i) {
+											}
+										};
 
 }

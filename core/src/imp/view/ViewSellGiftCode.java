@@ -242,8 +242,8 @@ public class ViewSellGiftCode extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AbstractGameScreen.keyboard.registerTextField(tf, config,
-						KeyboardConfig.SINGLE_LINE);
+//				AbstractGameScreen.keyboard.registerTextField(tf, config,
+//						KeyboardConfig.SINGLE_LINE);
 				return true;
 			}
 		});

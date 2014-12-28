@@ -44,15 +44,15 @@ import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class MainMenuView extends View {
-	private Image			tranBg;
-	Table					content;
-	public int				lastSelect			= 0;
-	public ListMenu			menu;
-	Group					groupLogout;
-	private boolean			ignoreUpdateMove	= true;
-	public static boolean	isLoadUserData		= false;
-	private JsonValue		responeInfoDaily;
-	public boolean			block				= false;
+	private Image tranBg;
+	Table content;
+	public int lastSelect = 0;
+	public ListMenu menu;
+	Group groupLogout;
+	private boolean ignoreUpdateMove = true;
+	public static boolean isLoadUserData = false;
+	private JsonValue responeInfoDaily;
+	public boolean block = false;
 
 	public MainMenuView buildComponent() {
 		Color colorBg = new Color(100 / 255f, 100 / 255f, 100 / 255f, 1f);
@@ -183,18 +183,18 @@ public class MainMenuView extends View {
 							listener.done();
 						setIgnoreUpdateMove(false);
 						setViewState(ViewState.SHOW);
-						if (!isLoadUserData)
-							Request.getInstance().getInfoDaily(
-									AppPreference.instance.getName(),
-									new GetInfoDaily());
+						// if (!isLoadUserData)
+						Request.getInstance().getInfoDaily(
+								AppPreference.instance.getName(),
+								new GetInfoDaily());
 					}
 				})));
 	}
 
 	public void getUserData() {
-		if (!isLoadUserData)
-			Request.getInstance().getInfoDaily(
-					AppPreference.instance.getName(), new GetInfoDaily());
+		// if (!isLoadUserData)
+		Request.getInstance().getInfoDaily(AppPreference.instance.getName(),
+				new GetInfoDaily());
 	}
 
 	@Override
@@ -243,7 +243,8 @@ public class MainMenuView extends View {
 
 				menu.setUserName(UserInfo.fullName);
 				menu.setPhone(UserInfo.phone);
-				menu.setMoney(Factory.getDotMoney(UserInfo.money) + " $");
+				menu.setMoney(Factory.getDotMoney(UserInfo.money) + " "
+						+ UserInfo.currency);
 				isLoadUserData = true;
 			}
 			responeInfoDaily = null;
@@ -251,7 +252,7 @@ public class MainMenuView extends View {
 
 	};
 
-	Actor	bar, currentView;
+	Actor bar, currentView;
 
 	@Override
 	public void act(float delta) {
@@ -291,670 +292,522 @@ public class MainMenuView extends View {
 		hide(null);
 	}
 
-	boolean					canPan						= false;
-	CustomListener			customListener				= new CustomListener() {
-															public boolean touchDown(
-																	float x,
-																	float y,
-																	int pointer,
-																	int button) {
-																if (content
-																		.getX() == -content
-																		.getWidth()
-																		&& x < 10
-																		&& !canPan) {
-																	canPan = true;
-																	tranBg.setVisible(true);
-																}
-																return false;
-															};
-
-															public boolean pan(
-																	float x,
-																	float y,
-																	float deltaX,
-																	float deltaY) {
-																if (canPan) {
-																	setIgnoreUpdateMove(false);
-																	tranBg.setVisible(true);
-																	content.setPosition(
-																			MathUtils
-																					.clamp(content
-																							.getX()
-																							+ deltaX,
-																							-content.getWidth(),
-																							0),
-																			content.getY());
-																	float alpha = (content
-																			.getWidth() - content
-																			.getX())
-																			/ content
-																					.getWidth();
-																	if (content
-																			.getX() == 0)
-																		alpha = 1;
-																	tranBg.setColor(
-																			tranBg.getColor().r,
-																			tranBg.getColor().g,
-																			tranBg.getColor().b,
-																			alpha);
-																	return true;
-																}
-																return false;
-															};
-
-															public boolean panStop(
-																	float x,
-																	float y,
-																	int pointer,
-																	int button) {
-																if (canPan) {
-																	float position = content
-																			.getX()
-																			+ content
-																					.getWidth();
-																	if (position <= content
-																			.getWidth() / 2)
-																		hide(null);
-																	if (position > content
-																			.getWidth() / 2)
-																		show(null);
-																	canPan = false;
-																	return true;
-																}
-																canPan = false;
-																return false;
-															};
-
-														};
-
-	public OnClickListener	onActiveUserClicked			= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				Loading.ins
-																						.hide();
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_ADMIN_ACTIVE)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_ADMIN_ACTIVE)
-																							.show(null);
-																				} else {
-																					ViewAdminActive viewAdminActive = new ViewAdminActive();
-																					viewAdminActive
-																							.build(getStage(),
-																									getViewController(),
-																									StringSystem.VIEW_ADMIN_ACTIVE,
-																									new Rectangle(
-																											0,
-																											0,
-																											Constants.WIDTH_SCREEN,
-																											Constants.HEIGHT_SCREEN
-																													- Constants.HEIGHT_ACTIONBAR));
-																					viewAdminActive
-																							.buildComponent();
-																					viewAdminActive
-																							.show(null);
-																				}
-																			}
-																		});
-															}
-														};
-
-	public OnClickListener	onUnActiveUserClicked		= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				Loading.ins
-																						.hide();
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_ADMIN_REQUEST)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_ADMIN_REQUEST)
-																							.show(null);
-																				} else {
-																					ViewAdminRequest viewAdminRequest = new ViewAdminRequest();
-																					viewAdminRequest
-																							.build(getStage(),
-																									getViewController(),
-																									StringSystem.VIEW_ADMIN_REQUEST,
-																									new Rectangle(
-																											0,
-																											0,
-																											Constants.WIDTH_SCREEN,
-																											Constants.HEIGHT_SCREEN
-																													- Constants.HEIGHT_ACTIONBAR));
-																					viewAdminRequest
-																							.buildComponent();
-																					viewAdminRequest
-																							.show(null);
-																				}
-																			}
-																		});
-
-															}
-														};
-
-	public OnClickListener	onBlockUserClicked			= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				Loading.ins
-																						.hide();
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_ADMIN_BLOCK)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_ADMIN_BLOCK)
-																							.show(null);
-																				} else {
-																					ViewAdminLock viewAdminLock = new ViewAdminLock();
-																					viewAdminLock
-																							.build(getStage(),
-																									getViewController(),
-																									StringSystem.VIEW_ADMIN_BLOCK,
-																									new Rectangle(
-																											0,
-																											0,
-																											Constants.WIDTH_SCREEN,
-																											Constants.HEIGHT_SCREEN
-																													- Constants.HEIGHT_ACTIONBAR));
-																					viewAdminLock
-																							.buildComponent();
-																					viewAdminLock
-																							.show(null);
-																				}
-																			}
-																		});
-															}
-														};
-
-	public OnClickListener	onAvatarClicked				= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				Loading.ins
-																						.hide();
-																				if (!getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_HOST_INFO)) {
-																					ViewInfoDaiLy viewInfoDaiLy = new ViewInfoDaiLy();
-																					viewInfoDaiLy
-																							.build(getStage(),
-																									getViewController(),
-																									StringSystem.VIEW_HOST_INFO,
-																									new Rectangle(
-																											0,
-																											0,
-																											Constants.WIDTH_SCREEN,
-																											Constants.HEIGHT_SCREEN
-																													- Constants.HEIGHT_ACTIONBAR));
-
-																					viewInfoDaiLy
-																							.buildComponent();
-																					viewInfoDaiLy
-																							.show(null);
-																				} else {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_HOST_INFO)
-																							.show(null);
-																				}
-																			}
-																		});
-															}
-														};
-
-	public OnClickListener	onAllMailClicked			= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_MAIL)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_MAIL)
-																							.show(null);
-																				} else {
-																					ViewMails viewMail = new ViewMails();
-																					viewMail.build(
-																							getStage(),
-																							getViewController(),
-																							StringSystem.VIEW_MAIL,
-																							new Rectangle(
-																									0,
-																									0,
-																									Constants.WIDTH_SCREEN,
-																									Constants.HEIGHT_SCREEN
-																											- Constants.HEIGHT_ACTIONBAR));
-																					viewMail.buildComponent();
-																					viewMail.show(null);
-																				}
-
-																			}
-																		});
-															}
-														};
-
-	public OnClickListener	onHistorySendMoney			= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_LOG_SEND_MONEY_CHART)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_LOG_SEND_MONEY_CHART)
-																							.show(null);
-																				} else {
-																					ViewLogChart viewLog = new ViewLogChart();
-																					viewLog.build(
-																							getStage(),
-																							getViewController(),
-																							StringSystem.VIEW_LOG_SEND_MONEY_CHART,
-																							new Rectangle(
-																									0,
-																									0,
-																									Constants.WIDTH_SCREEN,
-																									Constants.HEIGHT_SCREEN
-																											- Constants.HEIGHT_ACTIONBAR));
-																					viewLog.buildComponent(ViewLogChart.TYPE_SEND_MONEY);
-																					viewLog.show(null);
-																				}
-																			}
-																		});
-															}
-														};
-
-	public OnClickListener	onHistoryReceiveMoney		= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)
-																							.show(null);
-																				} else {
-																					ViewLogChart viewLog = new ViewLogChart();
-																					viewLog.build(
-																							getStage(),
-																							getViewController(),
-																							StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART,
-																							new Rectangle(
-																									0,
-																									0,
-																									Constants.WIDTH_SCREEN,
-																									Constants.HEIGHT_SCREEN
-																											- Constants.HEIGHT_ACTIONBAR));
-																					viewLog.buildComponent(ViewLogChart.TYPE_RECEIVE_MONEY);
-																					viewLog.show(null);
-																				}
-																			}
-																		});
-															}
-														};
-
-	public OnClickListener	onAddMoneyClicked			= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																final ViewCapTienDaiLy viewAddMoney = new ViewCapTienDaiLy();
-																viewAddMoney
-																		.build(getStage(),
-																				getViewController(),
-																				StringSystem.VIEW_ADD_MONEY,
-																				new Rectangle(
-																						0,
-																						0,
-																						Constants.WIDTH_SCREEN,
-																						Constants.HEIGHT_SCREEN
-																								- Constants.HEIGHT_ACTIONBAR));
-																viewAddMoney
-																		.buildComponent();
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				viewAddMoney
-																						.show(null);
-																			}
-																		});
-
-															}
-														};
-
-	public OnClickListener	onLogoutListener			= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				getViewController()
-																						.getView(
-																								StringSystem.VIEW_LOGIN)
-																						.show(new OnCompleteListener() {
-
-																							@Override
-																							public void onError() {
-
-																							}
-
-																							@Override
-																							public void done() {
-																								getViewController()
-																										.resetAll();
-																							}
-																						});
-																			}
-																		});
-															}
-														};
-
-	public OnClickListener	onSellGiftCode				= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				Loading.ins
-																						.hide();
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_SELL_GIFT_CODE)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_SELL_GIFT_CODE)
-																							.show(null);
-																				} else {
-																					ViewSellGiftCode viewSell = new ViewSellGiftCode();
-																					viewSell.build(
-																							getStage(),
-																							getViewController(),
-																							StringSystem.VIEW_SELL_GIFT_CODE,
-																							new Rectangle(
-																									0,
-																									0,
-																									Constants.WIDTH_SCREEN,
-																									Constants.HEIGHT_SCREEN
-																											- Constants.HEIGHT_ACTIONBAR));
-																					viewSell.buildComponent();
-																					viewSell.show(null);
-																				}
-																			}
-																		});
-															}
-														};
-	public OnClickListener	onGiftcodeClicked			= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				Loading.ins
-																						.hide();
-																				Log.d("Click to use");
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_GIFTCODE)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_GIFTCODE)
-																							.show(null);
-																				} else {
-																					ViewGiftCode viewGiftcode = new ViewGiftCode();
-																					viewGiftcode
-																							.build(getStage(),
-																									getViewController(),
-																									StringSystem.VIEW_GIFTCODE,
-																									new Rectangle(
-																											0,
-																											0,
-																											Constants.WIDTH_SCREEN,
-																											Constants.HEIGHT_SCREEN
-																													- Constants.HEIGHT_ACTIONBAR));
-																					viewGiftcode
-																							.buildComponent();
-																					viewGiftcode
-																							.show(null);
-																				}
-																			}
-																		});
-															}
-														};
-	public OnClickListener	onHistoryGiftcodeClicked	= new OnClickListener() {
-
-															@Override
-															public void onClick(
-																	float x,
-																	float y) {
-																Loading.ins
-																		.show((Group) getViewController()
-																				.getCurrentView());
-
-																getViewController()
-																		.getView(
-																				StringSystem.VIEW_MAIN_MENU)
-																		.hide(new OnCompleteListener() {
-
-																			@Override
-																			public void onError() {
-
-																			}
-
-																			@Override
-																			public void done() {
-																				if (getViewController()
-																						.isContainView(
-																								StringSystem.VIEW_LOG_GIFTCODE_CHART)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_LOG_GIFTCODE_CHART)
-																							.show(null);
-																				} else {
-																					ViewLogChart viewLog = new ViewLogChart();
-																					viewLog.build(
-																							getStage(),
-																							getViewController(),
-																							StringSystem.VIEW_LOG_GIFTCODE_CHART,
-																							new Rectangle(
-																									0,
-																									0,
-																									Constants.WIDTH_SCREEN,
-																									Constants.HEIGHT_SCREEN
-																											- Constants.HEIGHT_ACTIONBAR));
-																					viewLog.buildComponent(ViewLogChart.TYPE_GIFTCODE);
-																					viewLog.show(null);
-																				}
-																			}
-																		});
-															}
-														};
+	boolean canPan = false;
+	CustomListener customListener = new CustomListener() {
+		public boolean touchDown(float x, float y, int pointer, int button) {
+			if (content.getX() == -content.getWidth() && x < 10 && !canPan) {
+				canPan = true;
+				tranBg.setVisible(true);
+			}
+			return false;
+		};
+
+		public boolean pan(float x, float y, float deltaX, float deltaY) {
+			if (canPan) {
+				setIgnoreUpdateMove(false);
+				tranBg.setVisible(true);
+				content.setPosition(
+						MathUtils.clamp(content.getX() + deltaX,
+								-content.getWidth(), 0), content.getY());
+				float alpha = (content.getWidth() - content.getX())
+						/ content.getWidth();
+				if (content.getX() == 0)
+					alpha = 1;
+				tranBg.setColor(tranBg.getColor().r, tranBg.getColor().g,
+						tranBg.getColor().b, alpha);
+				return true;
+			}
+			return false;
+		};
+
+		public boolean panStop(float x, float y, int pointer, int button) {
+			if (canPan) {
+				float position = content.getX() + content.getWidth();
+				if (position <= content.getWidth() / 2)
+					hide(null);
+				if (position > content.getWidth() / 2)
+					show(null);
+				canPan = false;
+				return true;
+			}
+			canPan = false;
+			return false;
+		};
+
+	};
+
+	public OnClickListener onActiveUserClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							Loading.ins.hide();
+							if (getViewController().isContainView(
+									StringSystem.VIEW_ADMIN_ACTIVE)) {
+								getViewController().getView(
+										StringSystem.VIEW_ADMIN_ACTIVE).show(
+										null);
+							} else {
+								ViewAdminActive viewAdminActive = new ViewAdminActive();
+								viewAdminActive
+										.build(getStage(),
+												getViewController(),
+												StringSystem.VIEW_ADMIN_ACTIVE,
+												new Rectangle(
+														0,
+														0,
+														Constants.WIDTH_SCREEN,
+														Constants.HEIGHT_SCREEN
+																- Constants.HEIGHT_ACTIONBAR));
+								viewAdminActive.buildComponent();
+								viewAdminActive.show(null);
+							}
+						}
+					});
+		}
+	};
+
+	public OnClickListener onUnActiveUserClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							Loading.ins.hide();
+							if (getViewController().isContainView(
+									StringSystem.VIEW_ADMIN_REQUEST)) {
+								getViewController().getView(
+										StringSystem.VIEW_ADMIN_REQUEST).show(
+										null);
+							} else {
+								ViewAdminRequest viewAdminRequest = new ViewAdminRequest();
+								viewAdminRequest
+										.build(getStage(),
+												getViewController(),
+												StringSystem.VIEW_ADMIN_REQUEST,
+												new Rectangle(
+														0,
+														0,
+														Constants.WIDTH_SCREEN,
+														Constants.HEIGHT_SCREEN
+																- Constants.HEIGHT_ACTIONBAR));
+								viewAdminRequest.buildComponent();
+								viewAdminRequest.show(null);
+							}
+						}
+					});
+
+		}
+	};
+
+	public OnClickListener onBlockUserClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							Loading.ins.hide();
+							if (getViewController().isContainView(
+									StringSystem.VIEW_ADMIN_BLOCK)) {
+								getViewController().getView(
+										StringSystem.VIEW_ADMIN_BLOCK).show(
+										null);
+							} else {
+								ViewAdminLock viewAdminLock = new ViewAdminLock();
+								viewAdminLock
+										.build(getStage(),
+												getViewController(),
+												StringSystem.VIEW_ADMIN_BLOCK,
+												new Rectangle(
+														0,
+														0,
+														Constants.WIDTH_SCREEN,
+														Constants.HEIGHT_SCREEN
+																- Constants.HEIGHT_ACTIONBAR));
+								viewAdminLock.buildComponent();
+								viewAdminLock.show(null);
+							}
+						}
+					});
+		}
+	};
+
+	public OnClickListener onAvatarClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							Loading.ins.hide();
+							if (!getViewController().isContainView(
+									StringSystem.VIEW_HOST_INFO)) {
+								ViewInfoDaiLy viewInfoDaiLy = new ViewInfoDaiLy();
+								viewInfoDaiLy
+										.build(getStage(),
+												getViewController(),
+												StringSystem.VIEW_HOST_INFO,
+												new Rectangle(
+														0,
+														0,
+														Constants.WIDTH_SCREEN,
+														Constants.HEIGHT_SCREEN
+																- Constants.HEIGHT_ACTIONBAR));
+
+								viewInfoDaiLy.buildComponent();
+								viewInfoDaiLy.show(null);
+							} else {
+								getViewController().getView(
+										StringSystem.VIEW_HOST_INFO).show(null);
+							}
+						}
+					});
+		}
+	};
+
+	public OnClickListener onAllMailClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							if (getViewController().isContainView(
+									StringSystem.VIEW_MAIL)) {
+								getViewController().getView(
+										StringSystem.VIEW_MAIL).show(null);
+							} else {
+								ViewMails viewMail = new ViewMails();
+								viewMail.build(
+										getStage(),
+										getViewController(),
+										StringSystem.VIEW_MAIL,
+										new Rectangle(
+												0,
+												0,
+												Constants.WIDTH_SCREEN,
+												Constants.HEIGHT_SCREEN
+														- Constants.HEIGHT_ACTIONBAR));
+								viewMail.buildComponent();
+								viewMail.show(null);
+							}
+
+						}
+					});
+		}
+	};
+
+	public OnClickListener onHistorySendMoney = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							if (getViewController().isContainView(
+									StringSystem.VIEW_LOG_SEND_MONEY_CHART)) {
+								getViewController().getView(
+										StringSystem.VIEW_LOG_SEND_MONEY_CHART)
+										.show(null);
+							} else {
+								ViewLogChart viewLog = new ViewLogChart();
+								viewLog.build(
+										getStage(),
+										getViewController(),
+										StringSystem.VIEW_LOG_SEND_MONEY_CHART,
+										new Rectangle(
+												0,
+												0,
+												Constants.WIDTH_SCREEN,
+												Constants.HEIGHT_SCREEN
+														- Constants.HEIGHT_ACTIONBAR));
+								viewLog.buildComponent(ViewLogChart.TYPE_SEND_MONEY);
+								viewLog.show(null);
+							}
+						}
+					});
+		}
+	};
+
+	public OnClickListener onHistoryReceiveMoney = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							if (getViewController().isContainView(
+									StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)) {
+								getViewController()
+										.getView(
+												StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)
+										.show(null);
+							} else {
+								ViewLogChart viewLog = new ViewLogChart();
+								viewLog.build(
+										getStage(),
+										getViewController(),
+										StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART,
+										new Rectangle(
+												0,
+												0,
+												Constants.WIDTH_SCREEN,
+												Constants.HEIGHT_SCREEN
+														- Constants.HEIGHT_ACTIONBAR));
+								viewLog.buildComponent(ViewLogChart.TYPE_RECEIVE_MONEY);
+								viewLog.show(null);
+							}
+						}
+					});
+		}
+	};
+
+	public OnClickListener onAddMoneyClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			final ViewCapTienDaiLy viewAddMoney = new ViewCapTienDaiLy();
+			viewAddMoney.build(getStage(), getViewController(),
+					StringSystem.VIEW_ADD_MONEY, new Rectangle(0, 0,
+							Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
+									- Constants.HEIGHT_ACTIONBAR));
+			viewAddMoney.buildComponent();
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							viewAddMoney.show(null);
+						}
+					});
+
+		}
+	};
+
+	public OnClickListener onLogoutListener = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							getViewController()
+									.getView(StringSystem.VIEW_LOGIN).show(
+											new OnCompleteListener() {
+
+												@Override
+												public void onError() {
+
+												}
+
+												@Override
+												public void done() {
+													getViewController()
+															.resetAll();
+												}
+											});
+						}
+					});
+		}
+	};
+
+	public OnClickListener onSellGiftCode = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+
+			Loading.ins.show((Group) getViewController().getCurrentView());
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							Loading.ins.hide();
+							if (getViewController().isContainView(
+									StringSystem.VIEW_SELL_GIFT_CODE)) {
+								getViewController().getView(
+										StringSystem.VIEW_SELL_GIFT_CODE).show(
+										null);
+							} else {
+								ViewSellGiftCode viewSell = new ViewSellGiftCode();
+								viewSell.build(
+										getStage(),
+										getViewController(),
+										StringSystem.VIEW_SELL_GIFT_CODE,
+										new Rectangle(
+												0,
+												0,
+												Constants.WIDTH_SCREEN,
+												Constants.HEIGHT_SCREEN
+														- Constants.HEIGHT_ACTIONBAR));
+								viewSell.buildComponent();
+								viewSell.show(null);
+							}
+						}
+					});
+		}
+	};
+	public OnClickListener onGiftcodeClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							Loading.ins.hide();
+							Log.d("Click to use");
+							if (getViewController().isContainView(
+									StringSystem.VIEW_GIFTCODE)) {
+								getViewController().getView(
+										StringSystem.VIEW_GIFTCODE).show(null);
+							} else {
+								ViewGiftCode viewGiftcode = new ViewGiftCode();
+								viewGiftcode
+										.build(getStage(),
+												getViewController(),
+												StringSystem.VIEW_GIFTCODE,
+												new Rectangle(
+														0,
+														0,
+														Constants.WIDTH_SCREEN,
+														Constants.HEIGHT_SCREEN
+																- Constants.HEIGHT_ACTIONBAR));
+								viewGiftcode.buildComponent();
+								viewGiftcode.show(null);
+							}
+						}
+					});
+		}
+	};
+	public OnClickListener onHistoryGiftcodeClicked = new OnClickListener() {
+
+		@Override
+		public void onClick(float x, float y) {
+			Loading.ins.show((Group) getViewController().getCurrentView());
+
+			getViewController().getView(StringSystem.VIEW_MAIN_MENU).hide(
+					new OnCompleteListener() {
+
+						@Override
+						public void onError() {
+
+						}
+
+						@Override
+						public void done() {
+							if (getViewController().isContainView(
+									StringSystem.VIEW_LOG_GIFTCODE_CHART)) {
+								getViewController().getView(
+										StringSystem.VIEW_LOG_GIFTCODE_CHART)
+										.show(null);
+							} else {
+								ViewLogChart viewLog = new ViewLogChart();
+								viewLog.build(
+										getStage(),
+										getViewController(),
+										StringSystem.VIEW_LOG_GIFTCODE_CHART,
+										new Rectangle(
+												0,
+												0,
+												Constants.WIDTH_SCREEN,
+												Constants.HEIGHT_SCREEN
+														- Constants.HEIGHT_ACTIONBAR));
+								viewLog.buildComponent(ViewLogChart.TYPE_GIFTCODE);
+								viewLog.show(null);
+							}
+						}
+					});
+		}
+	};
 
 	class GetInfoDaily implements HttpResponseListener {
 

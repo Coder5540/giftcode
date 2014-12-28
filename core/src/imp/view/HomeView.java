@@ -20,9 +20,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.listener.OnClickListener;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.views.IViewController;
+import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class HomeView extends View {
@@ -123,6 +125,15 @@ public class HomeView extends View {
 	}
 
 	@Override
+	public void onGameEvent(GameEvent gameEvent) {
+		if (gameEvent == GameEvent.ONBACK) {
+			if (TraceView.instance.getLastView().equalsIgnoreCase(getName())) {
+				show(null);
+			}
+		}
+	}
+
+	@Override
 	public void back() {
 		if (actorExit.getActions().size > 0) {
 			Gdx.app.exit();
@@ -220,4 +231,5 @@ class IconFunction extends Group {
 				bgTitle.getX() + bgTitle.getHeight() / 2 - lbTitle.getHeight()
 						/ 2);
 	}
+
 }

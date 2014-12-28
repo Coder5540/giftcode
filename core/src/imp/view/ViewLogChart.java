@@ -10,6 +10,7 @@ import utils.elements.PartnerSelectBox;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
 import utils.factory.FontFactory.fontType;
+import utils.factory.Factory;
 import utils.factory.StringSystem;
 import utils.factory.StringUtil;
 import utils.factory.Style;
@@ -49,6 +50,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.ColumnChartView;
 import com.coder5560.game.ui.CustomTextField;
@@ -94,9 +96,10 @@ public class ViewLogChart extends View {
 	Label					lbContent;
 
 	long					totalMoney				= 0;
-	String username = "";
+	String					username				= "";
 
 	public ViewLogChart buildComponent(int type) {
+		username = AppPreference.instance.name;
 		this.typeView = type;
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
 		bg.setSize(getWidth(), getHeight());
@@ -298,9 +301,9 @@ public class ViewLogChart extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AbstractGameScreen.keyboard.registerTextField(tfSearch,
-						"tfSearch", KeyboardConfig.NORMAL,
-						KeyboardConfig.SINGLE_LINE);
+				// AbstractGameScreen.keyboard.registerTextField(tfSearch,
+				// "tfSearch", KeyboardConfig.NORMAL,
+				// KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
@@ -354,9 +357,10 @@ public class ViewLogChart extends View {
 
 		return this;
 	}
-	
-	public void setUserName(String name){
+
+	public void setUserName(String name) {
 		this.username = name;
+		partnerFun.getSelected().name = name;
 	}
 
 	public void setTitleView(String title) {
@@ -386,9 +390,8 @@ public class ViewLogChart extends View {
 	}
 
 	void getListTotalMoney() {
-		Request.getInstance().getListTotalMoney(username,
-				dateFrom.getDate(), dateTo.getDate(),
-				new getTotalMoneyListener());
+		Request.getInstance().getListTotalMoney(username, dateFrom.getDate(),
+				dateTo.getDate(), new getTotalMoneyListener());
 		gBottom.setVisible(false);
 		Loading.ins.show(this);
 	}
@@ -431,7 +434,7 @@ public class ViewLogChart extends View {
 				ArrayList<String> dir = new ArrayList<String>();
 
 				if (typeView == TYPE_SEND_MONEY) {
-					dir.add("Tiền đã chuyển");
+					dir.add("Tiền đã cấp");
 					color.add(new Color(255 / 255f, 48 / 255f, 48 / 255f, 1));
 					columnchart.numbertype = 1;
 				} else if (typeView == TYPE_RECEIVE_MONEY) {
@@ -494,7 +497,8 @@ public class ViewLogChart extends View {
 										viewLogTransferMoney.setFun(1);
 									}
 									((ViewLogTransferMoney) _viewController
-											.getView(StringSystem.VIEW_LOG_SEND_MONEY)).setUserName(username);
+											.getView(StringSystem.VIEW_LOG_SEND_MONEY))
+											.setUserName(username);
 									((ViewLogTransferMoney) _viewController
 											.getView(StringSystem.VIEW_LOG_SEND_MONEY))
 											.show(null);
@@ -525,7 +529,7 @@ public class ViewLogChart extends View {
 												.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 												.setDate(date);
 										((ViewLogTransferMoney) _viewController
-												.getView(StringSystem.VIEW_LOG_SEND_MONEY))
+												.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 												.setFun(1);
 									} else {
 										ViewLogTransferMoney viewLogTransferMoney = new ViewLogTransferMoney();
@@ -545,7 +549,8 @@ public class ViewLogChart extends View {
 										viewLogTransferMoney.setFun(1);
 									}
 									((ViewLogTransferMoney) _viewController
-											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY)).setUserName(username);
+											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
+											.setUserName(username);
 									((ViewLogTransferMoney) _viewController
 											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 											.show(null);
@@ -564,42 +569,45 @@ public class ViewLogChart extends View {
 							ColumnChartComponent colGiftCode = new ColumnChartComponent();
 							colGiftCode.addColumnComponent(new ColumnComponent(
 									money_giftcode, color.get(0)));
-							colGiftCode.addListener(new ClickListener() {
-								@Override
-								public void clicked(InputEvent event, float x,
-										float y) {
-									if (_viewController
-											.isContainView(StringSystem.VIEW_LOG_MONEY_GIFTCODE)) {
+							if (UserInfo.getInstance().getRoleId() != RoleID.USER_MANAGER) {
+								colGiftCode.addListener(new ClickListener() {
+									@Override
+									public void clicked(InputEvent event,
+											float x, float y) {
+										if (_viewController
+												.isContainView(StringSystem.VIEW_LOG_MONEY_GIFTCODE)) {
+											((ViewLogGiftCode) _viewController
+													.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
+													.setDate(date);
+											((ViewLogGiftCode) _viewController
+													.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
+													.setFun(1);
+										} else {
+											ViewLogGiftCode viewlogGiftCode = new ViewLogGiftCode();
+											viewlogGiftCode
+													.build(getStage(),
+															_viewController,
+															StringSystem.VIEW_LOG_MONEY_GIFTCODE,
+															new Rectangle(
+																	0,
+																	0,
+																	Constants.WIDTH_SCREEN,
+																	Constants.HEIGHT_SCREEN
+																			- Constants.HEIGHT_ACTIONBAR));
+											viewlogGiftCode.buildComponent();
+											viewlogGiftCode.setDate(date);
+											viewlogGiftCode.setFun(1);
+										}
 										((ViewLogGiftCode) _viewController
 												.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
-												.setDate(date);
+												.setUserName(username);
 										((ViewLogGiftCode) _viewController
 												.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
-												.setFun(1);
-									} else {
-										ViewLogGiftCode viewlogGiftCode = new ViewLogGiftCode();
-										viewlogGiftCode
-												.build(getStage(),
-														_viewController,
-														StringSystem.VIEW_LOG_MONEY_GIFTCODE,
-														new Rectangle(
-																0,
-																0,
-																Constants.WIDTH_SCREEN,
-																Constants.HEIGHT_SCREEN
-																		- Constants.HEIGHT_ACTIONBAR));
-										viewlogGiftCode.buildComponent();
-										viewlogGiftCode.setDate(date);
-										viewlogGiftCode.setFun(1);
+												.show(null);
+										super.clicked(event, x, y);
 									}
-									((ViewLogGiftCode) _viewController
-											.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE)).setUserName(username);
-									((ViewLogGiftCode) _viewController
-											.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
-											.show(null);
-									super.clicked(event, x, y);
-								}
-							});
+								});
+							}
 							colGroup.addComponent(colGiftCode);
 						}
 					}
@@ -614,22 +622,21 @@ public class ViewLogChart extends View {
 
 				String title = "";
 				if (typeView == TYPE_SEND_MONEY) {
-					title = "Tổng tiền: "
-							+ StringUtil.getDotMoney(totalMoneySend)
+					title = "Tổng tiền: " + Factory.getDotMoney(totalMoneySend)
 							+ UserInfo.currency + "/"
-							+ StringUtil.getDotMoney(totalMoney)
+							+ Factory.getDotMoney(totalMoney)
 							+ UserInfo.currency;
 				} else if (typeView == TYPE_RECEIVE_MONEY) {
 					title = "Tổng tiền: "
-							+ StringUtil.getDotMoney(totalMoneyReceive)
+							+ Factory.getDotMoney(totalMoneyReceive)
 							+ UserInfo.currency + "/"
-							+ StringUtil.getDotMoney(totalMoney)
+							+ Factory.getDotMoney(totalMoney)
 							+ UserInfo.currency;
 				} else {
 					title = "Tổng tiền: "
-							+ StringUtil.getDotMoney(totalMoneyGiftCode)
+							+ Factory.getDotMoney(totalMoneyGiftCode)
 							+ UserInfo.currency + "/"
-							+ StringUtil.getDotMoney(totalMoney)
+							+ Factory.getDotMoney(totalMoney)
 							+ UserInfo.currency;
 				}
 				Image icon = new Image(new Texture(

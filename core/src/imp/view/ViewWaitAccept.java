@@ -228,8 +228,8 @@ public class ViewWaitAccept extends View {
 	}
 
 	public void registerKeyboard(TextField tf, int config) {
-		AbstractGameScreen.keyboard.registerTextField(tf, config,
-				KeyboardConfig.SINGLE_LINE);
+//		AbstractGameScreen.keyboard.registerTextField(tf, config,
+//				KeyboardConfig.SINGLE_LINE);
 	}
 
 	@Override

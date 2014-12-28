@@ -5,8 +5,8 @@ import utils.elements.PartnerPicker;
 import utils.elements.PartnerSelectBox;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
+import utils.factory.Factory;
 import utils.factory.FontFactory.fontType;
-import utils.factory.StringUtil;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
@@ -107,6 +107,7 @@ public class ViewLogTransferMoney extends View {
 	String				username				= "";
 
 	public ViewLogTransferMoney buildComponent(int type) {
+		username = AppPreference.instance.name;
 		this.typeView = type;
 		top();
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
@@ -348,9 +349,9 @@ public class ViewLogTransferMoney extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				AbstractGameScreen.keyboard.registerTextField(tfSearch,
-						"tfSearch", KeyboardConfig.NORMAL,
-						KeyboardConfig.SINGLE_LINE);
+//				AbstractGameScreen.keyboard.registerTextField(tfSearch,
+//						"tfSearch", KeyboardConfig.NORMAL,
+//						KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
@@ -370,10 +371,10 @@ public class ViewLogTransferMoney extends View {
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
 					Loading.ins.show(ViewLogTransferMoney.this);
-				}else if (stateofpartnerFun.equals("4")) {
-					Request.getInstance().getLogMoneyByName(typeView,
-							username, dateFrom.getDate(),
-							dateTo.getDate(), new getListByName());
+				} else if (stateofpartnerFun.equals("4")) {
+					Request.getInstance().getLogMoneyByName(typeView, username,
+							dateFrom.getDate(), dateTo.getDate(),
+							new getListByName());
 					Loading.ins.show(ViewLogTransferMoney.this);
 				} else if (stateofpartnerFun.equals("0")) {
 					Request.getInstance().getLogMoneyByRole(typeView,
@@ -515,7 +516,8 @@ public class ViewLogTransferMoney extends View {
 	}
 
 	public void setFun(int select) {
-		if (UserInfo.getInstance().getRoleId() == 3 || UserInfo.getInstance().getRoleId() == 4) {
+		if (UserInfo.getInstance().getRoleId() == 3
+				|| UserInfo.getInstance().getRoleId() == 4) {
 			partnerFun.setSelectedIndex(0);
 		} else {
 			partnerFun.setSelectedIndex(1);
@@ -541,16 +543,16 @@ public class ViewLogTransferMoney extends View {
 						// int type = 0;
 						long money_before = content
 								.getLong(ExtParamsKey.MONEY_BEFORE);
-						String str_money_before = StringUtil
-								.getStrMoney((int) money_before);
+						String str_money_before = Factory
+								.getDotMoney((long) money_before);
 						long money_after = content
 								.getLong(ExtParamsKey.MONEY_AFTER);
-						String str_money_after = StringUtil
-								.getStrMoney((int) money_after);
+						String str_money_after = Factory
+								.getDotMoney((long) money_after);
 						long money_transfer = content
 								.getLong(ExtParamsKey.MONEY_TRANSFER);
-						String str_money_transfer = StringUtil
-								.getStrMoney((int) money_transfer);
+						String str_money_transfer = Factory
+								.getDotMoney((long) money_transfer);
 						String currency = content
 								.getString(ExtParamsKey.CURRENCY);
 						String date = DateTime.getStringDate(
@@ -719,7 +721,7 @@ public class ViewLogTransferMoney extends View {
 	public void hide(OnCompleteListener listener) {
 		super.hide(listener);
 	}
-	
+
 	@Override
 	public void back() {
 		// TODO Auto-generated method stub
