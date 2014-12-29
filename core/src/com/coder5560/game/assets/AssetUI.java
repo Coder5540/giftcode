@@ -14,15 +14,23 @@ public class AssetUI {
 	public TextureRegion	reg_ninepatch4;
 	public TextureRegion	reg_down;
 	public TextureRegion	reg_avatar;
-	public TextureRegion	reg_userManagements;
-	private TextureRegion	reg_mail;
+
 	private TextureRegion	reg_circle;
-	private TextureRegion	reg_icon_transition;
+
 	private TextureRegion	reg_ninepathKnob;
 	private TextureRegion	reg_logout;
+
+	public TextureRegion	reg_userManagements;
+	private TextureRegion	reg_icon_transition;
+	private TextureRegion	reg_icon_giftcode;
+	private TextureRegion	reg_mail;
+
 	private TextureRegion	reg_icon_user;
 	private TextureRegion	reg_icon_phone;
 	private TextureRegion	reg_icon_money;
+	private TextureRegion	reg_icon_role;
+	private TextureRegion	reg_icon_refresh;
+	private TextureRegion	reg_icon_menu;
 
 	private TextureAtlas	textureAtlas;
 
@@ -40,19 +48,19 @@ public class AssetUI {
 
 	public TextureRegion getAvatar() {
 		if (reg_avatar == null)
-			reg_avatar = textureAtlas.findRegion("avatar");
+			reg_avatar = textureAtlas.findRegion("user");
 		return reg_avatar;
 	}
 
 	public TextureRegion getRegUsermanagement() {
 		if (reg_userManagements == null)
-			reg_userManagements = textureAtlas.findRegion("user_manager");
+			reg_userManagements = textureAtlas.findRegion("agency");
 		return reg_userManagements;
 	}
 
 	public TextureRegion getRegionMail() {
 		if (reg_mail == null)
-			reg_mail = textureAtlas.findRegion("email");
+			reg_mail = textureAtlas.findRegion("mail");
 		return reg_mail;
 	}
 
@@ -70,33 +78,58 @@ public class AssetUI {
 
 	public TextureRegion getIconTransition() {
 		if (reg_icon_transition == null) {
-			reg_icon_transition = textureAtlas.findRegion("transistionicon");
+			reg_icon_transition = textureAtlas.findRegion("history");
 		}
 		return reg_icon_transition;
 	}
 
+	public TextureRegion getIconGiftcode() {
+		if (reg_icon_giftcode == null) {
+			reg_icon_giftcode = textureAtlas.findRegion("giftcode");
+		}
+		return reg_icon_giftcode;
+	}
+
 	public TextureRegion getRegionLogout() {
 		if (reg_logout == null)
-			reg_logout = textureAtlas.findRegion("Logout");
+			reg_logout = textureAtlas.findRegion("logout");
 		return reg_logout;
 	}
 
 	public TextureRegion getIconUser() {
 		if (reg_icon_user == null)
-			reg_icon_user = textureAtlas.findRegion("icon-user");
+			reg_icon_user = textureAtlas.findRegion("user");
 		return reg_icon_user;
 	}
 
 	public TextureRegion getIconPhone() {
 		if (reg_icon_phone == null)
-			reg_icon_phone = textureAtlas.findRegion("phone-icon");
+			reg_icon_phone = textureAtlas.findRegion("phone");
 		return reg_icon_phone;
 	}
 
 	public TextureRegion getIconMoney() {
 		if (reg_icon_money == null)
-			reg_icon_money = textureAtlas.findRegion("money_icon");
+			reg_icon_money = textureAtlas.findRegion("money");
 		return reg_icon_money;
+	}
+
+	public TextureRegion getIconRole() {
+		if (reg_icon_role == null)
+			reg_icon_role = textureAtlas.findRegion("admin");
+		return reg_icon_role;
+	}
+
+	public TextureRegion getIconRefresh() {
+		if (reg_icon_refresh == null)
+			reg_icon_refresh = textureAtlas.findRegion("refresh");
+		return reg_icon_refresh;
+	}
+
+	public TextureRegion getIconMenu() {
+		if (reg_icon_menu == null)
+			reg_icon_menu = textureAtlas.findRegion("home-list");
+		return reg_icon_menu;
 	}
 
 }

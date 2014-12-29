@@ -1,7 +1,7 @@
 package imp.view;
 
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.StringSystem;
 
 import com.badlogic.gdx.graphics.Color;
@@ -41,7 +41,7 @@ public class ViewMessage extends View {
 
 	public void buildComponent() {
 		LabelStyle style = new LabelStyle();
-		style.font = Assets.instance.fontFactory.getFont(20, fontType.Medium);
+		style.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
 		style.fontColor = new Color(Color.BLACK);
 		lbShortDescription = new Label(_content, style);
 		lbShortDescription.setAlignment(Align.top, Align.left);
@@ -51,7 +51,7 @@ public class ViewMessage extends View {
 
 		LabelStyle styleTime = new LabelStyle();
 		styleTime.font = Assets.instance.fontFactory
-				.getFont(18, fontType.Light);
+				.getFont(18, FontType.Light);
 		styleTime.fontColor = Color.BLACK;
 
 		time = new Label(Factory.getTime(_time), styleTime);

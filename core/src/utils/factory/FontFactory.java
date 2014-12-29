@@ -13,7 +13,11 @@ import com.coder5560.game.enums.Constants;
 
 public class FontFactory {
 
-	HashMap<String, BitmapFont> fonts = new HashMap<String, BitmapFont>();
+	HashMap<String, BitmapFont>	fonts	= new HashMap<String, BitmapFont>();
+
+	public enum FontType {
+		Regular, Bold, Light, Italic, Medium
+	};
 
 	public FontFactory(AssetManager assetManager) {
 
@@ -41,11 +45,7 @@ public class FontFactory {
 		return font;
 	}
 
-	public enum fontType {
-		Regular, Bold, Light, Italic, Medium
-	};
-
-	public BitmapFont getFont(int size, fontType type) {
+	public BitmapFont getFont(int size, FontType type) {
 		if (fonts.get("font" + size + type.toString()) == null) {
 			fonts.put("font" + size + type.toString(),
 					loadFont("font/Roboto-" + type.toString() + ".ttf", size));
@@ -54,13 +54,13 @@ public class FontFactory {
 	}
 
 	public BitmapFont getFont(int size) {
-		if (fonts.get("font" + size + fontType.Regular.toString()) == null) {
+		if (fonts.get("font" + size + FontType.Regular.toString()) == null) {
 			fonts.put(
-					"font" + size + fontType.Regular.toString(),
-					loadFont("font/Roboto-" + fontType.Regular.toString()
+					"font" + size + FontType.Regular.toString(),
+					loadFont("font/Roboto-" + FontType.Regular.toString()
 							+ ".ttf", size));
 		}
-		return fonts.get("font" + size + fontType.Regular.toString());
+		return fonts.get("font" + size + FontType.Regular.toString());
 	}
 
 }

@@ -4,7 +4,7 @@ public class Constants {
 
 	public static final int HEIGHT_SCREEN = 800;
 	public static final int WIDTH_SCREEN = 480;
-	public static final int HEIGHT_ACTIONBAR = 60;
+	public static final int HEIGHT_ACTIONBAR = 75;
 	public static final int WIDTH_MAINMENU = 300;
 	public static final String APP_NAME = "8b8gifcode";
 	public static String DEVICE_ID = "id";

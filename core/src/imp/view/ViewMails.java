@@ -3,7 +3,7 @@ package imp.view;
 import utils.elements.CustomTable;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.StringSystem;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
@@ -193,7 +193,7 @@ public class ViewMails extends View {
 		bgDialog.setTouchable(Touchable.enabled);
 
 		LabelStyle style = new LabelStyle();
-		style.font = Assets.instance.fontFactory.getFont(30, fontType.Light);
+		style.font = Assets.instance.fontFactory.getFont(30, FontType.Light);
 		style.fontColor = Color.BLACK;
 		Label label = new Label("Bạn Không Có Tin Nhắn Nào !", style);
 		label.setAlignment(Align.center);
@@ -231,19 +231,19 @@ public class ViewMails extends View {
 			this.isRead = isRead;
 			styleTitle = new LabelStyle();
 			styleTitle.font = Assets.instance.fontFactory.getFont(22,
-					fontType.Medium);
+					FontType.Medium);
 			styleTitle.fontColor = new Color(20 / 255f, 20 / 255f, 20 / 255f,
 					1f);
 
 			styleDesciption = new LabelStyle();
 			styleDesciption.font = Assets.instance.fontFactory.getFont(18,
-					fontType.Light);
+					FontType.Light);
 			styleDesciption.fontColor = new Color(40 / 255f, 40 / 255f,
 					40 / 255f, 1f);
 
 			styleTime = new LabelStyle();
 			styleTime.font = Assets.instance.fontFactory.getFont(18,
-					fontType.Light);
+					FontType.Light);
 			styleTime.fontColor = new Color(40 / 255f, 40 / 255f, 40 / 255f, 1f);
 			lbTitle = new Label(title, styleTitle);
 			lbTitle.setAlignment(Align.center, Align.left);

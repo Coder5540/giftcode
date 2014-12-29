@@ -1,8 +1,10 @@
 package imp.view;
 
+import utils.elements.Img;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
+import utils.factory.Log;
 import utils.factory.StringSystem;
 import utils.factory.Style;
 import utils.networks.ExtParamsKey;
@@ -37,12 +39,15 @@ import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class HomeViewV2 extends View {
-	String	response	= "";
-	boolean	isLoad		= false;
+	String	response		= "";
+	boolean	isLoad			= false;
 
 	Table	content;
-	String	username	= "";
+	String	username		= "";
 	int		role_id;
+	Color	colorItem		= new Color(255 / 255f, 255 / 255f, 255 / 255f, .4f);
+	Color	colorTextTitle	= new Color(0.2f, 0.2f, 0.2f, 1f);
+	Color	colorText		= new Color(0, 191 / 255f, 1, 1f);
 
 	public HomeViewV2 buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
@@ -72,11 +77,12 @@ public class HomeViewV2 extends View {
 	}
 
 	void addItem(String title, String content, ItemListener listener) {
-		ItemTotal item = new ItemTotal(title, content, getWidth(), 100,
+		ItemTotal item = new ItemTotal(title, content, getWidth(), 80,
 				listener);
-
-		this.content.add(item).width(item.getWidth()).height(item.getHeight())
-				.padTop(5).row();
+		// this.content.add(item).width(item.getWidth()).height(item.getHeight())
+		// .padBottom(2).row();
+		this.content.add(item).expandX().fillX().height(item.getHeight())
+				.padBottom(2).row();
 	}
 
 	Actor	actorExit	= new Actor();
@@ -265,34 +271,42 @@ public class HomeViewV2 extends View {
 				float height, final ItemListener listener) {
 			setSize(width, height);
 			final Image bg = new Image(new NinePatch(
-					Assets.instance.ui.reg_ninepatch4, 6, 6, 6, 6));
-			bg.setColor(new Color(201 / 255f, 228 / 255f, 214 / 255f, 1));
+					Assets.instance.ui.reg_ninepatch, 0, 0, 0, 1));
+			bg.setColor(colorItem);
 			bg.setSize(getWidth(), getHeight());
 			Image icon = new Image(new Texture(
-					Gdx.files.internal("Img/icon_tong.png")));
-			icon.setSize(getHeight() - 40, getHeight() - 40);
-			Label lbtitle = new Label(title, Style.ins.getLabelStyle(20,
-					fontType.Light, new Color(50 / 255f, 50 / 255f, 50 / 255f,
-							1)));
-			Label lbcontent = new Label(content, Style.ins.getLabelStyle(25,
-					fontType.Regular, Color.BLACK));
+					Gdx.files.internal("Img/coin.png")));
+			icon.setSize(getHeight()/4, getHeight()/4);
+//			icon.setColor(colorText);
 
-			icon.setPosition(15, getHeight() / 2 - icon.getHeight() / 2);
-			lbtitle.setPosition(icon.getX() + icon.getWidth() + 20,
+			Label lbtitle = new Label(title, Style.ins.getLabelStyle(20,
+					FontType.Light, colorTextTitle));
+			Label lbcontent = new Label(content, Style.ins.getLabelStyle(25,
+					FontType.Regular, colorText));
+
+			icon.setPosition(25, getHeight() / 2 +6);
+			// icon.setPosition(-icon.getWidth(), -icon.getHeight());
+			lbtitle.setPosition(icon.getX() + icon.getWidth() + 12,
 					getHeight() / 2 + 3);
 			lbcontent.setPosition(lbtitle.getX(),
 					getHeight() / 2 - lbcontent.getHeight() - 3);
+			
+			Img line = new Img(Assets.instance.ui.reg_ninepatch);
+			line.setSize(getWidth()-2*lbtitle.getX(), 1);
+			line.setColor(0, 191/255f, 1f, 1f);
+			line.setPosition(lbtitle.getX(), 1);
 			addActor(bg);
 			addActor(icon);
 			addActor(lbtitle);
 			addActor(lbcontent);
+			addActor(line);
 
 			if (listener != null && UserInfo.getInstance().getRoleId() != 0) {
 				addListener(new ClickListener() {
 					@Override
 					public boolean touchDown(InputEvent event, float x,
 							float y, int pointer, int button) {
-						// TODO Auto-generated method stub
+						Log.d("Clicked");
 						bg.setColor(150 / 255f, 150 / 255f, 150 / 255f, 1);
 						return super.touchDown(event, x, y, pointer, button);
 					}

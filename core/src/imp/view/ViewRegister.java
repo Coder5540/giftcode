@@ -2,7 +2,7 @@ package imp.view;
 
 import utils.factory.AppPreference;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
@@ -76,9 +76,9 @@ public class ViewRegister extends View {
 			}
 		});
 		TextFieldStyle tfStyleName = Style.ins.getTextFieldStyle(8,
-				Assets.instance.fontFactory.getFont(25, fontType.Light));
+				Assets.instance.fontFactory.getFont(25, FontType.Light));
 		TextFieldStyle tfStylePass = Style.ins.getTextFieldStyle(8,
-				Assets.instance.fontFactory.getFont(25, fontType.Light));
+				Assets.instance.fontFactory.getFont(25, FontType.Light));
 		Label phoneNumber = new Label("Số điện thoại",
 				Style.ins.getLabelStyle(22));
 		phoneNumber.setColor(Color.BLACK);
@@ -126,7 +126,7 @@ public class ViewRegister extends View {
 				new Color(0, 191 / 255f, 1, 1)));
 		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
 				new Color(0, 191 / 255f, 1, 0.5f)));
-		btStyle.font = Assets.instance.fontFactory.getFont(20, fontType.Medium);
+		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
 		btStyle.fontColor = Color.WHITE;
 		TextButton btOk = new TextButton("Đăng ký", btStyle);
 		btOk.setSize(370, 55);
@@ -219,7 +219,7 @@ public class ViewRegister extends View {
 		this.content.add(btOk).width(375).height(55).colspan(2).padTop(10);
 
 		btnRegister = new Label("Đăng nhập", new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Light),
+				Assets.instance.fontFactory.getFont(20, FontType.Light),
 				new Color(0, 191 / 255f, 1, 1))) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {

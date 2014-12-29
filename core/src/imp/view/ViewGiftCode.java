@@ -3,7 +3,7 @@ package imp.view;
 import utils.elements.PartnerPicker;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -71,7 +72,11 @@ public class ViewGiftCode extends View {
 				Loading.ins.show(ViewGiftCode.this);
 				if (partnerGiftCode.getSelectedIndex() == 0) {
 					partnerState.setVisible(true);
-					partnerGiftCode.addAction(Actions.moveTo(0, 0, 0.5f,
+					partnerGiftCode.addAction(Actions.moveTo(
+							(groupPartner.getWidth()
+									- partnerGiftCode.getWidth()
+									- partnerState.getWidth() - 20) / 2,
+							partnerGiftCode.getY(), 0.5f,
 							Interpolation.exp10Out));
 					Request.getInstance().getNormalGiftCode(
 							AppPreference.instance.name,
@@ -81,7 +86,8 @@ public class ViewGiftCode extends View {
 					partnerState.setVisible(false);
 					partnerGiftCode.addAction(Actions.moveTo(
 							groupPartner.getWidth() / 2
-									- partnerGiftCode.getWidth() / 2, 0, 0.5f,
+									- partnerGiftCode.getWidth() / 2,
+							partnerGiftCode.getY(), 0.5f,
 							Interpolation.exp10Out));
 					Request.getInstance().getUsedGiftCode(
 							AppPreference.instance.name, new GetGiftCodeUsed());
@@ -108,13 +114,24 @@ public class ViewGiftCode extends View {
 		partnerState.setSize(170, 40);
 
 		groupPartner = new Group();
-		groupPartner.setSize(360, 40);
+		groupPartner.setSize(getWidth(), 80);
+		Image bgTop = new Image(new NinePatch(new NinePatch(
+				Assets.instance.ui.reg_ninepatch3, 6, 6, 6, 6), new Color(
+				245 / 255f, 245 / 255f, 245 / 255f, 1)));
+		bgTop.setSize(groupPartner.getWidth(), groupPartner.getHeight());
+		groupPartner.addActor(bgTop);
 		groupPartner.addActor(partnerGiftCode);
 		groupPartner.addActor(partnerState);
-		partnerState.setX(partnerGiftCode.getWidth() + 20);
+		partnerGiftCode.setPosition(
+				(groupPartner.getWidth() - partnerGiftCode.getWidth()
+						- partnerState.getWidth() - 20) / 2,
+				groupPartner.getHeight() / 2 - partnerGiftCode.getHeight() / 2);
+		partnerState.setPosition(
+				partnerGiftCode.getX() + partnerGiftCode.getWidth() + 20,
+				partnerGiftCode.getY());
 
 		lbTitle = new Label("DANH SÁCH GIFT CODE CHƯA SỬ DỤNG", new LabelStyle(
-				Assets.instance.fontFactory.getFont(26, fontType.Medium),
+				Assets.instance.fontFactory.getFont(26, FontType.Medium),
 				Color.BLUE));
 		lbTitle.setVisible(false);
 
@@ -135,7 +152,7 @@ public class ViewGiftCode extends View {
 
 		tbContent = new Table();
 
-		this.add(groupPartner).padTop(10).row();
+		this.add(groupPartner).row();
 		this.add(lbTitle).padTop(20).row();
 		this.add(tbContent);
 
@@ -158,14 +175,13 @@ public class ViewGiftCode extends View {
 						JsonValue content = list.get(i);
 						final String giftCode = content
 								.getString(ExtParamsKey.GIFT_CODE);
-						int money = content.getInt(ExtParamsKey.AMOUNT);
+						long money = content.getLong(ExtParamsKey.AMOUNT);
 						String currency = content
 								.getString(ExtParamsKey.CURRENCY);
-						int money_in_game = content
-								.getInt(ExtParamsKey.MONEY_IN_GAME);
+						long money_in_game = content
+								.getLong(ExtParamsKey.MONEY_IN_GAME);
 						long time = content.getLong(ExtParamsKey.DATE_EXPIRE);
 						final int isSold = content.getInt(ExtParamsKey.IS_SOLD);
-						String state;
 						final String id = content.getString(ExtParamsKey.ID);
 						final ItemGiftCodeNormal item = new ItemGiftCodeNormal(
 								tableNormal, isSold, new String[] {
@@ -268,11 +284,11 @@ public class ViewGiftCode extends View {
 						JsonValue content = list.get(i);
 						final String giftCode = content
 								.getString(ExtParamsKey.GIFT_CODE);
-						int money = content.getInt(ExtParamsKey.AMOUNT);
+						long money = content.getLong(ExtParamsKey.AMOUNT);
 						String currency = content
 								.getString(ExtParamsKey.CURRENCY);
-						int money_in_game = content
-								.getInt(ExtParamsKey.MONEY_IN_GAME);
+						long money_in_game = content
+								.getLong(ExtParamsKey.MONEY_IN_GAME);
 						long timeExpire = content
 								.getLong(ExtParamsKey.DATE_EXPIRE);
 						long timeUsed = content
@@ -335,7 +351,7 @@ public class ViewGiftCode extends View {
 			boolean resut = responeReturn.getBoolean(ExtParamsKey.RESULT);
 			if (resut) {
 				UserInfo.money = responeReturn
-						.getInt(ExtParamsKey.UPDATE_MONEY);
+						.getLong(ExtParamsKey.UPDATE_MONEY);
 				Request.getInstance().getNormalGiftCode(
 						AppPreference.instance.name,
 						partnerState.getPartnerId(), new GetGiftCodeNormal());

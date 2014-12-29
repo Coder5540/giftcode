@@ -10,7 +10,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 import java.util.ArrayList;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -63,7 +63,7 @@ public class Toast {
 			back = new Image(patch);
 			back.getColor().a = 0.9f;
 			labelStyle.font = Assets.instance.fontFactory.getFont(20,
-					fontType.Light);
+					FontType.Light);
 
 			labelStyle.fontColor = Color.WHITE;
 			toastLabel = new Label("", labelStyle);

@@ -2,7 +2,7 @@ package imp.view;
 
 import utils.factory.AppPreference;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.StringUtil;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
@@ -69,32 +69,37 @@ public class ViewCapTienDaiLy extends View {
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
 
+		Table tbTop = new Table();
+		tbTop.setBackground(new NinePatchDrawable(new NinePatch(new NinePatch(
+				Assets.instance.ui.reg_ninepatch3, 6, 6, 6, 6), new Color(
+				245 / 255f, 245 / 255f, 245 / 255f, 1))));
+
 		Label lbPerson = new Label("Người nhận tiền", new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Regular),
+				Assets.instance.fontFactory.getFont(20, FontType.Regular),
 				Color.BLACK));
 		tfPerson = new CustomTextField("", Style.ins.getTextFieldStyle(8,
-				Assets.instance.fontFactory.getFont(25, fontType.Light)));
+				Assets.instance.fontFactory.getFont(25, FontType.Light)));
 		tfPerson.setOnscreenKeyboard(AbstractGameScreen.keyboard);
 		tfPerson.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-//				AbstractGameScreen.keyboard.registerTextField(tfPerson,
-//						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
+				AbstractGameScreen.keyboard.registerTextField(tfPerson,
+						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
 		final CustomTextField tfMoney = new CustomTextField(
 				"",
 				Style.ins.getTextFieldStyle(8,
-						Assets.instance.fontFactory.getFont(25, fontType.Light)));
+						Assets.instance.fontFactory.getFont(25, FontType.Light)));
 		tfMoney.setOnscreenKeyboard(AbstractGameScreen.keyboard);
 		tfMoney.addListener(new InputListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-//				AbstractGameScreen.keyboard.registerTextField(tfMoney,
-//						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
+				AbstractGameScreen.keyboard.registerTextField(tfMoney,
+						KeyboardConfig.NORMAL, KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
@@ -119,9 +124,13 @@ public class ViewCapTienDaiLy extends View {
 			}
 		});
 
+		tbTop.add(lbPerson).padTop(15).right();
+		tbTop.add(tfPerson).padLeft(10).width(250).height(35).left().row();
+		tbTop.add(btSend).padTop(10).width(120).height(40).colspan(2).row();
+
 		Label lbTitle = new Label("Danh sách các đại lý cấp dưới",
 				new LabelStyle(Assets.instance.fontFactory.getFont(30,
-						fontType.Medium), Color.BLUE));
+						FontType.Medium), Color.BLUE));
 
 		float[] widthCol = { 50, 180, 150, 98 };
 		tableDaily = new AbstractTable(new Table(), widthCol);
@@ -148,13 +157,10 @@ public class ViewCapTienDaiLy extends View {
 
 		viewDetail = new ViewDetail();
 
-		this.padTop(15);
-		this.add(lbPerson).right();
-		this.add(tfPerson).padLeft(10).width(250).height(35).left().row();
-		this.add(btSend).padTop(10).width(120).height(40).colspan(2).row();
-		this.add(lbTitle).padTop(15).colspan(2).row();
-		this.add(tableDaily).padTop(10).height(540).colspan(2).row();
-		this.add(page).colspan(2);
+		this.add(tbTop).width(getWidth()).height(120).row();
+		this.add(lbTitle).padTop(15).row();
+		this.add(tableDaily).padTop(10).height(540).row();
+		this.add(page);
 		this.addActor(viewDetail);
 
 		Loading.ins.show(this);
@@ -187,14 +193,15 @@ public class ViewCapTienDaiLy extends View {
 								.getString(ExtParamsKey.AGENCY_NAME);
 						final String sdtGt = content
 								.getString(ExtParamsKey.REF_CODE);
-						final int money = content.getInt(ExtParamsKey.AMOUNT);
+						final long money = content.getLong(ExtParamsKey.AMOUNT);
 						final String currency = content
 								.getString(ExtParamsKey.CURRENCY);
 						final String email = content
 								.getString(ExtParamsKey.EMAIL);
-						final String deviceId = Factory.getDeviceID(content);
+						final String deviceId = Factory.getDeviceID(content)
+								.replaceAll(",", "\n");
 						final String deviceName = Factory
-								.getDeviceName(content);
+								.getDeviceName(content).replaceAll(",", "\n");
 						int state = content.getInt(ExtParamsKey.STATE);
 						final String realState;
 						if (state == 0) {
@@ -269,12 +276,14 @@ public class ViewCapTienDaiLy extends View {
 				String capDaily = responeGetDaily
 						.getString(ExtParamsKey.ROLE_NAME);
 				String sdtGt = responeGetDaily.getString(ExtParamsKey.REF_CODE);
-				int money = responeGetDaily.getInt(ExtParamsKey.AMOUNT);
+				long money = responeGetDaily.getLong(ExtParamsKey.AMOUNT);
 				String currency = responeGetDaily
 						.getString(ExtParamsKey.CURRENCY);
 				String email = responeGetDaily.getString(ExtParamsKey.EMAIL);
-				String deviceId = Factory.getDeviceID(responeGetDaily);
-				String deviceName = Factory.getDeviceName(responeGetDaily);
+				String deviceId = Factory.getDeviceID(responeGetDaily)
+						.replaceAll(",", "\n");
+				String deviceName = Factory.getDeviceName(responeGetDaily)
+						.replaceAll(",", "\n");
 				int state = responeGetDaily.getInt(ExtParamsKey.STATE);
 				String stringState;
 				if (state == 0) {
@@ -376,49 +385,43 @@ public class ViewCapTienDaiLy extends View {
 
 	class ViewDetail extends View {
 
-		Label[] lbTitle;
-		TextfieldStatic[] lbInfo;
 		String agencyReceive;
-		int money;
-		Image bg;
+		long money;
 		boolean isSend = false;
 
+		ScrollPane scroll;
+		Table content;
+
 		ViewSendMoney viewSendMoney;
+		RowInfo[] rowInfo;
 
 		public ViewDetail() {
 			setVisible(false);
+			this.top();
 			setSize(Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
 					- Constants.HEIGHT_ACTIONBAR);
-			this.top();
-			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
-					new Color(1, 1, 1, 1)));
+			Image bg = new Image(new NinePatch(
+					Assets.instance.ui.reg_ninepatch, new Color(1, 1, 1, 1)));
 			bg.setSize(getWidth(), getHeight());
+
+			content = new Table();
+			scroll = new ScrollPane(content);
+
 			Label lbHeader = new Label("Thông tin đại lý", new LabelStyle(
-					Assets.instance.fontFactory.getFont(30, fontType.Medium),
-					Color.BLUE));
-			lbTitle = new Label[10];
-			lbInfo = new TextfieldStatic[10];
+					Assets.instance.fontFactory.getFont(30, FontType.Medium),
+					new Color(0, 191 / 255f, 1, 1)));
 
-			String[] title = { "Tên đại lý", "Địa chỉ đại lý", "Cấp đại lý",
-					"Số điện thoại đại lý", "Số điện thoại người giới thiệu",
-					"Số tiền trong tài khoản", "Email", "Imei thiết bị",
-					"Tên thiết bị", "Trạng thái" };
-			for (int i = 0; i < lbTitle.length; i++) {
-				lbTitle[i] = new Label("", new LabelStyle(
-						Assets.instance.fontFactory.getFont(20,
-								fontType.Regular), Color.GRAY));
-				lbTitle[i].setWrap(true);
-				lbTitle[i].setWidth(180);
-				lbTitle[i].setText(title[i]);
-			}
-
-			for (int i = 0; i < lbInfo.length; i++) {
-				lbInfo[i] = new TextfieldStatic("", Color.BLACK, 270);
-			}
-			lbInfo[4].setHeight(lbTitle[4].getTextBounds().height + 10);
-			lbInfo[4].setMinHeight(lbTitle[4].getTextBounds().height + 10);
-			lbInfo[5].setHeight(lbTitle[5].getTextBounds().height + 10);
-			lbInfo[5].setMinHeight(lbTitle[5].getTextBounds().height + 10);
+			rowInfo = new RowInfo[10];
+			rowInfo[0] = new RowInfo("Tên đại lý", "");
+			rowInfo[1] = new RowInfo("Địa chỉ đại lý", "");
+			rowInfo[2] = new RowInfo("Cấp đại lý", "");
+			rowInfo[3] = new RowInfo("Số điện thoại đại lý", "");
+			rowInfo[4] = new RowInfo("Số điện thoại người giới thiệu", "");
+			rowInfo[5] = new RowInfo("Số tiền trong tài khoản", "");
+			rowInfo[6] = new RowInfo("Email", "");
+			rowInfo[7] = new RowInfo("Imei thiết bị", "");
+			rowInfo[8] = new RowInfo("Tên thiết bị", "");
+			rowInfo[9] = new RowInfo("Trạng thái", "");
 
 			Table tbButton = new Table();
 			TextButton btSend = new TextButton("Chuyển tiền",
@@ -452,22 +455,22 @@ public class ViewCapTienDaiLy extends View {
 			});
 
 			this.addActor(bg);
-			this.add(lbHeader).padTop(10).colspan(3).padBottom(20).row();
-			for (int i = 0; i < 10; i++) {
-				this.add(lbTitle[i]).width(180).padTop(5);
-				this.add(lbInfo[i]).padLeft(5).padTop(5).left().row();
+			this.add(lbHeader).padTop(10).padBottom(20).row();
+			for (int i = 0; i < rowInfo.length; i++) {
+				content.add(rowInfo[i]).width(getWidth()).left().row();
 			}
-			this.add(tbButton).padTop(20).colspan(3);
+
+			this.add(scroll).width(getWidth()).row();
+			this.add(tbButton).padBottom(10);
+
 			viewSendMoney = new ViewSendMoney();
 			this.addActor(viewSendMoney);
 		}
 
-		void setInfo(String[] info) {
-			for (int i = 0; i < lbInfo.length; i++) {
-				lbInfo[i].setContent(info[i]);
-				getCell(lbInfo[i]).height(lbInfo[i].getHeight());
+		public void setInfo(String[] info) {
+			for (int i = 0; i < rowInfo.length; i++) {
+				rowInfo[i].setInfo(info[i]);
 			}
-			invalidate();
 		}
 
 		@Override
@@ -504,6 +507,31 @@ public class ViewCapTienDaiLy extends View {
 			return false;
 		}
 
+		class RowInfo extends Table {
+
+			Label lbInfo;
+
+			public RowInfo(String title, String info) {
+				left();
+				padTop(10);
+				padBottom(10);
+				Label lbTitle = new Label(title, new LabelStyle(
+						Assets.instance.fontFactory.getFont(17,
+								FontType.Regular), new Color(207 / 255f,
+								207 / 255f, 207 / 255f, 1)));
+				lbInfo = new Label(info, new LabelStyle(
+						Assets.instance.fontFactory.getFont(25,
+								FontType.Regular), new Color(0, 191 / 255f, 1,
+								1)));
+				add(lbTitle).left().padLeft(20).row();
+				add(lbInfo).left().padLeft(20);
+			}
+
+			void setInfo(String info) {
+				this.lbInfo.setText(info);
+			}
+		}
+
 		class ViewSendMoney extends View {
 			JsonValue responeSendMoney;
 			TextfieldStatic tfSMoney;
@@ -515,22 +543,23 @@ public class ViewCapTienDaiLy extends View {
 				setVisible(false);
 				setSize(Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
 						- Constants.HEIGHT_ACTIONBAR);
-				bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
-						new Color(1, 1, 1, 1)));
+				Image bg = new Image(
+						new NinePatch(Assets.instance.ui.reg_ninepatch,
+								new Color(1, 1, 1, 1)));
 				bg.setSize(getWidth(), getHeight());
 
 				Label lbHeader = new Label("Chuyển tiền",
 						new LabelStyle(Assets.instance.fontFactory.getFont(30,
-								fontType.Medium), Color.BLUE));
+								FontType.Medium), Color.BLUE));
 				Label lbMoney = new Label("Số tiền còn lại", new LabelStyle(
 						Assets.instance.fontFactory.getFont(20,
-								fontType.Regular), Color.GRAY));
+								FontType.Regular), Color.GRAY));
 				Label lbMoneySend = new Label("Số tiền cấn chuyển",
 						new LabelStyle(Assets.instance.fontFactory.getFont(20,
-								fontType.Regular), Color.GRAY));
+								FontType.Regular), Color.GRAY));
 				Label lbNote = new Label("Ghi chú", new LabelStyle(
 						Assets.instance.fontFactory.getFont(20,
-								fontType.Regular), Color.GRAY));
+								FontType.Regular), Color.GRAY));
 
 				tfSMoney = new TextfieldStatic(
 						Factory.getDotMoney(UserInfo.money) + " "
@@ -539,35 +568,35 @@ public class ViewCapTienDaiLy extends View {
 				tfMoney = new CustomTextField("",
 						Style.ins.getTextFieldStyle(8,
 								Assets.instance.fontFactory.getFont(25,
-										fontType.Light)));
+										FontType.Light)));
 				tfMoney.setOnscreenKeyboard(AbstractGameScreen.keyboard);
 				tfMoney.addListener(new InputListener() {
 					@Override
 					public boolean touchDown(InputEvent event, float x,
 							float y, int pointer, int button) {
-//						AbstractGameScreen.keyboard.registerTextField(tfMoney,
-//								KeyboardConfig.NUMBER,
-//								KeyboardConfig.SINGLE_LINE);
+						AbstractGameScreen.keyboard.registerTextField(tfMoney,
+								KeyboardConfig.NUMBER,
+								KeyboardConfig.SINGLE_LINE);
 						return super.touchDown(event, x, y, pointer, button);
 					}
 				});
 
 				Label lbCurrency = new Label(UserInfo.currency, new LabelStyle(
 						Assets.instance.fontFactory.getFont(20,
-								fontType.Regular), Color.BLACK));
+								FontType.Regular), Color.BLACK));
 
 				taNote = new TextArea("",
 						Style.ins.getTextFieldStyle(8,
 								Assets.instance.fontFactory.getFont(25,
-										fontType.Light)));
+										FontType.Light)));
 				taNote.setOnscreenKeyboard(AbstractGameScreen.keyboard);
 				taNote.addListener(new InputListener() {
 					@Override
 					public boolean touchDown(InputEvent event, float x,
 							float y, int pointer, int button) {
-//						AbstractGameScreen.keyboard.registerTextField(taNote,
-//								KeyboardConfig.NORMAL,
-//								KeyboardConfig.MULTI_LINE);
+						AbstractGameScreen.keyboard.registerTextField(taNote,
+								KeyboardConfig.NORMAL,
+								KeyboardConfig.MULTI_LINE);
 						return super.touchDown(event, x, y, pointer, button);
 					}
 				});
@@ -677,14 +706,14 @@ public class ViewCapTienDaiLy extends View {
 							.getBoolean(ExtParamsKey.RESULT);
 					if (result) {
 						isSend = true;
-						int moneyTrans = responeSendMoney
-								.getInt(ExtParamsKey.MONEY_TRANSFER);
+						long moneyTrans = responeSendMoney
+								.getLong(ExtParamsKey.MONEY_TRANSFER);
 						money += moneyTrans;
-						lbInfo[5].setContent(Factory.getDotMoney(money) + " "
+						rowInfo[5].setInfo(Factory.getDotMoney(money) + " "
 								+ UserInfo.currency);
 						if (UserInfo.getInstance().getRoleId() != 0) {
 							UserInfo.money = responeSendMoney
-									.getInt(ExtParamsKey.MONEY_UPDATE);
+									.getLong(ExtParamsKey.MONEY_UPDATE);
 							tfSMoney.setContent(Factory
 									.getDotMoney(UserInfo.money)
 									+ " "

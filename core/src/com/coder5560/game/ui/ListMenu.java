@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import utils.elements.Img;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Log;
 import utils.networks.ExtParamsKey;
 import utils.networks.PermissionConfig;
@@ -59,7 +59,7 @@ public class ListMenu extends ScrollPane {
 
 	LabelStyle				lbStyle;
 	private IconMail		iconMail;
-	private Icon			iconUser, iconMoney, iconPhone;
+	private Icon			iconUser, iconMoney, iconPhone, iconRole;
 
 	public ListMenu(IViewController controllerView, final Table table,
 			Rectangle bound) {
@@ -69,40 +69,46 @@ public class ListMenu extends ScrollPane {
 		setBounds(bound.x, bound.y, bound.width, bound.height);
 		table.top();
 		lbStyle = new LabelStyle(Assets.instance.fontFactory.getFont(20,
-				fontType.Bold), Color.WHITE);
+				FontType.Regular), Color.WHITE);
 		Group user = new Group();
 		createAvatar(user);
 		table.add(user).row();
+
+		Color colorItemMenu = new Color(0, 191 / 255f, 1, 1);
+		Color colorText = Color.WHITE;
+
 		ItemMenu itemManager = new ItemMenu(
 				Assets.instance.ui.getRegUsermanagement(),
-				"QUẢN LÝ ĐẠI LÝ CẤP DƯỚI", getWidth(), 50);
+				"QUẢN LÝ ĐẠI LÝ CẤP DƯỚI", getWidth(), 50, colorItemMenu,
+				colorText);
 		createItemManager(itemManager);
 		if (itemManager.getChirldenSize() > 0) {
-			addLine(table, 2);
+			addLine(table, 2, colorItemMenu);
 			addItem(itemManager, 0);
 		}
 		iconMail = new IconMail(45, 45);
-		ItemMenu itemMail = new ItemMenu(iconMail, "HÒM THƯ", getWidth(), 50);
+		ItemMenu itemMail = new ItemMenu(iconMail, "HÒM THƯ", getWidth(), 50,
+				colorItemMenu, colorText);
 		createItemMail(itemMail);
 		if (itemMail.getChirldenSize() > 0) {
-			addLine(table, 2);
+			addLine(table, 2, colorItemMenu);
 			addItem(itemMail, 1);
 		}
 
 		ItemMenu itemLog = new ItemMenu(Assets.instance.ui.getIconTransition(),
-				"LỊCH SỬ GIAO DỊCH", getWidth(), 50);
+				"LỊCH SỬ GIAO DỊCH", getWidth(), 50, colorItemMenu, colorText);
 		createItemHistory(itemLog);
 		if (itemLog.getChirldenSize() > 0) {
-			addLine(table, 2);
+			addLine(table, 2, colorItemMenu);
 			addItem(itemLog, 2);
 		}
 
 		ItemMenu itemGiftCode = new ItemMenu(
-				Assets.instance.ui.getIconTransition(), "GIFT CODE",
-				getWidth(), 50);
+				Assets.instance.ui.getIconGiftcode(), "GIFT CODE", getWidth(),
+				50, colorItemMenu, colorText);
 		createItemGiftcode(itemGiftCode);
 		if (itemGiftCode.getChirldenSize() > 0) {
-			addLine(table, 2);
+			addLine(table, 2, colorItemMenu);
 			addItem(itemGiftCode, 3);
 		}
 	}
@@ -242,28 +248,36 @@ public class ListMenu extends ScrollPane {
 	private void createAvatar(Group user) {
 		user.setSize(getWidth(), 200);
 		final Image bgFocus = new Image(new NinePatch(
-				Assets.instance.ui.reg_ninepatch, Color.GRAY));
+				Assets.instance.ui.reg_ninepatch, Color.WHITE));
 		bgFocus.setSize(user.getWidth(), user.getHeight());
 
-		String name = UserInfo.fullName;
 		user.addActor(bgFocus);
 		iconUser = new Icon(user.getWidth(), user.getHeight() / 4,
 				Assets.instance.ui.getIconUser(), UserInfo.fullName);
-		iconUser.setPosition(user.getWidth() / 2, 3 * user.getHeight() / 4,
-				Align.center);
-		iconUser.icon.setColor(new Color(0, 0.9f, 0.4f, 1f));
+
 		iconPhone = new Icon(user.getWidth(), user.getHeight() / 4,
-				Assets.instance.ui.getIconPhone(), "01663916248");
-		iconPhone.setPosition(user.getWidth() / 2, 2 * user.getHeight() / 4,
-				Align.center);
+				Assets.instance.ui.getIconPhone(), UserInfo.phone);
+
 		iconMoney = new Icon(user.getWidth(), user.getHeight() / 4,
 				Assets.instance.ui.getIconMoney(),
 				Factory.getDotMoney(UserInfo.money) + " " + UserInfo.currency);
-		iconMoney.setPosition(user.getWidth() / 2, 1 * user.getHeight() / 4,
-				Align.center);
+
+		iconRole = new Icon(user.getWidth(), user.getHeight() / 4,
+				Assets.instance.ui.getIconRole(), "Admin");
+
+		iconUser.setPosition(user.getWidth() / 2 - 10,
+				4 * user.getHeight() / 5, Align.center);
+		iconPhone.setPosition(user.getWidth() / 2 - 10,
+				3 * user.getHeight() / 5, Align.center);
+		iconMoney.setPosition(user.getWidth() / 2 - 10,
+				2 * user.getHeight() / 5, Align.center);
+		iconRole.setPosition(user.getWidth() / 2 - 10,
+				1 * user.getHeight() / 5, Align.center);
+
 		user.addActor(iconUser);
 		user.addActor(iconPhone);
 		user.addActor(iconMoney);
+		user.addActor(iconRole);
 		user.addListener(new InputListener() {
 			Vector2	touchPoint	= new Vector2();
 
@@ -278,7 +292,7 @@ public class ListMenu extends ScrollPane {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				bgFocus.getColor().a = 0;
+				bgFocus.getColor().a = 1;
 				if (touchPoint.epsilonEquals(x, y, 20)) {
 					if (onAvatarClicked != null) {
 						onAvatarClicked.onClick(x, y);
@@ -291,7 +305,7 @@ public class ListMenu extends ScrollPane {
 			public void touchDragged(InputEvent event, float x, float y,
 					int pointer) {
 				if (!touchPoint.epsilonEquals(x, y, 40)) {
-					bgFocus.getColor().a = 0;
+					bgFocus.getColor().a = 1;
 					touchPoint.set(0, 0);
 				}
 				super.touchDragged(event, x, y, pointer);
@@ -299,8 +313,22 @@ public class ListMenu extends ScrollPane {
 		});
 	}
 
+	private void updateIconRole() {
+		if (UserInfo.getInstance().getRoleId() == RoleID.MONEY_MANAGER)
+			iconRole.text.setText("Money Manager");
+		if (UserInfo.getInstance().getRoleId() == RoleID.USER_MANAGER)
+			iconRole.text.setText("User Manager");
+		if (UserInfo.getInstance().getRoleId() == RoleID.ADMIN)
+			iconRole.text.setText("Admin");
+		if (UserInfo.getInstance().getRoleId() == RoleID.AGENCY_LEVEL1)
+			iconRole.text.setText("Đại lý cấp 1");
+		if (UserInfo.getInstance().getRoleId() == RoleID.AGENCY_LEVEL2)
+			iconRole.text.setText("Đại lý cấp 2");
+	}
+
 	public void setUserName(String name) {
 		iconUser.text.setText(name);
+		updateIconRole();
 	}
 
 	public void setPhone(String phone) {
@@ -395,9 +423,9 @@ public class ListMenu extends ScrollPane {
 			itemMail.addComponent(allMail);
 	}
 
-	void addLine(Table table, float height) {
+	void addLine(Table table, float height, Color color) {
 		Image line = new Image(Assets.instance.ui.reg_ninepatch);
-		line.setColor(new Color(0, 220 / 255f, 0, 1f));
+		line.setColor(color);
 		line.setHeight(height);
 		line.setWidth(table.getWidth());
 		table.add(line).expandX().fillX().height(height).padTop(10);
@@ -434,31 +462,28 @@ public class ListMenu extends ScrollPane {
 		float					currentheight;
 		Vector2					touchPoint;
 
-		// Image bg_content;
-
 		public ItemMenu(TextureRegion region, String title, float width,
-				float height) {
+				float height, Color color, Color textColor) {
 			touchPoint = new Vector2();
 			subButton = new ArrayList<LabelButton>();
 			setSize(width, height);
 			item = new Group();
 			item.setSize(width, height);
-			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch, 1,
-					1, 1, 1));
-			bg.setColor(new Color(250 / 255f, 250 / 255f, 250 / 255f, 1f));
+			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
+					color));
+			bg.setColor(new Color(1f, 1f, 1, 1f));
 			bg.setSize(item.getWidth(), item.getHeight());
 
 			bgFocus = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
-			bgFocus.setColor(new Color(220 / 255f, 220 / 255f, 220 / 255f, 0));
+			bgFocus.setColor(new Color(0, 191 / 255f, 1, 0));
 			bgFocus.setSize(item.getWidth(), item.getHeight());
 
 			Label lbtitle = new Label(title, new LabelStyle(
-					Assets.instance.fontFactory.getFont(15, fontType.Medium),
-					new Color(0, 191 / 255f, 1, 1)));
+					Assets.instance.fontFactory.getFont(16, FontType.Bold),
+					textColor));
 			btnExpand = new Image(Assets.instance.getRegion("down"));
 			btnExpand.setSize(15, 10);
-			btnExpand
-					.setColor(new Color(130 / 255f, 130 / 255f, 130 / 255f, 1));
+			btnExpand.setColor(textColor);
 			btnExpand.setOrigin(btnExpand.getWidth() / 2,
 					btnExpand.getHeight() / 2);
 
@@ -529,29 +554,29 @@ public class ListMenu extends ScrollPane {
 			return subButton.size();
 		}
 
-		public ItemMenu(IconMail iconMail, String title, float width, int height) {
+		public ItemMenu(IconMail iconMail, String title, float width,
+				int height, Color bgColor, Color textColor) {
 
 			touchPoint = new Vector2();
 			subButton = new ArrayList<LabelButton>();
 			setSize(width, height);
 			item = new Group();
 			item.setSize(width, height);
-			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch, 1,
-					1, 1, 1));
-			bg.setColor(new Color(250 / 255f, 250 / 255f, 250 / 255f, 1f));
+			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
+					bgColor));
+			bg.setColor(new Color(1, 1, 1, 1f));
 			bg.setSize(item.getWidth(), item.getHeight());
 
 			bgFocus = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
-			bgFocus.setColor(new Color(220 / 255f, 220 / 255f, 220 / 255f, 0));
+			bgFocus.setColor(new Color(0, 191 / 255f, 1, 0));
 			bgFocus.setSize(item.getWidth(), item.getHeight());
 
 			Label lbtitle = new Label(title, new LabelStyle(
-					Assets.instance.fontFactory.getFont(15, fontType.Medium),
-					new Color(0, 191 / 255f, 1, 1)));
+					Assets.instance.fontFactory.getFont(16, FontType.Bold),
+					textColor));
 			btnExpand = new Image(Assets.instance.getRegion("down"));
 			btnExpand.setSize(15, 10);
-			btnExpand
-					.setColor(new Color(130 / 255f, 130 / 255f, 130 / 255f, 1));
+			btnExpand.setColor(textColor);
 			btnExpand.setOrigin(btnExpand.getWidth() / 2,
 					btnExpand.getHeight() / 2);
 
@@ -753,18 +778,18 @@ public class ListMenu extends ScrollPane {
 			touchPoint = new Vector2();
 			setSize(width, height);
 			bg = new Image(new NinePatch(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4), new Color(
-					100 / 255f, 100 / 255f, 100 / 255f, 1)));
+					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4), new Color(0,
+					191 / 255f, 1, 1)));
 			bg.setSize(width, height);
 			bgFocus = new Image(new NinePatch(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4), new Color(
-					220 / 255f, 220 / 255f, 220 / 255f, 1)));
+					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4), new Color(0,
+					220 / 255f, 1, 1)));
 			bgFocus.getColor().a = 0;
 			bgFocus.setSize(width - 20, height);
 
 			this.title = new Label(title, style);
 			if (align == LEFT) {
-				this.title.setPosition(30, bg.getY() + bg.getHeight() / 2
+				this.title.setPosition(56, bg.getY() + bg.getHeight() / 2
 						- this.title.getHeight() / 2);
 			} else {
 				this.title.setPosition(getWidth() / 2 - this.title.getWidth()
@@ -819,12 +844,12 @@ public class ListMenu extends ScrollPane {
 		void create() {
 			lbNotify = new LabelStyle();
 			lbNotify.font = Assets.instance.fontFactory.getFont(15,
-					fontType.Bold);
+					FontType.Regular);
 			notify = new Label("" + unRead, lbNotify);
 			notify.setVisible(true);
 			icon = new Image(Assets.instance.ui.getRegionMail());
 			icon.setOrigin(Align.center);
-			icon.setColor(new Color(0, 220 / 255f, 0f, 1f));
+			// icon.setColor(new Color(0, 220 / 255f, 0f, 1f));
 			bgNotify = new Image(Assets.instance.ui.getCircle());
 			bgNotify.setOrigin(Align.center);
 			bgNotify.setColor(new Color(255 / 255f, 0f, 0f, 1f));
@@ -913,6 +938,23 @@ class Icon extends Group {
 	public Label	text;
 	private String	_text;
 
+	public Icon(float width, float height, TextureRegion regIcon, String _text,
+			Color textColor) {
+		super();
+		setSize(width, height);
+		icon = new Img(regIcon);
+		this._text = _text;
+		LabelStyle labelStyle = new LabelStyle();
+		labelStyle.font = Assets.instance.fontFactory.getFont(20,
+				FontType.Light);
+		labelStyle.fontColor = new Color(0, 191 / 255f, 1, 1);
+		text = new Label(_text, labelStyle);
+		text.setWrap(true);
+		addActor(icon);
+		addActor(text);
+		validElements();
+	}
+
 	public Icon(float width, float height, TextureRegion regIcon, String _text) {
 		super();
 		setSize(width, height);
@@ -920,8 +962,8 @@ class Icon extends Group {
 		this._text = _text;
 		LabelStyle labelStyle = new LabelStyle();
 		labelStyle.font = Assets.instance.fontFactory.getFont(20,
-				fontType.Medium);
-		labelStyle.fontColor = Color.WHITE;
+				FontType.Light);
+		labelStyle.fontColor = new Color(0, 191 / 255f, 1, 1);
 		text = new Label(_text, labelStyle);
 		text.setWrap(true);
 		addActor(icon);

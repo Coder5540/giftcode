@@ -2,7 +2,7 @@ package com.coder5560.game.ui;
 
 import java.util.ArrayList;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.networks.UserInfo;
 
 import com.badlogic.gdx.graphics.Color;
@@ -19,7 +19,7 @@ public class MoneyPicker extends SelectBox<MyPartner> {
 
 	public static int ALL = -1;
 	protected LabelStyle style = new LabelStyle(
-			Assets.instance.fontFactory.getFont(20, fontType.Regular),
+			Assets.instance.fontFactory.getFont(20, FontType.Regular),
 			Color.BLACK);
 
 	public MoneyPicker(SelectBoxStyle style) {

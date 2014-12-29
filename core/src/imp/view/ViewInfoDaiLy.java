@@ -1,92 +1,76 @@
 package imp.view;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.networks.UserInfo;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
-import com.coder5560.game.ui.Loading;
-import com.coder5560.game.ui.TextfieldStatic;
 import com.coder5560.game.views.View;
 
 public class ViewInfoDaiLy extends View {
 
-	TextfieldStatic lbTfTitle[];
-	TextfieldStatic lbTfInfo[];
-
 	ScrollPane scroll;
 	Table content;
 
-	public void buildComponent() {
-		content = new Table();
-		content.setWidth(getWidth());
-		scroll = new ScrollPane(content);
-		scroll.setSize(getWidth(), getHeight() - 200);
+	@Override
+	public String getLabel() {
+		return "Thông tin đại lý";
+	}
 
-		Loading.ins.hide();
-		this.top();
+	public void buildComponent() {
+		this.top().left();
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
-
-		lbTfTitle = new TextfieldStatic[10];
-		lbTfInfo = new TextfieldStatic[10];
-		lbTfTitle[0] = new TextfieldStatic("Tên đại lý", Color.GRAY, 220);
-		lbTfTitle[1] = new TextfieldStatic("Địa chỉ đại lý", Color.GRAY, 220);
-		lbTfTitle[2] = new TextfieldStatic("Cấp đại lý", Color.GRAY, 220);
-		lbTfTitle[3] = new TextfieldStatic("Số điện thoại đại lý", Color.GRAY,
-				220);
-		lbTfTitle[4] = new TextfieldStatic("Số điện thoại người giới thiệu",
-				Color.GRAY, 220);
-		lbTfTitle[5] = new TextfieldStatic("Số tiền trong tài khoản",
-				Color.GRAY, 220);
-		lbTfTitle[6] = new TextfieldStatic("Email", Color.GRAY, 220);
-		lbTfTitle[7] = new TextfieldStatic("Imei thiết bị", Color.GRAY, 220);
-		lbTfTitle[8] = new TextfieldStatic("Tên thiết bị", Color.GRAY, 220);
-		lbTfTitle[9] = new TextfieldStatic("Trạng thái", Color.GRAY, 220);
-
-		lbTfInfo[0] = new TextfieldStatic(UserInfo.fullName, Color.BLACK, 220);
-		lbTfInfo[1] = new TextfieldStatic(UserInfo.address, Color.BLACK, 220);
-		lbTfInfo[2] = new TextfieldStatic(UserInfo.level, Color.BLACK, 220);
-		lbTfInfo[3] = new TextfieldStatic(UserInfo.phone, Color.BLACK, 220);
-		lbTfInfo[4] = new TextfieldStatic(UserInfo.phoneNGT, Color.BLACK, 220);
-		lbTfInfo[5] = new TextfieldStatic("" + UserInfo.money + " "
-				+ UserInfo.currency, Color.BLACK, 220);
-		lbTfInfo[6] = new TextfieldStatic(UserInfo.email, Color.BLACK, 220);
-		lbTfInfo[7] = new TextfieldStatic(UserInfo.imeiDevice, Color.BLACK, 220);
-		lbTfInfo[8] = new TextfieldStatic(UserInfo.nameDevice, Color.BLACK, 220);
-		lbTfInfo[9] = new TextfieldStatic("", Color.BLACK, 220);
+		content = new Table();
+		scroll = new ScrollPane(content);
+		scroll.setOverscroll(false, true);
+		content.add(getRow("Tên đại lý", UserInfo.fullName)).width(getWidth()).left().padTop(10)
+				.row();
+		content.add(getRow("Địa chỉ đại lý", UserInfo.address)).left().row();
+		content.add(getRow("Cấp đại lý", UserInfo.level)).left().row();
+		content.add(getRow("Số điện thoại đại lý", UserInfo.phone)).left()
+				.row();
+		content.add(getRow("Số điện thoại người giới thiệu", UserInfo.phoneNGT))
+				.left().row();
+		content.add(getRow("Số tiền trong tài khoản", "" + UserInfo.money))
+				.left().row();
+		content.add(getRow("Email", UserInfo.email)).left().row();
+		String imei = UserInfo.imeiDevice.replaceAll(",", "\n");
+		content.add(getRow("Imei thiết bị", imei)).left().row();
+		String nameDevice = UserInfo.nameDevice.replaceAll(",", "\n");
+		content.add(getRow("Tên thiết bị", nameDevice)).left().row();
+		String state;
 		if (UserInfo.state == 0) {
-			lbTfInfo[9].setContent("Chưa kích hoạt");
+			state = "Chưa kích hoạt";
 		} else if (UserInfo.state == 1) {
-			lbTfInfo[9].setContent("Hoạt động bình thường");
+			state = "Hoạt động bình thường";
 		} else {
-			lbTfInfo[9].setContent("Bị khóa");
+			state = "Bị khóa";
 		}
+		content.add(getRow("Trạng thái", state)).left().row();
+		this.add(scroll).width(getWidth());
+	}
 
-		for (int i = 0; i < 10; i++) {
-			if (lbTfTitle[i].getHeight() < lbTfInfo[i].getHeight()) {
-				lbTfTitle[i].setHeight(lbTfInfo[i].getHeight());
-			} else {
-				lbTfInfo[i].setHeight(lbTfTitle[i].getHeight());
-			}
-		}
-
-		lbTfInfo[4].setHeight(lbTfTitle[4].getHeight());
-		Label lbTitle = new Label("Thông tin đại lý", new LabelStyle(
-				Assets.instance.fontFactory.getFont(30, fontType.Medium),
-				Color.BLUE));
-		this.add(lbTitle).padTop(10).padBottom(10).row();
-		for (int i = 0; i < 10; i++) {
-			content.add(lbTfTitle[i]).padTop(5);
-			content.add(lbTfInfo[i]).padLeft(5).padTop(5).row();
-		}
-		this.add(scroll).width(getWidth()).height(scroll.getHeight());
+	Table getRow(String title, String info) {
+		Table table = new Table();
+		table.left();
+		table.padTop(10);
+		table.padBottom(10);
+		Label lbTitle = new Label(title, new LabelStyle(
+				Assets.instance.fontFactory.getFont(17, FontType.Regular),
+				new Color(207 / 255f, 207 / 255f, 207 / 255f, 1)));
+		Label lbInfo = new Label(info, new LabelStyle(
+				Assets.instance.fontFactory.getFont(25, FontType.Regular),
+				new Color(0, 191 / 255f, 1, 1)));
+		table.add(lbTitle).left().padLeft(20).row();
+		table.add(lbInfo).left().padLeft(20);
+		return table;
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package com.coder5560.game.ui;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -56,7 +56,7 @@ public class CustomDialog extends View {
 						240 / 255f, 240 / 255f, 1f))));
 
 		BitmapFont font_normal = Assets.instance.fontFactory.getFont(20,
-				fontType.Light);
+				FontType.Light);
 		LabelStyle style_normal = new LabelStyle(font_normal, new Color(
 				0 / 255f, 0 / 255f, 0 / 255f, 1));
 
@@ -65,10 +65,10 @@ public class CustomDialog extends View {
 		NinePatch bg = new NinePatch(Assets.instance.ui.reg_ninepatch4, 6, 6,
 				6, 6);
 		btnPositive = UIUtils.getTextButton("OK", bg,
-				Assets.instance.fontFactory.getFont(20, fontType.Light),
+				Assets.instance.fontFactory.getFont(20, FontType.Light),
 				Color.WHITE, Color.BLACK, onAddListener);
 		btnNegative = UIUtils.getTextButton("Cancel", bg,
-				Assets.instance.fontFactory.getFont(20, fontType.Light),
+				Assets.instance.fontFactory.getFont(20, FontType.Light),
 				Color.WHITE, Color.BLACK, onCancelListener);
 
 		Image image = new Image(Assets.instance.ui.reg_ninepatch);

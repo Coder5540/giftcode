@@ -3,7 +3,7 @@ package com.coder5560.game.ui;
 import java.util.ArrayList;
 
 import utils.factory.StringUtil;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.aia.appsreport.component.table.ItemTable;
 import com.badlogic.gdx.graphics.Color;
@@ -197,7 +197,7 @@ public class Page extends Table {
 			this.index = index;
 			this.setTransform(true);
 			this.page = new Label("" + index, new LabelStyle(
-					Assets.instance.fontFactory.getFont(30, fontType.Regular),
+					Assets.instance.fontFactory.getFont(30, FontType.Regular),
 					Color.BLACK));
 			this.setOrigin(page.getWidth() / 2, page.getHeight() / 2);
 			this.setScale(0.7f);

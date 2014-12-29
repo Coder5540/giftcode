@@ -1,7 +1,7 @@
 package com.coder5560.game.ui;
 
 import utils.factory.DateTime;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
 import utils.keyboard.VirtualKeyboard.OnBackSpaceComma;
@@ -29,7 +29,7 @@ public class DatePicker extends Table {
 	Label dayL, monthL, yearL;
 	int day, month, year;
 	protected LabelStyle style = new LabelStyle(
-			Assets.instance.fontFactory.getFont(20, fontType.Regular),
+			Assets.instance.fontFactory.getFont(20, FontType.Regular),
 			Color.BLACK);
 	String startString = "Ngày";
 
@@ -79,7 +79,7 @@ public class DatePicker extends Table {
 		tfStyle.cursor = new NinePatchDrawable(new NinePatch(
 				Assets.instance.getRegion("bg_white"), new Color(0, 191 / 255f,
 						1, 1)));
-		tfStyle.font = Assets.instance.fontFactory.getFont(20, fontType.Light);
+		tfStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Light);
 		tfStyle.fontColor = Color.BLACK;
 
 		tfStyle.background.setLeftWidth(5);

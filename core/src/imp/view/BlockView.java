@@ -1,6 +1,6 @@
 package imp.view;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 
 import com.badlogic.gdx.graphics.Color;
@@ -74,7 +74,7 @@ public class BlockView extends View {
 				};
 			});
 		}
-		LabelStyle style = Style.ins.getLabelStyle(20, fontType.Medium,
+		LabelStyle style = Style.ins.getLabelStyle(20, FontType.Medium,
 				Color.BLACK);
 		// Label lbBlockAll = new Label("Khóa tài khoản", style);
 		// lbBlockAll.setAlignment(Align.left);

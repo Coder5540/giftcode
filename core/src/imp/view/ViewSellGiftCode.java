@@ -3,7 +3,7 @@ package imp.view;
 import utils.elements.GiftCode;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Log;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
@@ -97,7 +97,7 @@ public class ViewSellGiftCode extends View {
 				new Color(0, 191 / 255f, 1, 1)));
 		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
 				new Color(0, 191 / 255f, 1, 0.5f)));
-		btStyle.font = Assets.instance.fontFactory.getFont(20, fontType.Medium);
+		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
 		btStyle.fontColor = Color.WHITE;
 		TextButton btGetGiftCode = new TextButton("Lấy giftcode", btStyle);
 		btGetGiftCode.setSize(370, 55);

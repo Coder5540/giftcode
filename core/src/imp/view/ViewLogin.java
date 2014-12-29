@@ -1,9 +1,8 @@
 package imp.view;
 
-import imp.view.MainMenuView.GetInfoDaily;
 import utils.factory.AppPreference;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Log;
 import utils.factory.StringSystem;
 import utils.factory.Style;
@@ -47,17 +46,17 @@ import com.coder5560.game.views.View;
 
 public class ViewLogin extends View {
 
-	private CustomTextField tfName;
-	private CustomTextField tfPass;
-	private JsonValue respone;
-	private JsonValue responeInfoDaily;
-	Label btnRegister, btnActive;
-	CustomDialog dialogConfirm;
-	View view;
+	private CustomTextField	tfName;
+	private CustomTextField	tfPass;
+	private JsonValue		respone;
+	private JsonValue		responeInfoDaily;
+	Label					btnRegister, btnActive;
+	CustomDialog			dialogConfirm;
+	View					view;
 
-	boolean isHandlerResponseLogin = false;
-	boolean isHandlerResponseGetInfo = false;
-	int id = -1;
+	boolean					isHandlerResponseLogin		= false;
+	boolean					isHandlerResponseGetInfo	= false;
+	int						id							= -1;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -86,9 +85,9 @@ public class ViewLogin extends View {
 			}
 		});
 		TextFieldStyle tfStyleName = Style.ins.getTextFieldStyle(43,
-				Assets.instance.fontFactory.getFont(25, fontType.Light));
+				Assets.instance.fontFactory.getFont(25, FontType.Light));
 		TextFieldStyle tfStylePass = Style.ins.getTextFieldStyle(43,
-				Assets.instance.fontFactory.getFont(25, fontType.Light));
+				Assets.instance.fontFactory.getFont(25, FontType.Light));
 
 		tfName = new CustomTextField("", tfStyleName);
 		tfPass = new CustomTextField("", tfStylePass);
@@ -140,11 +139,11 @@ public class ViewLogin extends View {
 				new Color(0, 191 / 255f, 1, 1)));
 		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
 				new Color(0, 191 / 255f, 1, 0.5f)));
-		btStyle.font = Assets.instance.fontFactory.getFont(20, fontType.Medium);
+		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
 		btStyle.fontColor = Color.WHITE;
 		TextButton btOk = new TextButton("Đăng nhập", btStyle);
 		btOk.setSize(370, 55);
-		btOk.setPosition(tfName.getX(), tfPass.getY() - tfPass.getHeight() - 20);
+		btOk.setPosition(tfName.getX(), tfPass.getY() - tfPass.getHeight() - 36);
 		btOk.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -177,7 +176,7 @@ public class ViewLogin extends View {
 		});
 
 		Label btnForgotPass = new Label("Quên mật khẩu ?", new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Light),
+				Assets.instance.fontFactory.getFont(20, FontType.Light),
 				new Color(0, 191 / 255f, 1, 1)));
 		btnForgotPass.setPosition(btOk.getX(), btOk.getY() - 70);
 		btnForgotPass.addListener(new ClickListener() {
@@ -187,7 +186,7 @@ public class ViewLogin extends View {
 			}
 		});
 		btnRegister = new Label("Đăng ký", new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Light),
+				Assets.instance.fontFactory.getFont(20, FontType.Light),
 				new Color(0, 191 / 255f, 1, 1))) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {
@@ -233,7 +232,7 @@ public class ViewLogin extends View {
 			}
 		});
 		btnActive = new Label("Kích hoạt tài khoản", new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Light),
+				Assets.instance.fontFactory.getFont(20, FontType.Light),
 				new Color(0, 191 / 255f, 1, 1))) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {
@@ -301,8 +300,8 @@ public class ViewLogin extends View {
 	}
 
 	public void registerKeyboard(final TextField tf, String tfname, int config) {
-//		AbstractGameScreen.keyboard.registerTextField(tf, tfname, config,
-//				KeyboardConfig.SINGLE_LINE);
+		// AbstractGameScreen.keyboard.registerTextField(tf, tfname, config,
+		// KeyboardConfig.SINGLE_LINE);
 	}
 
 	@Override
@@ -559,64 +558,77 @@ public class ViewLogin extends View {
 						.getDeviceName(), _loginListener);
 	}
 
-	HttpResponseListener _registerDeviceListener = new HttpResponseListener() {
+	HttpResponseListener	_registerDeviceListener	= new HttpResponseListener() {
 
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			JsonValue value = (new JsonReader()).parse(httpResponse
-					.getResultAsString());
-			if (value.getBoolean(ExtParamsKey.RESULT))
-				switchView();
-		}
+														@Override
+														public void handleHttpResponse(
+																HttpResponse httpResponse) {
+															JsonValue value = (new JsonReader())
+																	.parse(httpResponse
+																			.getResultAsString());
+															if (value
+																	.getBoolean(ExtParamsKey.RESULT))
+																switchView();
+														}
 
-		@Override
-		public void failed(Throwable t) {
+														@Override
+														public void failed(
+																Throwable t) {
 
-		}
+														}
 
-		@Override
-		public void cancelled() {
+														@Override
+														public void cancelled() {
 
-		}
-	};
+														}
+													};
 
-	HttpResponseListener _loginListener = new HttpResponseListener() {
+	HttpResponseListener	_loginListener			= new HttpResponseListener() {
 
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			respone = (new JsonReader())
-					.parse(httpResponse.getResultAsString());
-			Log.d("OnLogin result", respone.toString());
-		}
+														@Override
+														public void handleHttpResponse(
+																HttpResponse httpResponse) {
+															respone = (new JsonReader())
+																	.parse(httpResponse
+																			.getResultAsString());
+															Log.d("OnLogin result",
+																	respone.toString());
+														}
 
-		@Override
-		public void failed(Throwable t) {
-			Log.d("On Login Fail :", t.getMessage());
-		}
+														@Override
+														public void failed(
+																Throwable t) {
+															Log.d("On Login Fail :",
+																	t.getMessage());
+														}
 
-		@Override
-		public void cancelled() {
-			Log.d("On Login Cancel :", "Login is cancel");
-		}
-	};
+														@Override
+														public void cancelled() {
+															Log.d("On Login Cancel :",
+																	"Login is cancel");
+														}
+													};
 
-	HttpResponseListener onGetinfoListener = new HttpResponseListener() {
+	HttpResponseListener	onGetinfoListener		= new HttpResponseListener() {
 
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			responeInfoDaily = (new JsonReader()).parse(httpResponse
-					.getResultAsString());
-		}
+														@Override
+														public void handleHttpResponse(
+																HttpResponse httpResponse) {
+															responeInfoDaily = (new JsonReader())
+																	.parse(httpResponse
+																			.getResultAsString());
+														}
 
-		@Override
-		public void failed(Throwable t) {
+														@Override
+														public void failed(
+																Throwable t) {
 
-		}
+														}
 
-		@Override
-		public void cancelled() {
+														@Override
+														public void cancelled() {
 
-		}
-	};
+														}
+													};
 
 }

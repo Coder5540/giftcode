@@ -1,6 +1,6 @@
 package com.aia.appsreport.component.table;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -20,9 +20,13 @@ public class AbstractTable extends ScrollPane {
 	public float[] positionXCol;
 	public Group rowTitle;
 	public float heightRowTitle;
-	public float heightRow = 50;
 	public Color color;
 	private int size = 0;
+
+	Image borderTop;
+	Image borderBottom;
+	Image bgRowTitle;
+	Image[] borderTitle;
 
 	public Table content;
 	private Table tableScroll;
@@ -34,7 +38,7 @@ public class AbstractTable extends ScrollPane {
 		this.widthCol = widthCol;
 		this.setOverscroll(false, false);
 		positionXCol = new float[numberCol];
-		color = new Color(211 / 255f, 211 / 255f, 211 / 255f, 0.5f);
+		color = new Color(211 / 255f, 211 / 255f, 211 / 255f, 1f);
 		float width = 0;
 		for (int i = 0; i < widthCol.length; i++) {
 			width += widthCol[i];
@@ -45,33 +49,52 @@ public class AbstractTable extends ScrollPane {
 		this.setWidth(width + 2);
 		tableScroll.top();
 		rowTitle = new Group();
+
+		borderTop = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
+				color));
+		borderBottom = new Image(new NinePatch(
+				Assets.instance.ui.reg_ninepatch, color));
+		borderTitle = new Image[2];
+		for (int i = 0; i < borderTitle.length; i++) {
+			borderTitle[i] = new Image(new NinePatch(
+					Assets.instance.ui.reg_ninepatch, color));
+		}
+		borderTitle[1].setX(width);
+		bgRowTitle = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
+				new Color(245 / 255f, 245 / 255f, 245 / 255f, 1f)));
+
+		rowTitle.addActor(bgRowTitle);
+		rowTitle.addActor(borderTitle[0]);
+		rowTitle.addActor(borderTitle[1]);
+		rowTitle.addActor(borderTop);
+		rowTitle.addActor(borderBottom);
 	}
 
 	public void init() {
-		rowTitle.setSize(getWidth(), heightRowTitle);
-		Image borderTop = new Image(new NinePatch(
-				Assets.instance.ui.reg_ninepatch, color));
-		borderTop.setSize(getWidth(), 2f);
-		borderTop.setPosition(0, rowTitle.getHeight());
-		Image borderBottom = new Image(new NinePatch(
-				Assets.instance.ui.reg_ninepatch, color));
-		borderBottom.setSize(getWidth(), 2.5f);
-		rowTitle.addActor(borderTop);
-		rowTitle.addActor(borderBottom);
-		Image[] border = new Image[numberCol + 1];
-		for (int i = 0; i < border.length; i++) {
-			border[i] = new Image(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, color));
-			border[i].setSize(2f, rowTitle.getHeight());
-			rowTitle.addActor(border[i]);
-		}
+		rowTitle.setSize(getWidth() - 2, heightRowTitle);
 
-		for (int i = 1; i <= numberCol; i++) {
-			border[i].setPosition(border[i - 1].getX() + widthCol[i - 1], 0);
+		borderTop.setSize(getWidth(), 2);
+		borderTop.setPosition(0, rowTitle.getHeight());
+		borderBottom.setSize(getWidth(), 2);
+		bgRowTitle.setSize(rowTitle.getWidth(), rowTitle.getHeight());
+		for (int i = 0; i < borderTitle.length; i++) {
+			borderTitle[i].setSize(2, rowTitle.getHeight());
 		}
+		// rowTitle.addActor(borderTop);
+		// rowTitle.addActor(borderBottom);
+		// Image[] border = new Image[numberCol + 1];
+		// for (int i = 0; i < border.length; i++) {
+		// border[i] = new Image(new NinePatch(
+		// Assets.instance.ui.reg_ninepatch, color));
+		// border[i].setSize(2f, rowTitle.getHeight());
+		// rowTitle.addActor(border[i]);
+		// }
+
+		// for (int i = 1; i <= numberCol; i++) {
+		// border[i].setPosition(border[i - 1].getX() + widthCol[i - 1], 0);
+		// }
 
 		content = new Table();
-
 		tableScroll.add(rowTitle).padTop(5).row();
 		tableScroll.add(content);
 	}
@@ -95,8 +118,8 @@ public class AbstractTable extends ScrollPane {
 		Label[] lbTitle = new Label[title.length];
 		for (int i = 0; i < title.length; i++) {
 			lbTitle[i] = new Label(title[i], new LabelStyle(
-					Assets.instance.fontFactory.getFont(20, fontType.Light),
-					Color.RED));
+					Assets.instance.fontFactory.getFont(20, FontType.Regular),
+					Color.BLACK));
 			lbTitle[i].setWrap(true);
 			lbTitle[i].setAlignment(Align.center);
 			lbTitle[i].setWidth(widthCol[i]);

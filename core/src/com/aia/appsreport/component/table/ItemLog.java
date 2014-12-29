@@ -1,6 +1,6 @@
 package com.aia.appsreport.component.table;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 
 import com.badlogic.gdx.graphics.Color;
@@ -16,7 +16,7 @@ public class ItemLog extends ItemTable {
 			String sotiengd, String donvi, String nguoigd, String sdtnguoidg,
 			String note, String thoigian) {
 		super(table);
-		style = Style.ins.getLabelStyle(20, fontType.Regular, Color.GRAY);
+		style = Style.ins.getLabelStyle(20, FontType.Regular, Color.GRAY);
 		Label lb[] = { getLabel(stt, 0), getLabel(sdt, 1), getLabel(ten, 2),
 				getLabel(loaigd, 3), getLabel(sotientruocgd, 4),
 				getLabel(sotiensaugd, 5), getLabel(sotiengd, 6),
@@ -31,7 +31,7 @@ public class ItemLog extends ItemTable {
 			String loaigd, String sotientruocgd, String sotiensaugd,
 			String sotiengd, String donvi, String thoigian) {
 		super(table);
-		style = Style.ins.getLabelStyle(20, fontType.Regular, Color.GRAY);
+		style = Style.ins.getLabelStyle(20, FontType.Regular, Color.GRAY);
 		Label lb[] = { getLabel(stt, 0), getLabel(sdt, 1), getLabel(ten, 2),
 				getLabel(loaigd, 3), getLabel(sotientruocgd, 4),
 				getLabel(sotiensaugd, 5), getLabel(sotiengd, 6),

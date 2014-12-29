@@ -3,7 +3,7 @@ package imp.view;
 import java.util.HashMap;
 
 import utils.elements.PartnerPicker;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
@@ -49,11 +49,11 @@ public class ViewChangeRole extends View {
 				Assets.instance.ui.reg_ninepatch)));
 
 		Label lbTitle = new Label("Thay đổi cấp tài khoản", new LabelStyle(
-				Assets.instance.fontFactory.getFont(30, fontType.Regular),
+				Assets.instance.fontFactory.getFont(30, FontType.Regular),
 				Color.BLUE));
 
 		Label lbRole = new Label("Role : ", new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Regular),
+				Assets.instance.fontFactory.getFont(20, FontType.Regular),
 				Color.GRAY));
 
 		Table tbButton = new Table();

@@ -49,17 +49,26 @@ public class ItemTable extends Group {
 		borderBottom.setSize(this.getWidth(), 2f);
 		this.addActor(borderBottom);
 
-		Image[] border = new Image[table.numberCol + 1];
+		Image[] border = new Image[2];
 		for (int i = 0; i < border.length; i++) {
 			border[i] = new Image(new NinePatch(
 					Assets.instance.ui.reg_ninepatch, table.color));
 			border[i].setSize(2f, this.getHeight());
 			this.addActor(border[i]);
 		}
-		for (int i = 1; i <= table.numberCol; i++) {
-			border[i].setPosition(border[i - 1].getX() + table.widthCol[i - 1],
-					0);
-		}
+		border[1].setX(table.getWidthTable());
+
+		// Image[] border = new Image[table.numberCol + 1];
+		// for (int i = 0; i < border.length; i++) {
+		// border[i] = new Image(new NinePatch(
+		// Assets.instance.ui.reg_ninepatch, table.color));
+		// border[i].setSize(2f, this.getHeight());
+		// this.addActor(border[i]);
+		// }
+		// for (int i = 1; i <= table.numberCol; i++) {
+		// border[i].setPosition(border[i - 1].getX() + table.widthCol[i - 1],
+		// 0);
+		// }
 	}
 
 }

@@ -2,7 +2,7 @@ package com.coder5560.game.ui;
 
 import java.util.ArrayList;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.aia.appsreport.component.chart.ChartBack;
 import com.aia.appsreport.component.chart.ColumnChart;
@@ -13,17 +13,17 @@ import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 
 public class ColumnChartView extends Group {
-	public ChartBack chartback;
-	public ColumnChart columnChart;
-	public int numbertype = 0;
+	public ChartBack	chartback;
+	public ColumnChart	columnChart;
+	public int			numbertype	= 0;
 
 	public ColumnChartView(float height) {
 		columnChart = new ColumnChart();
 		chartback = new ChartBack();
 		chartback.setStyleCol(new LabelStyle(Assets.instance.fontFactory
-				.getFont(13, fontType.Light), Color.BLACK));
+				.getFont(13, FontType.Light), Color.BLACK));
 		chartback.setStyleRow(new LabelStyle(Assets.instance.fontFactory
-				.getFont(15, fontType.Regular), Color.GRAY));
+				.getFont(15, FontType.Regular), Color.GRAY));
 		addActor(chartback);
 		addActor(columnChart);
 		setHeight(height);
@@ -36,8 +36,8 @@ public class ColumnChartView extends Group {
 		if (widthChartBack < Constants.WIDTH_SCREEN) {
 			widthChartBack = Constants.WIDTH_SCREEN;
 		}
-		chartback.setdata(columnChart.getMaxValue(),
-				columnChart.getMaxValue() / 5, size, numbertype,
+		chartback.setdata((long) columnChart.getMaxValue(),
+				(long) columnChart.getMaxValue() / 5, size, numbertype,
 				widthChartBack, getHeight(), 80);
 		chartback.colWidth = colWidth;
 		chartback.refresh();

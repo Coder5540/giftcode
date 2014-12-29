@@ -1,6 +1,6 @@
 package imp.view;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Factory;
 import utils.factory.PlatformResolver.OnResultListener;
 import utils.factory.Style;
@@ -115,7 +115,7 @@ public class ViewInfoDaiLySmall extends View {
 		lbTfInfo[4].setHeight(lbTfTitle[4].getHeight());
 
 		lbTitle = new Label("Thông tin đại lý", new LabelStyle(
-				Assets.instance.fontFactory.getFont(30, fontType.Medium),
+				Assets.instance.fontFactory.getFont(30, FontType.Medium),
 				Color.BLUE));
 		this.add(lbTitle).padTop(10).padBottom(10).colspan(2).row();
 		for (int i = 0; i < lbTfInfo.length; i++) {

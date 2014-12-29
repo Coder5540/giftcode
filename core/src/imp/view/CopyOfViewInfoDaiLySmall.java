@@ -1,6 +1,6 @@
 package imp.view;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 
 import com.badlogic.gdx.graphics.Color;
@@ -87,7 +87,7 @@ public class CopyOfViewInfoDaiLySmall extends View {
 
 		{
 			lbTitle = new Label("Thông tin đại lý", new LabelStyle(
-					Assets.instance.fontFactory.getFont(30, fontType.Medium),
+					Assets.instance.fontFactory.getFont(30, FontType.Medium),
 					Color.BLUE));
 			lbTitle.setSize(getWidth(), 60);
 			lbTitle.setWrap(true);

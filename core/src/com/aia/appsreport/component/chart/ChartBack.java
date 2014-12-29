@@ -3,8 +3,7 @@ package com.aia.appsreport.component.chart;
 import java.util.ArrayList;
 
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
-import utils.factory.StringUtil;
+import utils.factory.FontFactory.FontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -20,7 +19,7 @@ import com.coder5560.game.assets.Assets;
 
 public class ChartBack extends Table {
 	public static int NUM_ROW = 8, START_CHART_Y = 50, START_CHART_X = 50;
-	float max, jump;
+	long max, jump;
 	protected int numCol;
 	int numRow;
 	int numType;
@@ -34,7 +33,7 @@ public class ChartBack extends Table {
 
 	public Array<Color> colors = new Array<Color>();
 
-	public ChartBack(int max, float jump, int numCol, int numLine, float width,
+	public ChartBack(long max, long jump, int numCol, int numLine, float width,
 			float height, int startChartY) {
 		this.max = max;
 		this.jump = jump;
@@ -48,11 +47,11 @@ public class ChartBack extends Table {
 		init();
 	}
 
-	private void caculJump(int max) {
+	private void caculJump(long max) {
 		jump = 1;
-		for (int i = 1; i < 10; i++) {
+		for (int i = 1; i < 15; i++) {
 			if (max > Math.pow(10, i)) {
-				jump = (float) Math.pow(10, i);
+				jump = (long) Math.pow(10, i);
 				if ((int) (max / jump) < 2)
 					jump = jump / 5;
 				if ((max / jump) >= 2 && (max / jump) <= 5)
@@ -77,26 +76,17 @@ public class ChartBack extends Table {
 		float temp = 0;
 		int index = 0;
 		while (temp < max + jump) {
-			String tempS = Factory.getDotMoney((long) temp);
-			Label value = new Label(tempS, styleRow);
-			value.setY(START_CHART_Y + dis * index - value.getHeight() / 2);
-			value.setX(5);
+			// String tempS = Factory.getDotMoney((long) temp);
+			// Label value = new Label(tempS, styleRow);
+			// value.setY(START_CHART_Y + dis * index - value.getHeight() / 2);
+			// value.setX(5);
 			Image line = new Image(new NinePatch(
 					Assets.instance.ui.reg_ninepatch, new Color(Color.GRAY)));
 			line.setWidth(getWidth() - styleCol.font.getBounds("100000").width);
 			line.setHeight(1);
 			line.setPosition(START_CHART_X, START_CHART_Y + dis * index);
 			addActor(line);
-			// Line line = new Line(START_CHART_X, START_CHART_Y + dis * index,
-			// getWidth() - styleCol.font.getBounds("100000").width
-			// + START_CHART_X, START_CHART_Y + dis * index);
-			// line.setWidth(getWidth() -
-			// styleCol.font.getBounds("100000").width);
-			// line.setHeight(1);
-			// line.isShapeRender = true;
-			// line.setPosition(START_CHART_X, START_CHART_Y + dis * index);
-			// line.setColor(Color.GRAY);
-			addActor(value);
+			// addActor(value);
 			temp += jump;
 			index++;
 		}
@@ -110,14 +100,14 @@ public class ChartBack extends Table {
 		}
 	}
 
-	public void setdata(float max, float jump, int numCol, int numLine,
+	public void setdata(long max, long jump, int numCol, int numType,
 			float width, float height, int startChartY) {
 		this.max = max;
 		this.jump = jump;
 		this.numCol = numCol;
-		this.numType = numLine;
+		this.numType = numType;
 		START_CHART_Y = startChartY;
-		caculJump((int) max);
+		caculJump(max);
 		clear();
 		setSize(width, height);
 		init();
@@ -142,7 +132,7 @@ public class ChartBack extends Table {
 	}
 
 	protected LabelStyle style = new LabelStyle(
-			Assets.instance.fontFactory.getFont(15, fontType.Regular),
+			Assets.instance.fontFactory.getFont(15, FontType.Regular),
 			Color.BLACK);
 
 	public void init() {
@@ -163,15 +153,7 @@ public class ChartBack extends Table {
 			line.setHeight(1);
 			line.setPosition(START_CHART_X, START_CHART_Y + dis * index);
 			addActor(line);
-			// Line line = new Line(START_CHART_X, START_CHART_Y + dis * index,
-			// getWidth() - styleCol.font.getBounds("100000").width
-			// + START_CHART_X, START_CHART_Y + dis * index);
-			// line.setWidth(getWidth() -
-			// styleCol.font.getBounds("100000").width);
-			// line.setHeight(1);
-			// line.isShapeRender = true;
-			// line.setPosition(START_CHART_X, START_CHART_Y + dis * index);
-			// line.setColor(Color.GRAY);
+
 			addActor(value);
 			temp += jump;
 			index++;
@@ -281,7 +263,7 @@ public class ChartBack extends Table {
 							- text.getTextBounds().height - 3,
 					text.getTextBounds().width, text.getTextBounds().height);
 			if (maxHeightLabel <= text.getTextBounds().height) {
-				max = text.getTextBounds().height;
+				maxHeightLabel = text.getTextBounds().height;
 			}
 			addActor(text);
 		}
@@ -298,7 +280,7 @@ public class ChartBack extends Table {
 							- text.getTextBounds().height - 3, boundWidth,
 					text.getTextBounds().height);
 			if (maxHeightLabel <= text.getTextBounds().height) {
-				max = text.getTextBounds().height;
+				maxHeightLabel = text.getTextBounds().height;
 			}
 			addActor(text);
 		}

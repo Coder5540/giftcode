@@ -2,7 +2,7 @@ package utils.factory;
 
 import java.util.HashMap;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -89,7 +89,7 @@ public class Style {
 		textButtonStyle.down = new NinePatchDrawable(new NinePatch(np1,
 				new Color(0, 191 / 255f, 1, 0.5f)));
 		textButtonStyle.font = Assets.instance.fontFactory.getFont(20,
-				fontType.Medium);
+				FontType.Medium);
 		textButtonStyle.fontColor = Color.WHITE;
 		windowStyle = new WindowStyle(Assets.instance.fontFactory.getFont(20),
 				Color.BLACK, scrollPanelType.background);
@@ -102,11 +102,11 @@ public class Style {
 		tfStyle.cursor = new NinePatchDrawable(new NinePatch(
 				Assets.instance.getRegion("bg_white"), new Color(245 / 255f,
 						191 / 255f, 1, 1)));
-		tfStyle.font = Assets.instance.fontFactory.getFont(20, fontType.Light);
+		tfStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Light);
 		tfStyle.fontColor = Color.BLACK;
 	}
 
-	public LabelStyle getLabelStyle(int size, fontType type) {
+	public LabelStyle getLabelStyle(int size, FontType type) {
 		if (styles.get("" + size + type.toString()) == null) {
 			styles.put("" + size + type.toString(), new LabelStyle(
 					Assets.instance.fontFactory.getFont(size, type),
@@ -115,7 +115,7 @@ public class Style {
 		return styles.get("" + size + type.toString());
 	}
 
-	public LabelStyle getLabelStyle(int size, fontType type, Color color) {
+	public LabelStyle getLabelStyle(int size, FontType type, Color color) {
 		if (styles.get("" + size + type.toString() + color) == null) {
 			styles.put("" + size + type.toString() + color, new LabelStyle(
 					Assets.instance.fontFactory.getFont(size, type), color));
@@ -124,13 +124,13 @@ public class Style {
 	}
 
 	public LabelStyle getLabelStyle(int size) {
-		if (styles.get("" + size + fontType.Regular.toString()) == null) {
+		if (styles.get("" + size + FontType.Regular.toString()) == null) {
 			styles.put(
-					"" + size + fontType.Regular.toString(),
+					"" + size + FontType.Regular.toString(),
 					new LabelStyle(Assets.instance.fontFactory.getFont(size,
-							fontType.Regular), Color.WHITE));
+							FontType.Regular), Color.WHITE));
 		}
-		return styles.get("" + size + fontType.Regular.toString());
+		return styles.get("" + size + FontType.Regular.toString());
 	}
 
 	public TextFieldStyle getTextFieldStyle(int padLeft, BitmapFont font) {

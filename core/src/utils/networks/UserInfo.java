@@ -19,7 +19,7 @@ public class UserInfo {
 	public static String		level;
 	public static String		phone;
 	public static String		phoneNGT;
-	public static int			money;
+	public static long			money;
 	public static String		currency;
 	public static String		email;
 	public static String		imeiDevice;

@@ -35,7 +35,6 @@ public class GameScreen extends AbstractGameScreen {
 	@Override
 	public void show() {
 		super.show();
-
 		controller = new ViewController(parent, this);
 		controller.setFacebookConnector(parent.facebookConnector);
 		controller.platformResolver = parent.getPlatformResolver();

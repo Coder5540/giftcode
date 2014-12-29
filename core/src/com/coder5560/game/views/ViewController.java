@@ -1,11 +1,13 @@
 package com.coder5560.game.views;
 
 import imp.view.ViewLogin;
+import imp.view.ViewTestList;
 import utils.factory.AppPreference;
 import utils.factory.PlatformResolver;
 import utils.factory.StringSystem;
 import utils.networks.FacebookConnector;
 import utils.networks.UserInfo;
+import utils.screen.AbstractGameScreen;
 import utils.screen.GameCore;
 
 import com.badlogic.gdx.math.Rectangle;
@@ -25,11 +27,11 @@ public class ViewController implements IViewController {
 	public IViews				currentView;
 	public FacebookConnector	facebookConnector;
 	private GameCore			_gameParent;
-	private GameScreen			_gameScreen;
+	private AbstractGameScreen	_gameScreen;
 	public PlatformResolver		platformResolver;
 	boolean						reset	= false;
 
-	public ViewController(GameCore _gameParent, GameScreen gameScreen) {
+	public ViewController(GameCore _gameParent, AbstractGameScreen gameScreen) {
 		super();
 		this._gameParent = _gameParent;
 		this._gameScreen = gameScreen;
@@ -53,6 +55,17 @@ public class ViewController implements IViewController {
 			public void done() {
 			}
 		});
+	}
+
+	public void buidTest(Stage stage) {
+		this.stage = stage;
+		views = new Array<IViews>();
+		ViewTestList viewTestList = new ViewTestList();
+		viewTestList.build(getStage(), this, StringSystem.VIEW_HOME,
+				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
+		viewTestList.buildComponent();
+		viewTestList.show(null);
 	}
 
 	@Override
@@ -204,7 +217,10 @@ public class ViewController implements IViewController {
 
 	@Override
 	public GameScreen getGameScreen() {
-		return _gameScreen;
+		if (_gameScreen instanceof GameScreen) {
+			return (GameScreen) _gameScreen;
+		}
+		return null;
 	}
 
 	public PlatformResolver getPlatformResolver() {

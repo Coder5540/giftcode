@@ -2,7 +2,7 @@ package imp.view;
 
 import utils.elements.CustomTable;
 import utils.elements.Img;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.StringSystem;
 import utils.networks.UserInfo;
 import utils.screen.Toast;
@@ -153,7 +153,7 @@ class IconFunction extends Group {
 		setSize(width, height);
 		LabelStyle labelStyle = new LabelStyle();
 		labelStyle.font = Assets.instance.fontFactory
-				.getFont(14, fontType.Bold);
+				.getFont(14, FontType.Bold);
 		lbTitle = new Label(title, labelStyle);
 		labelStyle.fontColor = Color.BLACK;
 

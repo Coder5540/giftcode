@@ -6,7 +6,7 @@ import utils.elements.PartnerSelectBox;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
 import utils.factory.Factory;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
@@ -229,7 +229,7 @@ public class ViewLogGiftCode extends View {
 		bgExtendDate.setColor(245 / 255f, 245 / 255f, 245 / 255f, 1);
 		bgExtendDate.setSize(gExtendDate.getWidth(), gExtendDate.getHeight());
 		Label lbExtendDate = new Label("Chọn nhanh", Style.ins.getLabelStyle(
-				20, fontType.Regular, Color.BLACK));
+				20, FontType.Regular, Color.BLACK));
 		quickDatePicker = new PartnerSelectBox(Style.ins.selectBoxStyle);
 		quickDatePicker.setSize(220, 40);
 		quickDatePicker.addPartner(new ItemDatePartner(0));
@@ -267,7 +267,7 @@ public class ViewLogGiftCode extends View {
 
 		});
 		LabelButton btnOk = new LabelButton("Chọn", Style.ins.getLabelStyle(20,
-				fontType.Regular, Color.BLACK), 80, 40, LabelButton.CENTER);
+				FontType.Regular, Color.BLACK), 80, 40, LabelButton.CENTER);
 		lbExtendDate.setPosition(55,
 				gExtendDate.getHeight() / 2 - lbExtendDate.getHeight() / 2);
 		quickDatePicker.setPosition(
@@ -332,7 +332,7 @@ public class ViewLogGiftCode extends View {
 		style.background.setLeftWidth(10);
 		style.cursor = new NinePatchDrawable(new NinePatch(
 				Assets.instance.getRegion("bg_white"), Color.GRAY));
-		style.font = Assets.instance.fontFactory.getFont(20, fontType.Regular);
+		style.font = Assets.instance.fontFactory.getFont(20, FontType.Regular);
 		style.fontColor = Color.BLACK;
 
 		tfSearch = new CustomTextField("", style);

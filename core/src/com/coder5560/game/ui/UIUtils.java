@@ -1,6 +1,6 @@
 package com.coder5560.game.ui;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -22,7 +22,7 @@ public class UIUtils {
 
 	public static LabelStyle getLabelStyle(Color color) {
 		if (font == null)
-			font = Assets.instance.fontFactory.getFont(20, fontType.Regular);
+			font = Assets.instance.fontFactory.getFont(20, FontType.Regular);
 		LabelStyle style = new LabelStyle();
 		style.font = font;
 		style.fontColor = color;
@@ -31,7 +31,7 @@ public class UIUtils {
 
 	public static Label getLabel(String text, Color color) {
 		if (font == null)
-			font = Assets.instance.fontFactory.getFont(20, fontType.Regular);
+			font = Assets.instance.fontFactory.getFont(20, FontType.Regular);
 		LabelStyle style = new LabelStyle();
 		style.font = font;
 		style.fontColor = color;
@@ -56,7 +56,7 @@ public class UIUtils {
 	public static TextFieldStyle getTextFieldStyle(NinePatch background) {
 		TextFieldStyle style = new TextFieldStyle();
 		style.background = new NinePatchDrawable(background);
-		style.font = Assets.instance.fontFactory.getFont(20, fontType.Regular);
+		style.font = Assets.instance.fontFactory.getFont(20, FontType.Regular);
 		style.cursor = new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch));
 		style.fontColor = Color.BLACK;

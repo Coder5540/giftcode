@@ -1,7 +1,7 @@
 package imp.view;
 
 import utils.elements.Img;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Log;
 import utils.factory.StringSystem;
 import utils.factory.Style;
@@ -61,6 +61,19 @@ public class ViewUserManager extends View {
 	Array<User>				listAgency1			= new Array<ViewUserManager.User>();
 	Array<User>				listAgency2			= new Array<ViewUserManager.User>();
 
+	Color					bgItemColor			= new Color(0 / 255f,
+														191 / 255f, 255 / 255f,
+														0f);
+	Color					textItemColor		= new Color(0 / 255f,
+														191 / 255f, 255 / 255f,
+														1f);
+	Color					dataItemColor		= new Color(0 / 255f,
+														191 / 255f, 255 / 255f,
+														0f);
+	Color					iconItemColor		= new Color(0 / 255f,
+														191 / 255f, 255 / 255f,
+														1f);
+
 	public ViewUserManager() {
 		super();
 
@@ -81,7 +94,9 @@ public class ViewUserManager extends View {
 
 	public void buildComponent() {
 		setBackground(new NinePatchDrawable(new NinePatch(
-				Assets.instance.ui.reg_ninepatch, Color.GRAY)));
+				Assets.instance.ui.reg_ninepatch)));
+		Table topData = new Table();
+		add(topData).width(getWidth()).height(4).top().row();
 		buildRoot();
 		rebuildUI();
 		Log.d("Phone : " + UserInfo.phone);
@@ -98,17 +113,17 @@ public class ViewUserManager extends View {
 		scroll.setScrollingDisabled(true, false);
 		add(scroll).expand().fill().top();
 
-		ItemUser itemMoneyManager = new ItemUser(0, 400, 60,
+		ItemUser itemMoneyManager = new ItemUser(0, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "MoneyManager", " ("
 						+ 1 + ")", onClickListener, new Table());
 		addItemUser(root, itemMoneyManager);
 
-		ItemUser itemUserAdmin = new ItemUser(ADMIN_CLICK, 400, 60,
+		ItemUser itemUserAdmin = new ItemUser(ADMIN_CLICK, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "Admin", " (" + 1
 						+ ")", onClickListener, new Table());
 		addItemUser(root, itemUserAdmin);
 
-		ItemUser itemUserLevel1 = new ItemUser(2, 400, 60,
+		ItemUser itemUserLevel1 = new ItemUser(2, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "Đại lý cấp 1", " ("
 						+ 3 + ")", onClickListener, new Table());
 		addItemUser(root, itemUserLevel1);
@@ -121,7 +136,7 @@ public class ViewUserManager extends View {
 			itemUserLevel1.addSubItem(subItemUser);
 		}
 
-		ItemUser itemUserLevel2 = new ItemUser(0, 400, 60,
+		ItemUser itemUserLevel2 = new ItemUser(0, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "Đại lý cấp 2", " ("
 						+ 3 + ")", onClickListener, new Table());
 		addItemUser(root, itemUserLevel2);
@@ -130,8 +145,7 @@ public class ViewUserManager extends View {
 
 	public void rebuildUI() {
 		root.clear();
-
-		ItemUser itemMoneyManager = new ItemUser(MONEYMANAGE_CLICK, 400, 60,
+		ItemUser itemMoneyManager = new ItemUser(MONEYMANAGE_CLICK, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "MoneyManager", " ("
 						+ listMoneyManager.size + ")", onClickListener,
 				new Table());
@@ -148,7 +162,7 @@ public class ViewUserManager extends View {
 			itemMoneyManager.addSubItem(subItemUser);
 		}
 
-		ItemUser itemAdmin = new ItemUser(MONEYMANAGE_CLICK, 400, 60,
+		ItemUser itemAdmin = new ItemUser(MONEYMANAGE_CLICK, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "Admin", " ("
 						+ listAdmin.size + ")", onClickListener, new Table());
 		addItemUser(root, itemAdmin);
@@ -162,7 +176,7 @@ public class ViewUserManager extends View {
 			itemAdmin.addSubItem(subItemUser);
 		}
 
-		ItemUser itemAgency1 = new ItemUser(AGENCY_1_CLICK, 400, 60,
+		ItemUser itemAgency1 = new ItemUser(AGENCY_1_CLICK, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "Đại lý cấp 1", " ("
 						+ listAgency1.size + ")", onClickListener, new Table());
 		addItemUser(root, itemAgency1);
@@ -176,7 +190,7 @@ public class ViewUserManager extends View {
 			itemAgency1.addSubItem(subItemUser);
 		}
 
-		ItemUser itemAgency2 = new ItemUser(AGENCY_2_CLICK, 400, 60,
+		ItemUser itemAgency2 = new ItemUser(AGENCY_2_CLICK, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "Đại lý cấp 2", " ("
 						+ listAgency2.size + ")", onClickListener, new Table());
 		addItemUser(root, itemAgency2);
@@ -192,8 +206,15 @@ public class ViewUserManager extends View {
 
 	}
 
+	public void addItemUser(Table rootTable, ItemUser itemUser, float padLeft,
+			float padRight) {
+		rootTable.add(itemUser).padBottom(2).row();
+		rootTable.add(itemUser.data).height(itemUser.data.getHeight())
+				.padLeft(padLeft).padRight(padRight).row();
+	}
+
 	public void addItemUser(Table rootTable, ItemUser itemUser) {
-		rootTable.add(itemUser).pad(4).row();
+		rootTable.add(itemUser).padBottom(2).row();
 		rootTable.add(itemUser.data).height(itemUser.data.getHeight())
 				.padLeft(rootTable.getWidth() / 2 - itemUser.getWidth() / 2)
 				.padRight(rootTable.getWidth() / 2 - itemUser.getWidth() / 2)
@@ -495,15 +516,17 @@ public class ViewUserManager extends View {
 			setOrigin(Align.center);
 			this.id = id;
 			this.icon = new Img(reg_icon);
-			this.bg = new Img(Style.ins.np1);
-			bg.setColor(Color.BLACK);
-			this.lbText = new Label(text, Style.ins.getLabelStyle(22,
-					fontType.Bold, Color.WHITE));
-			this.lbTextNumber = new Label(textnumber, Style.ins.getLabelStyle(
-					20, fontType.Regular, Color.WHITE));
+			this.bg = new Img(new NinePatch(Assets.instance.ui.reg_ninepatch));
+			bg.setTapScale(1.1f);
+			bg.setColor(bgItemColor);
 
-			NinePatch np = Style.ins.np4;
-			np.setColor(new Color(0.8f, 0.8f, 0.8f, 1f));
+			this.lbText = new Label(text, Style.ins.getLabelStyle(22,
+					FontType.Regular, textItemColor));
+			this.lbTextNumber = new Label(textnumber, Style.ins.getLabelStyle(
+					20, FontType.Regular, textItemColor));
+
+			NinePatch np = new NinePatch(Assets.instance.ui.reg_ninepatch);
+			np.setColor(dataItemColor);
 			this.data = data;
 			data.setTouchable(Touchable.childrenOnly);
 			this.data.setBackground(new NinePatchDrawable(np));
@@ -538,6 +561,8 @@ public class ViewUserManager extends View {
 			bg.setPosition(0, 0);
 			icon.setSize(4 * getHeight() / 5, 4 * getHeight() / 5);
 			icon.setPosition(getHeight() / 10, getHeight() / 10);
+			icon.setColor(iconItemColor);
+			bg.setColor(bgItemColor);
 			lbText.setPosition(icon.getX(Align.right) + 20,
 					icon.getY(Align.center) - lbText.getHeight() / 2);
 			lbTextNumber.setPosition(lbText.getX(Align.right) + 20,
@@ -556,7 +581,6 @@ public class ViewUserManager extends View {
 							.run(new Runnable() {
 								@Override
 								public void run() {
-									Log.d("Click to : " + id);
 									if (onClickListener != null) {
 										onClickListener.onClick(id);
 									}
@@ -594,6 +618,14 @@ public class ViewUserManager extends View {
 		Group				parent;
 		ItemUserState		itemUserState	= ItemUserState.COLLAPSE;
 		Array<SubItemUser>	listSubItem;
+		Color				bgItemColor		= new Color(0 / 255f, 191 / 255f,
+													255 / 255f, 0f);
+		Color				textItemColor	= new Color(0 / 255f, 191 / 255f,
+													255 / 255f, 1f);
+		Color				dataItemColor	= new Color(0 / 255f, 191 / 255f,
+													255 / 255f, 1f);
+		Color				iconItemColor	= new Color(0 / 255f, 191 / 255f,
+													255 / 255f, 1f);
 
 		public SubItemUser(Group parent, int id, float width, float height,
 				TextureRegion reg_icon, String text, String textnumber,
@@ -608,13 +640,14 @@ public class ViewUserManager extends View {
 			setOrigin(Align.center);
 			this.id = id;
 			this.icon = new Img(reg_icon);
-			this.bg = new Img(Style.ins.np1);
-			bg.setColor(Color.BLACK);
+			this.icon.setColor(iconItemColor);
+			this.icon.setSize(0.8f * icon.getWidth(), 0.8f * icon.getHeight());
+			this.bg = new Img(Assets.instance.ui.reg_ninepatch);
+			bg.setColor(bgItemColor);
 			this.lbText = new Label(text, Style.ins.getLabelStyle(22,
-					fontType.Bold, Color.WHITE));
+					FontType.Light, textItemColor));
 			this.lbTextNumber = new Label(textnumber, Style.ins.getLabelStyle(
-					20, fontType.Regular, Color.WHITE));
-
+					20, FontType.Light, textItemColor));
 			addActor(bg);
 			addActor(icon);
 			addActor(lbText);

@@ -1,6 +1,6 @@
 package com.coder5560.game.ui;
 
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -25,7 +25,7 @@ public class TextfieldStatic extends Group {
 		bg.setColor(new Color(245 / 255f, 245 / 255f, 245 / 255f, 1));
 
 		lbContent = new Label(content, new LabelStyle(
-				Assets.instance.fontFactory.getFont(20, fontType.Regular),
+				Assets.instance.fontFactory.getFont(20, FontType.Regular),
 				color));
 		lbContent.setWrap(true);
 		lbContent.setWidth(width - 10);

@@ -9,7 +9,7 @@ import utils.elements.PartnerPicker;
 import utils.elements.PartnerSelectBox;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
-import utils.factory.FontFactory.fontType;
+import utils.factory.FontFactory.FontType;
 import utils.factory.Factory;
 import utils.factory.StringSystem;
 import utils.factory.StringUtil;
@@ -220,7 +220,7 @@ public class ViewLogChart extends View {
 		bgExtendDate.setColor(245 / 255f, 245 / 255f, 245 / 255f, 1);
 		bgExtendDate.setSize(gExtendDate.getWidth(), gExtendDate.getHeight());
 		Label lbExtendDate = new Label("Chọn nhanh", Style.ins.getLabelStyle(
-				20, fontType.Regular, Color.BLACK));
+				20, FontType.Regular, Color.BLACK));
 		quickDatePicker = new PartnerSelectBox(Style.ins.selectBoxStyle);
 		quickDatePicker.setSize(220, 40);
 		quickDatePicker.addPartner(new ItemDatePartner(0));
@@ -288,7 +288,7 @@ public class ViewLogChart extends View {
 		style.background.setLeftWidth(10);
 		style.cursor = new NinePatchDrawable(new NinePatch(
 				Assets.instance.getRegion("bg_white"), Color.GRAY));
-		style.font = Assets.instance.fontFactory.getFont(20, fontType.Regular);
+		style.font = Assets.instance.fontFactory.getFont(20, FontType.Regular);
 		style.fontColor = Color.BLACK;
 
 		tfSearch = new CustomTextField("", style);
@@ -337,7 +337,7 @@ public class ViewLogChart extends View {
 		add(gTop).width(gTop.getWidth()).padLeft(-3).row();
 
 		titleView = new Label("Báo cáo doanh thu", Style.ins.getLabelStyle(25,
-				fontType.Regular, Color.GRAY));
+				FontType.Regular, Color.GRAY));
 		add(titleView).padTop(15).center().row();
 
 		gBottom = new Table();
@@ -644,7 +644,7 @@ public class ViewLogChart extends View {
 				icon.setSize(40, 40);
 
 				Label lbTitle = new Label(title, Style.ins.getLabelStyle(20,
-						fontType.Regular, Color.BLACK));
+						FontType.Regular, Color.BLACK));
 
 				gBottom.top().left();
 				gBottom.add(icon);

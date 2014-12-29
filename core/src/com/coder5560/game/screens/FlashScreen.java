@@ -1,6 +1,5 @@
 package com.coder5560.game.screens;
 
-import utils.networks.Request;
 import utils.screen.AbstractGameScreen;
 import utils.screen.GameCore;
 import utils.screen.Toast;
@@ -52,7 +51,7 @@ public class FlashScreen extends AbstractGameScreen {
 				if (parent.getPlatformResolver().getPlatform() == PlatformType.ANDROID)
 					checkNetworkAndInitialConfig();
 				else {
-//					Request.getInstance().loadConfig();
+					// Request.getInstance().loadConfig();
 					switchScreen();
 				}
 				checkedNetwork = false;
@@ -64,10 +63,16 @@ public class FlashScreen extends AbstractGameScreen {
 	boolean	switchScreen	= false;
 
 	void switchScreen() {
-		if (!switchScreen) {
-			parent.setScreen(gameScreen);
-			switchScreen = true;
-		}
+//		TestScreen testScreen = new TestScreen(parent);
+		// if (!switchScreen) {
+		// parent.setScreen(testScreen);
+		// switchScreen = true;
+		// }
+
+		 if (!switchScreen) {
+		 parent.setScreen(gameScreen);
+		 switchScreen = true;
+		 }
 	}
 
 	@Override
@@ -89,8 +94,8 @@ public class FlashScreen extends AbstractGameScreen {
 					public void run() {
 						switchScreen();
 						checkedNetwork = true;
-				 }
-				 })));
+					}
+				})));
 			}
 		} else {
 			imgFlash.addAction(Actions.forever(Actions.sequence(
@@ -106,7 +111,7 @@ public class FlashScreen extends AbstractGameScreen {
 						public void run() {
 							if (parent.getNetworkManager().isNetworkEnable()) {
 								if (!checkedNetwork) {
-//									Request.getInstance().loadConfig();
+									// Request.getInstance().loadConfig();
 									imgFlash.addAction(Actions.sequence(
 											Actions.alpha(0f, .2f),
 											Actions.run(new Runnable() {
