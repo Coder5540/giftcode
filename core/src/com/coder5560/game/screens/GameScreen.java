@@ -77,6 +77,11 @@ public class GameScreen extends AbstractGameScreen {
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.BACK || keycode == Keys.ESCAPE) {
+			if (controller.getCurrentView().getName()
+					.equalsIgnoreCase(StringSystem.VIEW_LOGIN)) {
+				controller.getView(StringSystem.VIEW_LOGIN).back();
+				return true ;
+			}
 
 			if (controller.getView(StringSystem.VIEW_MAIN_MENU) != null
 					&& controller.getView(StringSystem.VIEW_MAIN_MENU)

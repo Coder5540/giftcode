@@ -1,5 +1,7 @@
 package com.coder5560.game.ui;
 
+import utils.networks.UserInfo;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
@@ -21,9 +23,7 @@ public class Loading {
 	Table					table;
 	public boolean			isLoading	= false;
 	public static Loading	ins			= new Loading();
-	
-	
-	
+
 	private Loading() {
 		super();
 	}
@@ -94,6 +94,7 @@ public class Loading {
 
 		table.setVisible(true);
 		table.toFront();
+		isLoading = true;
 	}
 
 	public void show(Group parent, int upHeight) {
@@ -105,9 +106,9 @@ public class Loading {
 		loading.setPosition(parent.getWidth() / 2 - loading.getWidth() / 2,
 				parent.getHeight() / 2 - loading.getHeight() / 2 + 15);
 		parent.addActor(table);
-
 		table.setVisible(true);
 		table.toFront();
+		isLoading = true;
 	}
 
 	public void show(Group parent, Rectangle bound) {
@@ -122,11 +123,13 @@ public class Loading {
 
 		table.setVisible(true);
 		table.toFront();
+		isLoading = true;
 	}
 
 	public void hide() {
 		table.toBack();
 		table.setVisible(false);
+		isLoading = false;
 	}
 
 }

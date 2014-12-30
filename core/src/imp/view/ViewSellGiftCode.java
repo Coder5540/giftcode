@@ -6,7 +6,6 @@ import utils.factory.Factory;
 import utils.factory.FontFactory.FontType;
 import utils.factory.Log;
 import utils.factory.Style;
-import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
 import utils.networks.UserInfo;
@@ -36,6 +35,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.ui.Loading;
@@ -94,9 +94,12 @@ public class ViewSellGiftCode extends View {
 
 		TextButtonStyle btStyle = new TextButtonStyle();
 		btStyle.up = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 1)));
+				Constants.COLOR_ACTIONBAR));
+		Color colorDown = new Color(Constants.COLOR_ACTIONBAR);
+		colorDown.a = 0.5f;
+		
 		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 0.5f)));
+				colorDown));
 		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
 		btStyle.fontColor = Color.WHITE;
 		TextButton btGetGiftCode = new TextButton("Lấy giftcode", btStyle);

@@ -22,7 +22,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -40,7 +39,6 @@ import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.DialogCustom;
-import com.coder5560.game.views.IViewController;
 import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
@@ -84,14 +82,6 @@ public class ViewUserManager extends View {
 		return super.getLabel();
 	}
 
-	@Override
-	public void build(Stage stage, IViewController viewController,
-			String viewName, Rectangle bound) {
-		super.build(stage, viewController, viewName, bound);
-		((MainMenuView) getViewController()
-				.getView(StringSystem.VIEW_MAIN_MENU)).setBlock(true);
-	}
-
 	public void buildComponent() {
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
@@ -99,7 +89,6 @@ public class ViewUserManager extends View {
 		add(topData).width(getWidth()).height(4).top().row();
 		buildRoot();
 		rebuildUI();
-		Log.d("Phone : " + UserInfo.phone);
 		Request.getInstance().getAllAgency(UserInfo.phone, -1,
 				onAllAgencyListener);
 	}
@@ -278,7 +267,66 @@ public class ViewUserManager extends View {
 	}
 
 	private void processResponseCustom() {
-
+		if (responseCustomAgency != null) {
+			String userName = responseCustomAgency
+					.getString(ExtParamsKey.FULL_NAME);
+			String phone = responseCustomAgency
+					.getString(ExtParamsKey.AGENCY_NAME);
+			final int roleID = responseCustomAgency
+					.getInt(ExtParamsKey.ROLE_ID);
+			final User user = new User(responseCustomAgency, roleID, userName,
+					phone);
+			if (!getViewController().isContainView(
+					ViewInfoDaiLySmall.class.getName())) {
+				ViewInfoDaiLySmall view = new ViewInfoDaiLySmall();
+				view.build(getStage(), getViewController(),
+						ViewInfoDaiLySmall.class.getName(), new Rectangle(0, 0,
+								Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN
+										- Constants.HEIGHT_ACTIONBAR));
+				view.buildComponent();
+			}
+			ViewInfoDaiLySmall view = ((ViewInfoDaiLySmall) getViewController()
+					.getView(ViewInfoDaiLySmall.class.getName()));
+			view.buildComponent();
+			view.setInfo(user.data);
+			view.clearButton();
+			view.addButton("Lịch sử giao dịch", new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					if (!getViewController().isContainView(
+							StringSystem.VIEW_HOME_V2)) {
+						// khoi tao
+						HomeViewV2 homeViewV2 = new HomeViewV2();
+						homeViewV2.build(getStage(), getViewController(),
+								StringSystem.VIEW_HOME_V2, new Rectangle(0, 0,
+										Constants.WIDTH_SCREEN,
+										Constants.HEIGHT_SCREEN
+												- Constants.HEIGHT_ACTIONBAR));
+						homeViewV2.buildComponent();
+						homeViewV2.setUserName(user.phone);
+						Log.d("role_id : " + user.roleID);
+						homeViewV2.setRoleId(user.roleID);
+						Log.d("User Phone " + user.phone);
+						homeViewV2.show(null);
+					} else {
+						HomeViewV2 homeViewV2 = (HomeViewV2) getViewController()
+								.getView(StringSystem.VIEW_HOME_V2);
+						homeViewV2.setUserName(user.phone);
+						homeViewV2.setRoleId(user.roleID);
+						Log.d("User Phone 2 :" + user.phone);
+						homeViewV2.show(null);
+					}
+				}
+			});
+			view.addButton("Cấp quyền", new ClickListener() {
+				@Override
+				public void clicked(InputEvent event, float x, float y) {
+					onClickedChangeRole(user, roleID);
+				}
+			});
+			view.show(null);
+			responseCustomAgency = null;
+		}
 	}
 
 	@Override
@@ -289,6 +337,12 @@ public class ViewUserManager extends View {
 			Toast.makeText(getStage(), "Nhấn thêm lần nữa để thoát !", 0.3f);
 			actorExit.addAction(Actions.delay(1f));
 		}
+	}
+
+	@Override
+	public void onReload() {
+		// Request.getInstance().getAllAgency(UserInfo.phone, -1,
+		// onAllAgencyListener);
 	}
 
 	public void onGameEvent(GameEvent gameEvent) {
@@ -349,55 +403,7 @@ public class ViewUserManager extends View {
 									};
 
 	private void showUserInfo(final User user) {
-		if (!getViewController().isContainView(
-				ViewInfoDaiLySmall.class.getName())) {
-			ViewInfoDaiLySmall view = new ViewInfoDaiLySmall();
-			view.build(getStage(), getViewController(),
-					ViewInfoDaiLySmall.class.getName(), new Rectangle(0, 0,
-							Constants.WIDTH_SCREEN - 30,
-							Constants.HEIGHT_SCREEN
-									- Constants.HEIGHT_ACTIONBAR * 3));
-			view.buildComponent();
-		}
-		final int roleID = user.roleID;
-		ViewInfoDaiLySmall view = ((ViewInfoDaiLySmall) getViewController()
-				.getView(ViewInfoDaiLySmall.class.getName()));
-		view.buildComponent();
-		view.show(user.data);
-		view.addButton("Lịch sử giao dịch", new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if (!getViewController().isContainView(
-						StringSystem.VIEW_HOME_V2)) {
-					// khoi tao
-					HomeViewV2 homeViewV2 = new HomeViewV2();
-					homeViewV2.build(getStage(), getViewController(),
-							StringSystem.VIEW_HOME_V2, new Rectangle(0, 0,
-									Constants.WIDTH_SCREEN,
-									Constants.HEIGHT_SCREEN
-											- Constants.HEIGHT_ACTIONBAR));
-					homeViewV2.buildComponent();
-					homeViewV2.setUserName(user.phone);
-					Log.d("role_id : " + user.roleID);
-					homeViewV2.setRoleId(user.roleID);
-					Log.d("User Phone " + user.phone);
-					homeViewV2.show(null);
-				} else {
-					HomeViewV2 homeViewV2 = (HomeViewV2) getViewController()
-							.getView(StringSystem.VIEW_HOME_V2);
-					homeViewV2.setUserName(user.phone);
-					homeViewV2.setRoleId(user.roleID);
-					Log.d("User Phone 2 :" + user.phone);
-					homeViewV2.show(null);
-				}
-			}
-		});
-		view.addButton("Cấp quyền", new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				onClickedChangeRole(user, roleID);
-			}
-		});
+		Request.getInstance().getInfoDaily(user.phone, onCustomAgency);
 	}
 
 	private void onClickedChangeRole(final User user, int roleID) {
@@ -477,7 +483,7 @@ public class ViewUserManager extends View {
 		this.onClickListener = onClickListener;
 	}
 
-	public enum ItemUserState {
+	public enum ItemState {
 		EXPAND, COLLAPSE;
 	}
 
@@ -504,7 +510,7 @@ public class ViewUserManager extends View {
 		OnClickListener		onClickListener;
 		Table				data;
 
-		ItemUserState		itemUserState	= ItemUserState.COLLAPSE;
+		ItemState			itemUserState	= ItemState.COLLAPSE;
 		Array<SubItemUser>	listSubItem;
 
 		public ItemUser(int id, float width, float height,
@@ -547,7 +553,7 @@ public class ViewUserManager extends View {
 				listSubItem = new Array<ViewUserManager.SubItemUser>();
 			listSubItem.add(subItemUser);
 
-			itemUserState = ItemUserState.COLLAPSE;
+			itemUserState = ItemState.COLLAPSE;
 			data.setVisible(false);
 			root.getCell(data).height(0);
 			root.invalidateHierarchy();
@@ -584,15 +590,15 @@ public class ViewUserManager extends View {
 									if (onClickListener != null) {
 										onClickListener.onClick(id);
 									}
-									if (itemUserState == ItemUserState.EXPAND) {
-										itemUserState = ItemUserState.COLLAPSE;
+									if (itemUserState == ItemState.EXPAND) {
+										itemUserState = ItemState.COLLAPSE;
 										data.setVisible(false);
 										root.getCell(data).height(0);
 										root.invalidateHierarchy();
 										scroll.invalidate();
 										ViewUserManager.this.layout();
 									} else {
-										itemUserState = ItemUserState.EXPAND;
+										itemUserState = ItemState.EXPAND;
 										if (listSubItem != null) {
 											data.setVisible(true);
 											data.setHeight(70 * (listSubItem.size + 1) - 5);
@@ -616,7 +622,7 @@ public class ViewUserManager extends View {
 		Label				lbText, lbTextNumber;
 		OnClickListener		onClickListener;
 		Group				parent;
-		ItemUserState		itemUserState	= ItemUserState.COLLAPSE;
+		ItemState			itemUserState	= ItemState.COLLAPSE;
 		Array<SubItemUser>	listSubItem;
 		Color				bgItemColor		= new Color(0 / 255f, 191 / 255f,
 													255 / 255f, 0f);
@@ -712,6 +718,44 @@ public class ViewUserManager extends View {
 
 														Log.d("All Agency : "
 																+ responseAllAgency
+																		.toString());
+													}
+
+													@Override
+													public void failed(
+															Throwable t) {
+
+													}
+
+													@Override
+													public void cancelled() {
+
+													}
+
+												};
+
+	HttpResponseListener	onCustomAgency		= new HttpResponseListener() {
+
+													@Override
+													public void handleHttpResponse(
+															HttpResponse httpResponse) {
+														responseCustomAgency = new JsonReader()
+																.parse(httpResponse
+																		.getResultAsString());
+
+														boolean result = responseCustomAgency
+																.getBoolean(ExtParamsKey.RESULT);
+														if (!result) {
+															String data = responseCustomAgency
+																	.getString(ExtParamsKey.MESSAGE);
+															Toast.makeText(
+																	getStage(),
+																	data,
+																	Toast.LENGTH_SHORT);
+														}
+
+														Log.d("All Agency : "
+																+ responseCustomAgency
 																		.toString());
 													}
 

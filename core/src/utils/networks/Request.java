@@ -623,4 +623,8 @@ public class Request {
 										+ ConnectionConfig.CLIENT_KEY)).build(),
 				listener);
 	}
+
+	public void requestQuitApp(String fullName) {
+		
+	}
 }

@@ -1,7 +1,5 @@
 package imp.view;
 
-import imp.view.HomeViewV2.getMoneyInfoListener;
-
 import java.util.ArrayList;
 
 import utils.elements.ItemDatePartner;
@@ -9,12 +7,10 @@ import utils.elements.PartnerPicker;
 import utils.elements.PartnerSelectBox;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
-import utils.factory.FontFactory.FontType;
 import utils.factory.Factory;
+import utils.factory.FontFactory.FontType;
 import utils.factory.StringSystem;
-import utils.factory.StringUtil;
 import utils.factory.Style;
-import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
 import utils.networks.UserInfo;
@@ -336,15 +332,15 @@ public class ViewLogChart extends View {
 		top();
 		add(gTop).width(gTop.getWidth()).padLeft(-3).row();
 
-		titleView = new Label("Báo cáo doanh thu", Style.ins.getLabelStyle(25,
-				FontType.Regular, Color.GRAY));
+		titleView = new Label((type == TYPE_GIFTCODE) ? "" : "",
+				Style.ins.getLabelStyle(25, FontType.Regular, Color.GRAY));
 		add(titleView).padTop(15).center().row();
 
 		gBottom = new Table();
 		gBottom.setBounds(0, 0, getWidth(), 60);
 		gBottom.setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch4, 6, 6, 6, 6)));
-
+		gBottom.setClip(true);
 		content = new Table();
 		scroll = new ScrollPane(content);
 		scroll.setBounds(0, 0, getWidth(), getHeight() - gTop.getHeight()
@@ -352,9 +348,7 @@ public class ViewLogChart extends View {
 		content.left();
 		add(scroll).padTop(5).width(scroll.getWidth())
 				.height(scroll.getHeight());
-
 		addActor(gBottom);
-
 		return this;
 	}
 
@@ -373,7 +367,6 @@ public class ViewLogChart extends View {
 
 	@Override
 	public void back() {
-		// TODO Auto-generated method stub
 		getViewController().removeView(getName());
 		super.back();
 	}
@@ -473,14 +466,14 @@ public class ViewLogChart extends View {
 										float y) {
 									if (_viewController
 											.isContainView(StringSystem.VIEW_LOG_SEND_MONEY)) {
-										((ViewLogTransferMoney) _viewController
+										((ViewLogMoneyDetail) _viewController
 												.getView(StringSystem.VIEW_LOG_SEND_MONEY))
 												.setDate(date);
-										((ViewLogTransferMoney) _viewController
+										((ViewLogMoneyDetail) _viewController
 												.getView(StringSystem.VIEW_LOG_SEND_MONEY))
 												.setFun(1);
 									} else {
-										ViewLogTransferMoney viewLogTransferMoney = new ViewLogTransferMoney();
+										ViewLogMoneyDetail viewLogTransferMoney = new ViewLogMoneyDetail();
 										viewLogTransferMoney
 												.build(getStage(),
 														_viewController,
@@ -492,14 +485,14 @@ public class ViewLogChart extends View {
 																Constants.HEIGHT_SCREEN
 																		- Constants.HEIGHT_ACTIONBAR));
 										viewLogTransferMoney
-												.buildComponent(ViewLogTransferMoney.TYPE_SEND);
+												.buildComponent(ViewLogMoneyDetail.TYPE_SEND);
 										viewLogTransferMoney.setDate(date);
 										viewLogTransferMoney.setFun(1);
 									}
-									((ViewLogTransferMoney) _viewController
+									((ViewLogMoneyDetail) _viewController
 											.getView(StringSystem.VIEW_LOG_SEND_MONEY))
 											.setUserName(username);
-									((ViewLogTransferMoney) _viewController
+									((ViewLogMoneyDetail) _viewController
 											.getView(StringSystem.VIEW_LOG_SEND_MONEY))
 											.show(null);
 									super.clicked(event, x, y);
@@ -525,14 +518,14 @@ public class ViewLogChart extends View {
 									System.out.println("click to receive");
 									if (_viewController
 											.isContainView(StringSystem.VIEW_LOG_RECEIVE_MONEY)) {
-										((ViewLogTransferMoney) _viewController
+										((ViewLogMoneyDetail) _viewController
 												.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 												.setDate(date);
-										((ViewLogTransferMoney) _viewController
+										((ViewLogMoneyDetail) _viewController
 												.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 												.setFun(1);
 									} else {
-										ViewLogTransferMoney viewLogTransferMoney = new ViewLogTransferMoney();
+										ViewLogMoneyDetail viewLogTransferMoney = new ViewLogMoneyDetail();
 										viewLogTransferMoney
 												.build(getStage(),
 														_viewController,
@@ -548,10 +541,10 @@ public class ViewLogChart extends View {
 										viewLogTransferMoney.setDate(date);
 										viewLogTransferMoney.setFun(1);
 									}
-									((ViewLogTransferMoney) _viewController
+									((ViewLogMoneyDetail) _viewController
 											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 											.setUserName(username);
-									((ViewLogTransferMoney) _viewController
+									((ViewLogMoneyDetail) _viewController
 											.getView(StringSystem.VIEW_LOG_RECEIVE_MONEY))
 											.show(null);
 									super.clicked(event, x, y);
@@ -576,14 +569,14 @@ public class ViewLogChart extends View {
 											float x, float y) {
 										if (_viewController
 												.isContainView(StringSystem.VIEW_LOG_MONEY_GIFTCODE)) {
-											((ViewLogGiftCode) _viewController
+											((ViewLogGiftCodeDetail) _viewController
 													.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
 													.setDate(date);
-											((ViewLogGiftCode) _viewController
+											((ViewLogGiftCodeDetail) _viewController
 													.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
 													.setFun(1);
 										} else {
-											ViewLogGiftCode viewlogGiftCode = new ViewLogGiftCode();
+											ViewLogGiftCodeDetail viewlogGiftCode = new ViewLogGiftCodeDetail();
 											viewlogGiftCode
 													.build(getStage(),
 															_viewController,
@@ -598,10 +591,10 @@ public class ViewLogChart extends View {
 											viewlogGiftCode.setDate(date);
 											viewlogGiftCode.setFun(1);
 										}
-										((ViewLogGiftCode) _viewController
+										((ViewLogGiftCodeDetail) _viewController
 												.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
 												.setUserName(username);
-										((ViewLogGiftCode) _viewController
+										((ViewLogGiftCodeDetail) _viewController
 												.getView(StringSystem.VIEW_LOG_MONEY_GIFTCODE))
 												.show(null);
 										super.clicked(event, x, y);
@@ -626,6 +619,7 @@ public class ViewLogChart extends View {
 							+ UserInfo.currency + "/"
 							+ Factory.getDotMoney(totalMoney)
 							+ UserInfo.currency;
+					System.out.println(totalMoney);
 				} else if (typeView == TYPE_RECEIVE_MONEY) {
 					title = "Tổng tiền: "
 							+ Factory.getDotMoney(totalMoneyReceive)

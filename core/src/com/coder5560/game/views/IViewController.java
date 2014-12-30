@@ -54,4 +54,6 @@ public interface IViewController {
 
 	public void notifyEvent(GameEvent gameEvent);
 
+	public void resetHome();
+
 }

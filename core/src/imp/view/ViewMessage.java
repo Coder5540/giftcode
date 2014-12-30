@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.views.TraceView;
@@ -42,7 +43,7 @@ public class ViewMessage extends View {
 	public void buildComponent() {
 		LabelStyle style = new LabelStyle();
 		style.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
-		style.fontColor = new Color(Color.BLACK);
+		style.fontColor = new Color(Constants.COLOR_ACTIONBAR);
 		lbShortDescription = new Label(_content, style);
 		lbShortDescription.setAlignment(Align.top, Align.left);
 		lbShortDescription.setTouchable(Touchable.disabled);
@@ -52,7 +53,7 @@ public class ViewMessage extends View {
 		LabelStyle styleTime = new LabelStyle();
 		styleTime.font = Assets.instance.fontFactory
 				.getFont(18, FontType.Light);
-		styleTime.fontColor = Color.BLACK;
+		styleTime.fontColor = Constants.COLOR_ACTIONBAR;
 
 		time = new Label(Factory.getTime(_time), styleTime);
 		time.setTouchable(Touchable.disabled);

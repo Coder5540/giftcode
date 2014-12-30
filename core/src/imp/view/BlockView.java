@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnClickListener;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.listener.OnSelectListener;
@@ -65,7 +66,7 @@ public class BlockView extends View {
 	public void buildComponent() {
 		{
 			bg = new Image(Assets.instance.ui.reg_ninepatch);
-			bg.setColor(0.1f, 0.1f, 0.1f, 0.2f);
+			bg.setColor(0.12f, 0.2f, 0.2f, 0.4f);
 			bg.setSize(getWidth(), getHeight());
 			bg.addListener(new ClickListener() {
 				public void clicked(InputEvent event, float x, float y) {
@@ -75,7 +76,7 @@ public class BlockView extends View {
 			});
 		}
 		LabelStyle style = Style.ins.getLabelStyle(20, FontType.Medium,
-				Color.BLACK);
+				Constants.COLOR_ACTIONBAR);
 		// Label lbBlockAll = new Label("Khóa tài khoản", style);
 		// lbBlockAll.setAlignment(Align.left);
 		Label lbBlockDevice = new Label(type == 1 ? "Khóa thiết bị"
@@ -98,8 +99,8 @@ public class BlockView extends View {
 		content.setTouchable(Touchable.enabled);
 		content.defaults().expandX().fillX().height(60);
 		content.top();
-		NinePatch np = Style.ins.np4;
-		np.setColor(new Color(0.8f, 0.8f, 0.8f, 1f));
+		NinePatch np = Style.ins.np2;
+		np.setColor(new Color(1f, 1f, 1f, 1f));
 		content.setBackground(new NinePatchDrawable(np));
 		content.setSize(2 * getWidth() / 3, 60 * (2 + imeis.size));
 
@@ -108,10 +109,13 @@ public class BlockView extends View {
 		content.add(lbBlockDevice).padLeft(10).height(60).left().row()
 				.padBottom(10);
 
+		LabelStyle styleContent = Style.ins.getLabelStyle(16, FontType.Medium,
+				Color.WHITE);
+		
 		for (int i = 0; i < imeis.size; i++) {
 			final int index = i;
 			CustomTextButton customTextImei = getTextButton(imeis.get(i),
-					style, Style.ins.np2, Color.GREEN, Color.BLACK,
+					styleContent, Style.ins.np2, Constants.COLOR_ACTIONBAR, Color.WHITE,
 					new OnClickListener() {
 						@Override
 						public void onClick(float x, float y) {
@@ -121,7 +125,7 @@ public class BlockView extends View {
 						}
 					});
 			customTextImei.setSize(getWidth(), 60);
-			customTextImei.setColor(Color.GREEN);
+			customTextImei.setColor(Constants.COLOR_ACTIONBAR);
 			content.add(customTextImei).padLeft(10).height(60).row()
 					.padBottom(10);
 		}

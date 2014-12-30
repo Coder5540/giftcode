@@ -22,6 +22,7 @@ public class View extends Table implements IViews {
 	public IViewController	_viewController;
 	public ViewState		state;
 	public String			name;
+	float					timeReload	= 2f;
 
 	public View() {
 		super();
@@ -153,6 +154,20 @@ public class View extends Table implements IViews {
 	public void back() {
 		// TraceSystem.backView();
 		hide(null);
+	}
+
+	@Override
+	public void setTimeReload(float timeReload) {
+		this.timeReload = timeReload;
+	}
+
+	@Override
+	public float getTimeReload() {
+		return timeReload;
+	}
+
+	@Override
+	public void onReload() {
 	}
 
 	@Override

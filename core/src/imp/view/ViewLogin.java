@@ -13,15 +13,18 @@ import utils.networks.UserInfo;
 import utils.screen.AbstractGameScreen;
 import utils.screen.Toast;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -38,9 +41,8 @@ import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
-import com.coder5560.game.listener.OnResponseListener;
-import com.coder5560.game.ui.CustomDialog;
 import com.coder5560.game.ui.CustomTextField;
+import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
@@ -51,7 +53,6 @@ public class ViewLogin extends View {
 	private JsonValue		respone;
 	private JsonValue		responeInfoDaily;
 	Label					btnRegister, btnActive;
-	CustomDialog			dialogConfirm;
 	View					view;
 
 	boolean					isHandlerResponseLogin		= false;
@@ -136,9 +137,11 @@ public class ViewLogin extends View {
 
 		TextButtonStyle btStyle = new TextButtonStyle();
 		btStyle.up = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 1)));
-		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 0.5f)));
+				Constants.COLOR_ACTIONBAR));
+		Color color = new Color(Constants.COLOR_ACTIONBAR);
+		color.a = 0.5f;
+		btStyle.down = new NinePatchDrawable(
+				new NinePatch(Style.ins.np1, color));
 		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
 		btStyle.fontColor = Color.WHITE;
 		TextButton btOk = new TextButton("Đăng nhập", btStyle);
@@ -177,7 +180,7 @@ public class ViewLogin extends View {
 
 		Label btnForgotPass = new Label("Quên mật khẩu ?", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, FontType.Light),
-				new Color(0, 191 / 255f, 1, 1)));
+				Constants.COLOR_ACTIONBAR));
 		btnForgotPass.setPosition(btOk.getX(), btOk.getY() - 70);
 		btnForgotPass.addListener(new ClickListener() {
 			@Override
@@ -187,7 +190,7 @@ public class ViewLogin extends View {
 		});
 		btnRegister = new Label("Đăng ký", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, FontType.Light),
-				new Color(0, 191 / 255f, 1, 1))) {
+				Constants.COLOR_ACTIONBAR)) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {
 				if (x < btnRegister.getWidth() + 10 && x > -10
@@ -227,13 +230,13 @@ public class ViewLogin extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				btnRegister.setColor(new Color(0, 191 / 255f, 1, 1));
+				btnRegister.setColor(Constants.COLOR_ACTIONBAR);
 				super.touchUp(event, x, y, pointer, button);
 			}
 		});
 		btnActive = new Label("Kích hoạt tài khoản", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, FontType.Light),
-				new Color(0, 191 / 255f, 1, 1))) {
+				Constants.COLOR_ACTIONBAR)) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {
 				if (x < btnActive.getWidth() + 10 && x > -10
@@ -272,7 +275,7 @@ public class ViewLogin extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				btnActive.setColor(new Color(0, 191 / 255f, 1, 1));
+				btnActive.setColor(Constants.COLOR_ACTIONBAR);
 				super.touchUp(event, x, y, pointer, button);
 			}
 		});
@@ -304,8 +307,11 @@ public class ViewLogin extends View {
 		// KeyboardConfig.SINGLE_LINE);
 	}
 
+	Actor	actorExit	= new Actor();
+
 	@Override
 	public void update(float deltaTime) {
+		actorExit.act(deltaTime);
 		if (view != null && view.getViewState() == ViewState.HIDE) {
 			view.show(null);
 			return;
@@ -332,93 +338,15 @@ public class ViewLogin extends View {
 				Request.getInstance().getInfoDaily(
 						AppPreference.instance.getName(), onGetinfoListener);
 
-				// TopBarView topBarView = new TopBarView();
-				// topBarView.build(getStage(), getViewController(),
-				// StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
-				// Constants.HEIGHT_SCREEN
-				// - Constants.HEIGHT_ACTIONBAR,
-				// Constants.WIDTH_SCREEN,
-				// Constants.HEIGHT_ACTIONBAR));
-				// topBarView.buildComponent();
-				//
-				// final MainMenuView mainMenu = new MainMenuView();
-				// mainMenu.build(getStage(), getViewController(),
-				// StringSystem.VIEW_MAIN_MENU,
-				// new Rectangle(0, 0, Constants.WIDTH_SCREEN,
-				// Constants.HEIGHT_SCREEN));
-				// mainMenu.buildComponent();
-				//
-				// if (id == RoleID.USER_MANAGER) {
-				// ViewUserManager view = new ViewUserManager();
-				// view.build(getStage(), getViewController(),
-				// StringSystem.VIEW_HOME, new Rectangle(0, 0,
-				// Constants.WIDTH_SCREEN,
-				// Constants.HEIGHT_SCREEN
-				// - Constants.HEIGHT_ACTIONBAR));
-				// view.buildComponent();
-				// view.show(new OnCompleteListener() {
-				// @Override
-				// public void onError() {
-				// }
-				//
-				// @Override
-				// public void done() {
-				// mainMenu.hide(null);
-				// mainMenu.getUserData();
-				// getViewController()
-				// .getView(StringSystem.VIEW_LOGIN)
-				// .hide(null);
-				// }
-				// });
-				// } else {
-				// HomeViewV2 homeViewV2 = new HomeViewV2();
-				// homeViewV2.build(getStage(), getViewController(),
-				// StringSystem.VIEW_HOME, new Rectangle(0, 0,
-				// Constants.WIDTH_SCREEN,
-				// Constants.HEIGHT_SCREEN
-				// - Constants.HEIGHT_ACTIONBAR));
-				// homeViewV2.buildComponent();
-				// homeViewV2.show(
-				//
-				// new OnCompleteListener() {
-				// @Override
-				// public void onError() {
-				// }
-				//
-				// @Override
-				// public void done() {
-				// mainMenu.hide(null);
-				// mainMenu.getUserData();
-				// getViewController()
-				// .getView(StringSystem.VIEW_LOGIN)
-				// .hide(null);
-				// }
-				// });
-				// }
-
 			} else {
 				Loading.ins.hide();
-				// login success but the device is not active. show dialog
-				// confirm
 				setTouchable(Touchable.enabled);
-				dialogConfirm = new CustomDialog();
-				dialogConfirm.build(getStage(), getViewController(), "dialog",
-						new Rectangle(0, 0, Constants.WIDTH_SCREEN,
-								Constants.HEIGHT_SCREEN));
-				dialogConfirm.buildComponent("dialog", new Rectangle(0, 0,
-						Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
-				dialogConfirm.setContent(mess);
-				dialogConfirm.show(null);
-				dialogConfirm.setOnResponseListener(new OnResponseListener() {
-
+				final DialogCustom dia = new DialogCustom("");
+				dia.text(mess);
+				dia.button("Ok", new Runnable() {
 					@Override
-					public void onOk(String name, String quality) {
-
-					}
-
-					@Override
-					public void onOk() {
-						Log.d("onOk");
+					public void run() {
+						Loading.ins.show(ViewLogin.this);
 						String username = AppPreference.instance.name;
 						String pass = AppPreference.instance.pass;
 						String deviceID = getViewController().getGameParent()
@@ -428,12 +356,8 @@ public class ViewLogin extends View {
 						Request.getInstance().registerDevice(username, pass,
 								deviceID, deviceName, _registerDeviceListener);
 					}
-
-					@Override
-					public void onCancel() {
-						Log.d("onCancel");
-					}
 				});
+				dia.show(getStage());
 			}
 			isHandlerResponseLogin = true;
 			respone = null;
@@ -460,7 +384,10 @@ public class ViewLogin extends View {
 
 				UserInfo.imeiDevice = Factory.getDeviceID(responeInfoDaily);
 				UserInfo.nameDevice = Factory.getDeviceName(responeInfoDaily);
-
+				UserInfo.imeiDeviceBlock = Factory
+						.getDeviceIDBlock(responeInfoDaily);
+				UserInfo.nameDeviceBlock = Factory
+						.getDeviceNameBlock(responeInfoDaily);
 				UserInfo.state = responeInfoDaily.getInt(ExtParamsKey.STATE);
 			}
 			responeInfoDaily = null;
@@ -541,11 +468,22 @@ public class ViewLogin extends View {
 
 	public void back() {
 		Log.d("Call back on Login View");
+		if (Loading.ins.isLoading) {
+			Loading.ins.hide();
+			return;
+		}
+
 		if (view != null && view.getViewState() == ViewState.SHOW) {
 			view.hide(null);
 			return;
 		}
 
+		if (actorExit.getActions().size > 0) {
+			Gdx.app.exit();
+		} else {
+			Toast.makeText(getStage(), "Nhấn thêm lần nữa để thoát !", 0.3f);
+			actorExit.addAction(Actions.delay(1f));
+		}
 	};
 
 	private void switchView() {
@@ -563,6 +501,7 @@ public class ViewLogin extends View {
 														@Override
 														public void handleHttpResponse(
 																HttpResponse httpResponse) {
+															Loading.ins.hide();
 															JsonValue value = (new JsonReader())
 																	.parse(httpResponse
 																			.getResultAsString());

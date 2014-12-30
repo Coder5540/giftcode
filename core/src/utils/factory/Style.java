@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.Constants;
 
 public class Style {
 	public static Style			ins		= new Style();
@@ -85,7 +86,7 @@ public class Style {
 
 		textButtonStyle = new TextButtonStyle();
 		textButtonStyle.up = new NinePatchDrawable(new NinePatch(np1,
-				new Color(0, 191 / 255f, 1, 1)));
+				Constants.COLOR_ACTIONBAR));
 		textButtonStyle.down = new NinePatchDrawable(new NinePatch(np1,
 				new Color(0, 191 / 255f, 1, 0.5f)));
 		textButtonStyle.font = Assets.instance.fontFactory.getFont(20,
@@ -100,8 +101,7 @@ public class Style {
 				245 / 255f, 245 / 255f, 245 / 255f, 1)));
 		tfStyle.background.setLeftWidth(6);
 		tfStyle.cursor = new NinePatchDrawable(new NinePatch(
-				Assets.instance.getRegion("bg_white"), new Color(245 / 255f,
-						191 / 255f, 1, 1)));
+				Assets.instance.getRegion("bg_white"), Constants.COLOR_ACTIONBAR));
 		tfStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Light);
 		tfStyle.fontColor = Color.BLACK;
 	}

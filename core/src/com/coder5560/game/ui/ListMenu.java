@@ -36,6 +36,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.listener.OnClickListener;
 import com.coder5560.game.views.IViewController;
@@ -56,6 +57,7 @@ public class ListMenu extends ScrollPane {
 	private OnClickListener	onSellGiftCode;
 	private OnClickListener	listGiftcodeClicked;
 	private OnClickListener	onHistoryGiftcodeClicked;
+	private OnClickListener	onHomeViewClicked;
 
 	LabelStyle				lbStyle;
 	private IconMail		iconMail;
@@ -74,8 +76,14 @@ public class ListMenu extends ScrollPane {
 		createAvatar(user);
 		table.add(user).row();
 
-		Color colorItemMenu = new Color(0, 191 / 255f, 1, 1);
+		Color colorItemMenu = Constants.COLOR_ACTIONBAR;
 		Color colorText = Color.WHITE;
+
+		ItemMenu itemHomeView = new ItemMenu(
+				Assets.instance.ui.getIconHome(), "TRANG CHỦ",
+				getWidth(), 50, colorItemMenu, colorText, false);
+		addLine(table, 2, colorItemMenu);
+		addItem(itemHomeView, 0);
 
 		ItemMenu itemManager = new ItemMenu(
 				Assets.instance.ui.getRegUsermanagement(),
@@ -117,7 +125,6 @@ public class ListMenu extends ScrollPane {
 		LabelButton sellGiftCode = new LabelButton("Bán giftcode", lbStyle,
 				getWidth(), 45);
 		sellGiftCode.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(float x, float y) {
 				if (onSellGiftCode != null) {
@@ -144,11 +151,6 @@ public class ListMenu extends ScrollPane {
 				.isHasPermission(
 						PermissionConfig.PERMISSION_BAN_GIFTCODE.ordinal()))
 			itemGiftCode.addComponent(sellGiftCode);
-		// if (UserInfo
-		// .getInstance()
-		// .getPermission()
-		// .isHasPermission(
-		// PermissionConfig.PERMISSION_GIFTCODE_DASUDUNG.ordinal()))
 		if (UserInfo.getInstance().getRoleId() != RoleID.USER_MANAGER) {
 			itemGiftCode.addComponent(listGiftcode);
 		}
@@ -208,41 +210,6 @@ public class ListMenu extends ScrollPane {
 				.isHasPermission(
 						PermissionConfig.PERMISSION_LOG_GIFTCODE.ordinal()))
 			itemLog.addComponent(log_history_giftcode);
-	}
-
-	public void updateMail() {
-
-		setUserName(UserInfo.fullName);
-		setPhone(UserInfo.phone);
-		setMoney(Factory.getDotMoney(UserInfo.money) + " " + UserInfo.currency);
-		Request.getInstance().getMessageUnseen(
-				AppPreference.instance.getName(), new HttpResponseListener() {
-
-					@Override
-					public void handleHttpResponse(HttpResponse httpResponse) {
-						String dataRespone = httpResponse.getResultAsString();
-						Log.d("MAIL REQUEST", dataRespone);
-						JsonValue responeJson = new JsonReader()
-								.parse(dataRespone);
-						boolean result = responeJson
-								.getBoolean(ExtParamsKey.RESULT);
-						if (result) {
-							int number_unseen = responeJson
-									.getInt(ExtParamsKey.NUMBER_UNSEEN);
-							iconMail.setNotify(number_unseen);
-						}
-					}
-
-					@Override
-					public void failed(Throwable t) {
-
-					}
-
-					@Override
-					public void cancelled() {
-
-					}
-				});
 	}
 
 	private void createAvatar(Group user) {
@@ -445,6 +412,41 @@ public class ListMenu extends ScrollPane {
 		layout();
 	}
 
+	public void updateMail() {
+
+		setUserName(UserInfo.fullName);
+		setPhone(UserInfo.phone);
+		setMoney(Factory.getDotMoney(UserInfo.money) + " " + UserInfo.currency);
+		Request.getInstance().getMessageUnseen(
+				AppPreference.instance.getName(), new HttpResponseListener() {
+
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+						String dataRespone = httpResponse.getResultAsString();
+						Log.d("MAIL REQUEST", dataRespone);
+						JsonValue responeJson = new JsonReader()
+								.parse(dataRespone);
+						boolean result = responeJson
+								.getBoolean(ExtParamsKey.RESULT);
+						if (result) {
+							int number_unseen = responeJson
+									.getInt(ExtParamsKey.NUMBER_UNSEEN);
+							iconMail.setNotify(number_unseen);
+						}
+					}
+
+					@Override
+					public void failed(Throwable t) {
+
+					}
+
+					@Override
+					public void cancelled() {
+
+					}
+				});
+	}
+
 	public void setNotify(int number) {
 		iconMail.setNotify(number);
 	}
@@ -550,8 +552,77 @@ public class ListMenu extends ScrollPane {
 			});
 		}
 
-		public int getChirldenSize() {
-			return subButton.size();
+		public ItemMenu(TextureRegion region, String title, float width,
+				float height, Color color, Color textColor, boolean hasChildren) {
+			touchPoint = new Vector2();
+			subButton = new ArrayList<LabelButton>();
+			setSize(width, height);
+			item = new Group();
+			item.setSize(width, height);
+			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
+					color));
+			bg.setColor(new Color(1f, 1f, 1, 1f));
+			bg.setSize(item.getWidth(), item.getHeight());
+
+			Label lbtitle = new Label(title, new LabelStyle(
+					Assets.instance.fontFactory.getFont(16, FontType.Bold),
+					textColor));
+			btnExpand = new Image(Assets.instance.getRegion("down"));
+			btnExpand.setSize(15, 10);
+			btnExpand.setColor(textColor);
+			btnExpand.setOrigin(btnExpand.getWidth() / 2,
+					btnExpand.getHeight() / 2);
+
+			Image icon = new Image(region);
+			icon.setSize(45, 45);
+
+			icon.setPosition(7,
+					bg.getY() + bg.getHeight() / 2 - icon.getHeight() / 2);
+			lbtitle.setPosition(icon.getX() + icon.getWidth() + 5, bg.getY()
+					+ bg.getHeight() / 2 - lbtitle.getHeight() / 2);
+			btnExpand.setPosition(
+					item.getX() + item.getWidth() - btnExpand.getWidth() - 10,
+					bg.getY() + bg.getHeight() / 2 - btnExpand.getHeight() / 2);
+			item.addActor(bg);
+			item.addActor(icon);
+			item.addActor(lbtitle);
+			// item.addActor(btnExpand);
+
+			maxheight = height;
+			minheight = height;
+			currentheight = height;
+
+			item.addListener(new ClickListener() {
+				@Override
+				public boolean touchDown(InputEvent event, float x, float y,
+						int pointer, int button) {
+					touchPoint.set(x, y);
+					bg.setColor(new Color(0f, 191 / 255f, 1, 1f));
+					return true;
+				}
+
+				@Override
+				public void touchUp(InputEvent event, float x, float y,
+						int pointer, int button) {
+					Log.d("aaa");
+					if (onHomeViewClicked != null && !touchPoint.isZero()) {
+						onHomeViewClicked.onClick(x, y);
+						Log.d("bbb");
+					}
+					bg.setColor(new Color(1, 1, 1, 1f));
+					super.touchUp(event, x, y, pointer, button);
+				}
+
+				@Override
+				public void touchDragged(InputEvent event, float x, float y,
+						int pointer) {
+					if (!touchPoint.epsilonEquals(x, y, 40)) {
+						touchPoint.set(0, 0);
+						bg.setColor(new Color(1, 1, 1, 1f));
+					}
+					super.touchDragged(event, x, y, pointer);
+				}
+			});
 		}
 
 		public ItemMenu(IconMail iconMail, String title, float width,
@@ -568,7 +639,9 @@ public class ListMenu extends ScrollPane {
 			bg.setSize(item.getWidth(), item.getHeight());
 
 			bgFocus = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
-			bgFocus.setColor(new Color(0, 191 / 255f, 1, 0));
+			Color color = new Color(Constants.COLOR_ACTIONBAR);
+			color.a = 0;
+			bgFocus.setColor(color);
 			bgFocus.setSize(item.getWidth(), item.getHeight());
 
 			Label lbtitle = new Label(title, new LabelStyle(
@@ -711,6 +784,11 @@ public class ListMenu extends ScrollPane {
 						}
 					})));
 		}
+
+		public int getChirldenSize() {
+			return subButton.size();
+		}
+
 	}
 
 	public class LabelButton extends Group {
@@ -778,12 +856,12 @@ public class ListMenu extends ScrollPane {
 			touchPoint = new Vector2();
 			setSize(width, height);
 			bg = new Image(new NinePatch(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4), new Color(0,
-					191 / 255f, 1, 1)));
+					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4),
+					Constants.COLOR_ACTIONBAR));
 			bg.setSize(width, height);
 			bgFocus = new Image(new NinePatch(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4), new Color(0,
-					220 / 255f, 1, 1)));
+					Assets.instance.ui.reg_ninepatch, 4, 4, 4, 4),
+					Constants.COLOR_ACTIONBAR));
 			bgFocus.getColor().a = 0;
 			bgFocus.setSize(width - 20, height);
 
@@ -849,7 +927,6 @@ public class ListMenu extends ScrollPane {
 			notify.setVisible(true);
 			icon = new Image(Assets.instance.ui.getRegionMail());
 			icon.setOrigin(Align.center);
-			// icon.setColor(new Color(0, 220 / 255f, 0f, 1f));
 			bgNotify = new Image(Assets.instance.ui.getCircle());
 			bgNotify.setOrigin(Align.center);
 			bgNotify.setColor(new Color(255 / 255f, 0f, 0f, 1f));
@@ -931,6 +1008,10 @@ public class ListMenu extends ScrollPane {
 		this.onHistoryGiftcodeClicked = onHistoryGiftcodeClicked;
 	}
 
+	public void setOnHomeViewClicked(OnClickListener onHomeViewClicked) {
+		this.onHomeViewClicked = onHomeViewClicked;
+	}
+
 }
 
 class Icon extends Group {
@@ -947,7 +1028,7 @@ class Icon extends Group {
 		LabelStyle labelStyle = new LabelStyle();
 		labelStyle.font = Assets.instance.fontFactory.getFont(20,
 				FontType.Light);
-		labelStyle.fontColor = new Color(0, 191 / 255f, 1, 1);
+		labelStyle.fontColor = Constants.COLOR_ACTIONBAR;
 		text = new Label(_text, labelStyle);
 		text.setWrap(true);
 		addActor(icon);
@@ -963,7 +1044,7 @@ class Icon extends Group {
 		LabelStyle labelStyle = new LabelStyle();
 		labelStyle.font = Assets.instance.fontFactory.getFont(20,
 				FontType.Light);
-		labelStyle.fontColor = new Color(0, 191 / 255f, 1, 1);
+		labelStyle.fontColor = Constants.COLOR_ACTIONBAR;
 		text = new Label(_text, labelStyle);
 		text.setWrap(true);
 		addActor(icon);

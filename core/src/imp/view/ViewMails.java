@@ -219,7 +219,7 @@ public class ViewMails extends View {
 		LabelStyle		styleTitle, styleDesciption, styleTime;
 		Label			lbTitle, lbShortDescription, lbTime;
 		OnClickListener	onClickListener;
-		Color			bgColor;
+		Color			bgColor, fontColor;
 		public int		index;
 		private boolean	isRead;
 
@@ -229,22 +229,23 @@ public class ViewMails extends View {
 			this.setSize(width, height);
 			this.index = index;
 			this.isRead = isRead;
+			fontColor = new Color(Constants.COLOR_ACTIONBAR);
+			setRead(isRead);
 			styleTitle = new LabelStyle();
 			styleTitle.font = Assets.instance.fontFactory.getFont(22,
 					FontType.Medium);
-			styleTitle.fontColor = new Color(20 / 255f, 20 / 255f, 20 / 255f,
-					1f);
+			styleTitle.fontColor = fontColor;
 
 			styleDesciption = new LabelStyle();
 			styleDesciption.font = Assets.instance.fontFactory.getFont(18,
 					FontType.Light);
-			styleDesciption.fontColor = new Color(40 / 255f, 40 / 255f,
-					40 / 255f, 1f);
+
+			styleDesciption.fontColor = fontColor;
 
 			styleTime = new LabelStyle();
 			styleTime.font = Assets.instance.fontFactory.getFont(18,
 					FontType.Light);
-			styleTime.fontColor = new Color(40 / 255f, 40 / 255f, 40 / 255f, 1f);
+			styleTime.fontColor = fontColor;
 			lbTitle = new Label(title, styleTitle);
 			lbTitle.setAlignment(Align.center, Align.left);
 			lbTitle.setTouchable(Touchable.disabled);
@@ -262,7 +263,7 @@ public class ViewMails extends View {
 
 			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch4, 6,
 					6, 6, 6));
-			setRead(isRead);
+
 			bg.setColor(bgColor);
 			bg.addListener(new ClickListener() {
 				boolean	isTouch	= false;
@@ -324,11 +325,25 @@ public class ViewMails extends View {
 
 		private void setRead(boolean isRead) {
 			this.isRead = isRead;
-			if (isRead)
-				bgColor = new Color(64 / 255f, 229 / 255f, 47 / 255f, 0.2f);
-			else
-				bgColor = new Color(60 / 255f, 249 / 255f, 40 / 255f, 0.4f);
+			if (isRead) {
+				bgColor = new Color(250 / 255f, 250 / 255f, 250 / 255f, 0.2f);
+				fontColor = new Color(Constants.COLOR_ACTIONBAR);
+			} else {
+				bgColor = Constants.COLOR_ACTIONBAR;
+				fontColor = new Color(Color.WHITE);
+			}
+			updateColor();
+		}
 
+		public void updateColor() {
+			if (lbTime != null)
+				lbTime.setColor(fontColor);
+			if (lbTitle != null)
+				lbTitle.setColor(fontColor);
+			if (lbShortDescription != null)
+				lbShortDescription.setColor(fontColor);
+			if (bg != null)
+				bg.setColor(bgColor);
 		}
 
 		boolean getIsRead() {

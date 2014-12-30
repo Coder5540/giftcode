@@ -24,8 +24,10 @@ public class UserInfo {
 	public static String		email;
 	public static String		imeiDevice;
 	public static String		nameDevice;
-//	public static Array<String>	imeiDevices	= new Array<String>();
-//	public static Array<String>	nameDevices	= new Array<String>();
+	public static String		imeiDeviceBlock;
+	public static String		nameDeviceBlock;
+	// public static Array<String> imeiDevices = new Array<String>();
+	// public static Array<String> nameDevices = new Array<String>();
 	public static int			state;
 
 	public UserInfo() {
@@ -40,10 +42,10 @@ public class UserInfo {
 		return INSTANCE;
 	}
 
-	public void setDeviceIDAndName(JsonValue response){
-		
+	public void setDeviceIDAndName(JsonValue response) {
+
 	}
-	
+
 	public void setRoleId(int id) {
 		this.role_id = id;
 		setListPartner(id);

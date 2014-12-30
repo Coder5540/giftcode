@@ -15,8 +15,8 @@ public class LabelButton extends Group {
 	public static final int LEFT = 0;
 	public static final int CENTER = 1;
 
-	private Image bg;
-	public Image bgFocus;
+	public Image bg;
+	public Image			bgFocus;
 	Label title;
 	Vector2 touchPoint;
 	int align;

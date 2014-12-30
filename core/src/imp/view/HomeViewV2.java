@@ -39,15 +39,20 @@ import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class HomeViewV2 extends View {
-	String	response		= "";
-	boolean	isLoad			= false;
+	String		response		= "";
+	boolean		isLoad			= false;
 
-	Table	content;
-	String	username		= "";
-	int		role_id;
-	Color	colorItem		= new Color(255 / 255f, 255 / 255f, 255 / 255f, .4f);
-	Color	colorTextTitle	= new Color(0.2f, 0.2f, 0.2f, 1f);
-	Color	colorText		= new Color(0, 191 / 255f, 1, 1f);
+	Table		content;
+	String		username		= "";
+	int			role_id;
+	Color		colorItem		= new Color(255 / 255f, 255 / 255f, 255 / 255f,
+										.4f);
+	Color		colorTextTitle	= new Color(0.2f, 0.2f, 0.2f, 1f);
+	Color		colorText		= Constants.COLOR_ACTIONBAR;
+
+	public long	tongtiendacap;
+	public long	tongtiendanhan;
+	public long	tongtiengiftcode;
 
 	public HomeViewV2 buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
@@ -76,11 +81,17 @@ public class HomeViewV2 extends View {
 		return this.username;
 	}
 
-	void addItem(String title, String content, ItemListener listener) {
-		ItemTotal item = new ItemTotal(title, content, getWidth(), 80,
-				listener);
+	void addItem(int id, String title, String content, ItemListener listener) {
+		ItemTotal item = new ItemTotal(title, content, getWidth(), 80);
 		// this.content.add(item).width(item.getWidth()).height(item.getHeight())
 		// .padBottom(2).row();
+		if (id == 3) {
+			if (role_id != 0 && role_id != 4) {
+				item.setListener(listener);
+			}
+		} else {
+			item.setListener(listener);
+		}
 		this.content.add(item).expandX().fillX().height(item.getHeight())
 				.padBottom(2).row();
 	}
@@ -97,16 +108,13 @@ public class HomeViewV2 extends View {
 			boolean result = json.getBoolean(ExtParamsKey.RESULT);
 			String message = json.getString(ExtParamsKey.MESSAGE);
 			if (result) {
-				final long tiendanhan = json
-						.getLong(ExtParamsKey.MONEY_RECEIVE);
-				final long tiendacap = json
-						.getLong(ExtParamsKey.MONEY_TRANSFER);
-				final long tiendasudung = json
-						.getLong(ExtParamsKey.MONEY_GIFT_CODE);
+				tongtiendanhan = json.getLong(ExtParamsKey.MONEY_RECEIVE);
+				tongtiendacap = json.getLong(ExtParamsKey.MONEY_TRANSFER);
+				tongtiengiftcode = json.getLong(ExtParamsKey.MONEY_GIFT_CODE);
 				long tiencon = json.getLong(ExtParamsKey.MONEY_REMAIN);
 				if (role_id != 0) {
-					addItem("Tổng tiền đã nhận",
-							Factory.getDotMoney(tiendanhan) + " "
+					addItem(1, "Tổng tiền đã nhận",
+							Factory.getDotMoney(tongtiendanhan) + " "
 									+ UserInfo.currency, new ItemListener() {
 								@Override
 								public void onItemClick() {
@@ -132,6 +140,10 @@ public class HomeViewV2 extends View {
 									((ViewLogChart) getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
+											.setTotalMoney(tongtiendanhan);
+									((ViewLogChart) getViewController()
+											.getView(
+													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
 											.setUserName(username);
 									((ViewLogChart) getViewController()
 											.getView(
@@ -140,7 +152,7 @@ public class HomeViewV2 extends View {
 									((ViewLogChart) getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
-											.setTotalMoney(tiendanhan);
+											.setTotalMoney(tongtiendanhan);
 									getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)
@@ -148,10 +160,10 @@ public class HomeViewV2 extends View {
 								}
 							});
 				}
-				System.out.println("TIEN DA CAP : " + tiendacap);
+				System.out.println("TIEN DA CAP : " + tongtiendacap);
 				if (role_id != 3) {
-					addItem("Tổng tiền cấp",
-							Factory.getDotMoney(Math.abs(tiendacap)) + " "
+					addItem(2, "Tổng tiền cấp",
+							Factory.getDotMoney(Math.abs(tongtiendacap)) + " "
 									+ UserInfo.currency, new ItemListener() {
 								@Override
 								public void onItemClick() {
@@ -176,6 +188,10 @@ public class HomeViewV2 extends View {
 									((ViewLogChart) getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_SEND_MONEY_CHART))
+											.setTotalMoney(tongtiendacap);
+									((ViewLogChart) getViewController()
+											.getView(
+													StringSystem.VIEW_LOG_SEND_MONEY_CHART))
 											.setUserName(username);
 									((ViewLogChart) getViewController()
 											.getView(
@@ -184,7 +200,7 @@ public class HomeViewV2 extends View {
 									((ViewLogChart) getViewController()
 											.getView(
 													StringSystem.VIEW_LOG_SEND_MONEY_CHART))
-											.setTotalMoney(tiendacap);
+											.setTotalMoney(tongtiendacap);
 
 									getViewController()
 											.getView(
@@ -194,8 +210,8 @@ public class HomeViewV2 extends View {
 							});
 				}
 
-				addItem("Tổng tiền sinh GiftCode",
-						Factory.getDotMoney(tiendasudung) + " "
+				addItem(3, "Tổng tiền sinh GiftCode",
+						Factory.getDotMoney(tongtiengiftcode) + " "
 								+ UserInfo.currency, new ItemListener() {
 							@Override
 							public void onItemClick() {
@@ -220,6 +236,10 @@ public class HomeViewV2 extends View {
 								((ViewLogChart) getViewController()
 										.getView(
 												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART))
+										.setTimeReload(tongtiengiftcode);
+								((ViewLogChart) getViewController()
+										.getView(
+												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART))
 										.setUserName(username);
 								((ViewLogChart) getViewController()
 										.getView(
@@ -228,15 +248,15 @@ public class HomeViewV2 extends View {
 								((ViewLogChart) getViewController()
 										.getView(
 												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART))
-										.setTotalMoney(tiendasudung);
+										.setTotalMoney(tongtiengiftcode);
 								getViewController()
 										.getView(
 												StringSystem.VIEW_LOG_MONEY_GIFTCODE_CHART)
 										.show(null);
 							}
 						});
-				addItem("Tổng tiền còn lại", Factory.getDotMoney(tiencon) + " "
-						+ UserInfo.currency, null);
+				addItem(4, "Tổng tiền còn lại", Factory.getDotMoney(tiencon)
+						+ " " + UserInfo.currency, null);
 			} else {
 				Toast.makeText(getStage(), message, 3f);
 			}
@@ -267,33 +287,34 @@ public class HomeViewV2 extends View {
 	}
 
 	class ItemTotal extends Group {
-		public ItemTotal(String title, String content, float width,
-				float height, final ItemListener listener) {
+		Image	bg;
+
+		public ItemTotal(String title, String content, float width, float height) {
 			setSize(width, height);
-			final Image bg = new Image(new NinePatch(
-					Assets.instance.ui.reg_ninepatch, 0, 0, 0, 1));
+			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch, 0,
+					0, 0, 1));
 			bg.setColor(colorItem);
 			bg.setSize(getWidth(), getHeight());
 			Image icon = new Image(new Texture(
 					Gdx.files.internal("Img/coin.png")));
-			icon.setSize(getHeight()/4, getHeight()/4);
-//			icon.setColor(colorText);
+			icon.setSize(getHeight() / 4, getHeight() / 4);
+			// icon.setColor(colorText);
 
 			Label lbtitle = new Label(title, Style.ins.getLabelStyle(20,
 					FontType.Light, colorTextTitle));
 			Label lbcontent = new Label(content, Style.ins.getLabelStyle(25,
 					FontType.Regular, colorText));
 
-			icon.setPosition(25, getHeight() / 2 +6);
+			icon.setPosition(25, getHeight() / 2 + 6);
 			// icon.setPosition(-icon.getWidth(), -icon.getHeight());
 			lbtitle.setPosition(icon.getX() + icon.getWidth() + 12,
 					getHeight() / 2 + 3);
 			lbcontent.setPosition(lbtitle.getX(),
 					getHeight() / 2 - lbcontent.getHeight() - 3);
-			
+
 			Img line = new Img(Assets.instance.ui.reg_ninepatch);
-			line.setSize(getWidth()-2*lbtitle.getX(), 1);
-			line.setColor(0, 191/255f, 1f, 1f);
+			line.setSize(getWidth() - 2 * lbtitle.getX(), 1);
+			line.setColor(0, 191 / 255f, 1f, 1f);
 			line.setPosition(lbtitle.getX(), 1);
 			addActor(bg);
 			addActor(icon);
@@ -301,7 +322,10 @@ public class HomeViewV2 extends View {
 			addActor(lbcontent);
 			addActor(line);
 
-			if (listener != null && UserInfo.getInstance().getRoleId() != 0) {
+		}
+
+		public void setListener(final ItemListener listener) {
+			if (listener != null) {
 				addListener(new ClickListener() {
 					@Override
 					public boolean touchDown(InputEvent event, float x,
@@ -314,7 +338,7 @@ public class HomeViewV2 extends View {
 					@Override
 					public void touchUp(InputEvent event, float x, float y,
 							int pointer, int button) {
-						bg.setColor(201 / 255f, 228 / 255f, 214 / 255f, 1);
+						bg.setColor(colorItem);
 						listener.onItemClick();
 						super.touchUp(event, x, y, pointer, button);
 					}

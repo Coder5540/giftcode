@@ -12,6 +12,7 @@ public class AssetUI {
 	public TextureRegion	reg_ninepatch2;
 	public TextureRegion	reg_ninepatch3;
 	public TextureRegion	reg_ninepatch4;
+	public TextureRegion	reg_ninepatch5;
 	public TextureRegion	reg_down;
 	public TextureRegion	reg_avatar;
 
@@ -31,6 +32,7 @@ public class AssetUI {
 	private TextureRegion	reg_icon_role;
 	private TextureRegion	reg_icon_refresh;
 	private TextureRegion	reg_icon_menu;
+	private TextureRegion	reg_icon_home;
 
 	private TextureAtlas	textureAtlas;
 
@@ -44,6 +46,7 @@ public class AssetUI {
 		reg_ninepatch2 = textureAtlas.findRegion("ninepatch_outline");
 		reg_ninepatch3 = textureAtlas.findRegion("ninepatch_stock");
 		reg_ninepatch4 = textureAtlas.findRegion("ninepatch_shadow_bottom");
+		reg_ninepatch5 = textureAtlas.findRegion("ninepatch6");
 	}
 
 	public TextureRegion getAvatar() {
@@ -130,6 +133,11 @@ public class AssetUI {
 		if (reg_icon_menu == null)
 			reg_icon_menu = textureAtlas.findRegion("home-list");
 		return reg_icon_menu;
+	}
+	public TextureRegion getIconHome() {
+		if (reg_icon_home == null)
+			reg_icon_home = textureAtlas.findRegion("home");
+		return reg_icon_home;
 	}
 
 }

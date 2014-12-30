@@ -3,7 +3,6 @@ package imp.view;
 import utils.factory.FontFactory.FontType;
 import utils.networks.UserInfo;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
+import com.coder5560.game.enums.Constants;
 import com.coder5560.game.views.View;
 
 public class ViewInfoDaiLy extends View {
@@ -24,13 +24,16 @@ public class ViewInfoDaiLy extends View {
 	}
 
 	public void buildComponent() {
-		this.top().left();
+		this.top();
+		
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
+		
 		content = new Table();
+		content.left();
 		scroll = new ScrollPane(content);
 		scroll.setOverscroll(false, true);
-		content.add(getRow("Tên đại lý", UserInfo.fullName)).width(getWidth()).left().padTop(10)
+		content.add(getRow("Tên đại lý", UserInfo.fullName)).left().padTop(10)
 				.row();
 		content.add(getRow("Địa chỉ đại lý", UserInfo.address)).left().row();
 		content.add(getRow("Cấp đại lý", UserInfo.level)).left().row();
@@ -45,6 +48,10 @@ public class ViewInfoDaiLy extends View {
 		content.add(getRow("Imei thiết bị", imei)).left().row();
 		String nameDevice = UserInfo.nameDevice.replaceAll(",", "\n");
 		content.add(getRow("Tên thiết bị", nameDevice)).left().row();
+		String imeiBlock = UserInfo.imeiDeviceBlock.replaceAll(",", "\n");
+		content.add(getRow("Imei thiết bị bị khóa", imeiBlock)).left().row();
+		String nameBlock = UserInfo.nameDeviceBlock.replaceAll(",", "\n");
+		content.add(getRow("Tên thiết bị bị khóa", nameBlock)).left().row();
 		String state;
 		if (UserInfo.state == 0) {
 			state = "Chưa kích hoạt";
@@ -64,10 +71,10 @@ public class ViewInfoDaiLy extends View {
 		table.padBottom(10);
 		Label lbTitle = new Label(title, new LabelStyle(
 				Assets.instance.fontFactory.getFont(17, FontType.Regular),
-				new Color(207 / 255f, 207 / 255f, 207 / 255f, 1)));
+				Constants.COLOR_ACTIONBAR));
 		Label lbInfo = new Label(info, new LabelStyle(
 				Assets.instance.fontFactory.getFont(25, FontType.Regular),
-				new Color(0, 191 / 255f, 1, 1)));
+				Constants.COLOR_ACTIONBAR));
 		table.add(lbTitle).left().padLeft(20).row();
 		table.add(lbInfo).left().padLeft(20);
 		return table;

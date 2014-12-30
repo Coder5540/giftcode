@@ -28,6 +28,25 @@ public class DateTime {
 		}
 	}
 
+	public static boolean isBefore(long timestart, long timeend, int day) {
+		if (timeend - 86400 * 1000 * day > timestart) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public static void main(String[] args) {
+	}
+
+	public static String getCusDate(long time) {
+		if (getStringDate(time, "dd-MM").equals(getCurrentDate("dd-MM"))) {
+			return getStringDate(time, "HH:mm");
+		} else {
+			return getStringDate(time, "dd-MM");
+		}
+	}
+
 	public static String getCurrentDate(String format) {
 		return new SimpleDateFormat(format).format(Calendar.getInstance()
 				.getTime());

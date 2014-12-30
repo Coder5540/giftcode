@@ -29,7 +29,8 @@ public class ViewController implements IViewController {
 	private GameCore			_gameParent;
 	private AbstractGameScreen	_gameScreen;
 	public PlatformResolver		platformResolver;
-	boolean						reset	= false;
+	boolean						reset			= false;
+	private float				timeToReload	= 0;
 
 	public ViewController(GameCore _gameParent, AbstractGameScreen gameScreen) {
 		super();
@@ -70,6 +71,7 @@ public class ViewController implements IViewController {
 
 	@Override
 	public void update(float delta) {
+		updateDataThread(delta);
 		for (int i = 0; i < views.size; i++) {
 			views.get(i).update(delta);
 			if (views.get(i).getViewState() == ViewState.DISPOSE) {
@@ -103,6 +105,21 @@ public class ViewController implements IViewController {
 				}
 			});
 			reset = false;
+		}
+
+	}
+
+	public void updateDataThread(float delta) {
+		try {
+			timeToReload += delta;
+			float maxTime = getView(TraceView.instance.getLastView())
+					.getTimeReload();
+			if (timeToReload >= maxTime) {
+				getView(TraceView.instance.getLastView()).onReload();
+				timeToReload = 0;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -236,6 +253,21 @@ public class ViewController implements IViewController {
 		for (int i = 0; i < views.size; i++) {
 			views.get(i).onGameEvent(gameEvent);
 		}
+	}
+
+	@Override
+	public void resetHome() {
+		for (int i = 0; i < views.size; i++) {
+			if (!(views.get(i).getName()
+					.equalsIgnoreCase(StringSystem.VIEW_HOME)
+					|| views.get(i).getName()
+							.equalsIgnoreCase(StringSystem.VIEW_ACTION_BAR) || views
+					.get(i).getName()
+					.equalsIgnoreCase(StringSystem.VIEW_MAIN_MENU))) {
+				views.get(i).setViewState(ViewState.DISPOSE);
+			}
+		}
+		getView(StringSystem.VIEW_HOME).show(null);
 	}
 
 }

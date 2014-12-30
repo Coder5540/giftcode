@@ -76,5 +76,11 @@ public interface IViews {
 	 */
 	public void back();
 
+	public void setTimeReload(float timeReload);
+
+	public float getTimeReload();
+
+	public void onReload();
+
 	public void onGameEvent(GameEvent gameEvent);
 }

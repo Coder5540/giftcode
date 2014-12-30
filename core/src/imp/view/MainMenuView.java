@@ -55,7 +55,7 @@ public class MainMenuView extends View {
 	public boolean			block				= false;
 
 	public MainMenuView buildComponent() {
-		Color colorBg = new Color(0, 191 / 255f, 1, 1);
+		Color colorBg = Constants.COLOR_ACTIONBAR;
 
 		getViewController().getGameScreen().setGestureDetector(
 				new GestureDetector(customListener));
@@ -84,21 +84,13 @@ public class MainMenuView extends View {
 
 	}
 
-	public void setBlock(boolean block) {
-		// this.block = block;
-		// if (block)
-		// menu.setTouchable(Touchable.disabled);
-		// if (!block)
-		// menu.setTouchable(Touchable.enabled);
-
-	}
-
 	void buildContent(Table content) {
 		float heightLogout = 50;
 
 		menu = new ListMenu(getViewController(), new Table(), new Rectangle(0,
 				heightLogout, content.getWidth(), content.getHeight()
 						- heightLogout));
+		menu.setOnHomeViewClicked(onHomeViewClicked);
 		menu.setOnActiveUserClicked(onActiveUserClicked);
 		menu.setOnBlockUserClicked(onBlockUserClicked);
 		menu.setOnUnActiveUserClicked(onUnActiveUserClicked);
@@ -120,12 +112,12 @@ public class MainMenuView extends View {
 		final Img imgLogout = new Img(Assets.instance.ui.getRegionLogout());
 		imgLogout.setSize(40, 40);
 		imgLogout.setPosition(30, groupLogout.getHeight() / 2, Align.center);
-		imgLogout.setColor(0, 191 / 255f, 1f, 1f);
+		imgLogout.setColor(Constants.COLOR_ACTIONBAR);
 
 		LabelStyle labelStyle = new LabelStyle();
 		labelStyle.font = Assets.instance.fontFactory.getFont(26,
 				FontType.Light);
-		labelStyle.fontColor = new Color(0, 191 / 255f, 1f, 1f);
+		labelStyle.fontColor = new Color(Constants.COLOR_ACTIONBAR);
 
 		final Label label = new Label("Log out", labelStyle);
 		label.setPosition(
@@ -170,6 +162,7 @@ public class MainMenuView extends View {
 						})));
 			}
 		});
+
 		content.addActor(menu);
 		content.addActor(groupLogout);
 	}
@@ -251,7 +244,10 @@ public class MainMenuView extends View {
 
 				UserInfo.imeiDevice = Factory.getDeviceID(responeInfoDaily);
 				UserInfo.nameDevice = Factory.getDeviceName(responeInfoDaily);
-
+				UserInfo.imeiDeviceBlock = Factory
+						.getDeviceIDBlock(responeInfoDaily);
+				UserInfo.nameDeviceBlock = Factory
+						.getDeviceNameBlock(responeInfoDaily);
 				UserInfo.state = responeInfoDaily.getInt(ExtParamsKey.STATE);
 
 				menu.setUserName(UserInfo.fullName);
@@ -313,7 +309,7 @@ public class MainMenuView extends View {
 																if (content
 																		.getX() == -content
 																		.getWidth()
-																		&& x < 10
+																		&& x < 40
 																		&& !canPan) {
 																	canPan = true;
 																	tranBg.setVisible(true);
@@ -665,10 +661,6 @@ public class MainMenuView extends View {
 																				if (getViewController()
 																						.isContainView(
 																								StringSystem.VIEW_LOG_SEND_MONEY_CHART)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_LOG_SEND_MONEY_CHART)
-																							.show(null);
 																				} else {
 																					ViewLogChart viewLog = new ViewLogChart();
 																					viewLog.build(
@@ -682,8 +674,17 @@ public class MainMenuView extends View {
 																									Constants.HEIGHT_SCREEN
 																											- Constants.HEIGHT_ACTIONBAR));
 																					viewLog.buildComponent(ViewLogChart.TYPE_SEND_MONEY);
-																					viewLog.show(null);
 																				}
+																				((ViewLogChart) getViewController()
+																						.getView(
+																								StringSystem.VIEW_LOG_SEND_MONEY_CHART))
+																						.setTotalMoney(((HomeViewV2) getViewController()
+																								.getView(
+																										StringSystem.VIEW_HOME)).tongtiendacap);
+																				((ViewLogChart) getViewController()
+																						.getView(
+																								StringSystem.VIEW_LOG_SEND_MONEY_CHART))
+																						.show(null);
 																			}
 																		});
 															}
@@ -714,10 +715,6 @@ public class MainMenuView extends View {
 																				if (getViewController()
 																						.isContainView(
 																								StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART)
-																							.show(null);
 																				} else {
 																					ViewLogChart viewLog = new ViewLogChart();
 																					viewLog.build(
@@ -731,8 +728,17 @@ public class MainMenuView extends View {
 																									Constants.HEIGHT_SCREEN
 																											- Constants.HEIGHT_ACTIONBAR));
 																					viewLog.buildComponent(ViewLogChart.TYPE_RECEIVE_MONEY);
-																					viewLog.show(null);
 																				}
+																				((ViewLogChart) getViewController()
+																						.getView(
+																								StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
+																						.setTotalMoney(((HomeViewV2) getViewController()
+																								.getView(
+																										StringSystem.VIEW_HOME)).tongtiendanhan);
+																				((ViewLogChart) getViewController()
+																						.getView(
+																								StringSystem.VIEW_LOG_RECEIVE_MONEY_CHART))
+																						.show(null);
 																			}
 																		});
 															}
@@ -944,10 +950,6 @@ public class MainMenuView extends View {
 																				if (getViewController()
 																						.isContainView(
 																								StringSystem.VIEW_LOG_GIFTCODE_CHART)) {
-																					getViewController()
-																							.getView(
-																									StringSystem.VIEW_LOG_GIFTCODE_CHART)
-																							.show(null);
 																				} else {
 																					ViewLogChart viewLog = new ViewLogChart();
 																					viewLog.build(
@@ -961,8 +963,46 @@ public class MainMenuView extends View {
 																									Constants.HEIGHT_SCREEN
 																											- Constants.HEIGHT_ACTIONBAR));
 																					viewLog.buildComponent(ViewLogChart.TYPE_GIFTCODE);
-																					viewLog.show(null);
 																				}
+																				((ViewLogChart) getViewController()
+																						.getView(
+																								StringSystem.VIEW_LOG_GIFTCODE_CHART))
+																						.setTotalMoney(((HomeViewV2) getViewController()
+																								.getView(
+																										StringSystem.VIEW_HOME)).tongtiengiftcode);
+																				((ViewLogChart) getViewController()
+																						.getView(
+																								StringSystem.VIEW_LOG_GIFTCODE_CHART))
+																						.show(null);
+																			}
+																		});
+															}
+														};
+	public OnClickListener	onHomeViewClicked			= new OnClickListener() {
+
+															@Override
+															public void onClick(
+																	float x,
+																	float y) {
+																Loading.ins
+																		.show((Group) getViewController()
+																				.getCurrentView());
+																getViewController()
+																		.getView(
+																				StringSystem.VIEW_MAIN_MENU)
+																		.hide(new OnCompleteListener() {
+
+																			@Override
+																			public void onError() {
+
+																			}
+
+																			@Override
+																			public void done() {
+																				Loading.ins
+																						.hide();
+																				getViewController()
+																						.resetHome();
 																			}
 																		});
 															}

@@ -139,7 +139,9 @@ public abstract class GameCore implements ApplicationListener {
 			this.batch.dispose();
 			this.init = false;
 		}
+		
 		Request.getInstance().killAllProcess();
+//		Request.getInstance().requestQuitApp(UserInfo.getInstance().);
 		Assets.instance.assetManager.dispose();
 
 	}
