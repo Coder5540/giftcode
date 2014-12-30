@@ -90,7 +90,7 @@ public class DialogCustom extends MyDialog {
 				runMap.remove(object);
 			}
 		} catch (Exception e) {
-			Log.d(e.toString());
+			e.printStackTrace();
 		}
 	}
 }

@@ -38,12 +38,12 @@ import com.coder5560.game.views.View;
 
 public class ViewAdminRequest extends View {
 
-	private JsonValue respone, responeGetActiveCode;
-	String activeCode = "";
-	String phone = "";
-	boolean isSend = false, isFailGetActive = false;
-	PageV3 pages;
-	ListDetail listDetail;
+	private JsonValue	respone, responeGetActiveCode;
+	String				activeCode	= "";
+	String				phone		= "";
+	boolean				isSend		= false, isFailGetActive = false;
+	PageV3				pages;
+	ListDetail			listDetail;
 
 	@Override
 	public String getLabel() {
@@ -202,8 +202,10 @@ public class ViewAdminRequest extends View {
 					Request.getInstance().rejectActive(phone,
 							AppPreference.instance.name,
 							AppPreference.instance.pass, new RejectListener());
-					getViewController().getView(
-							ViewInfoDaiLySmall.class.getName()).hide(null);
+					if (getViewController().isContainView(
+							ViewInfoDaiLySmall.class.getName()))
+						getViewController().getView(
+								ViewInfoDaiLySmall.class.getName()).hide(null);
 				}
 			});
 			diaCancel.button("Hủy");
@@ -215,8 +217,10 @@ public class ViewAdminRequest extends View {
 			diaActive.button("Ok", new Runnable() {
 				@Override
 				public void run() {
-					getViewController().getView(
-							ViewInfoDaiLySmall.class.getName()).hide(null);
+					if (getViewController().isContainView(
+							ViewInfoDaiLySmall.class.getName()))
+						getViewController().getView(
+								ViewInfoDaiLySmall.class.getName()).hide(null);
 					if (!isFailGetActive) {
 						Loading.ins.show(ViewAdminRequest.this);
 						isSend = true;
