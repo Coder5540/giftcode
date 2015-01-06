@@ -1,10 +1,14 @@
 package utils.screen;
 
 import utils.keyboard.VirtualKeyboard;
+import utils.networks.Request;
+import utils.networks.UserInfo;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -64,6 +68,27 @@ public abstract class AbstractGameScreen implements Screen, InputProcessor,
 				Toast.instance.render(delta);
 		} catch (Exception e) {
 			e.printStackTrace();
+			Gdx.gl.glClearColor(0, 0, 0, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+			update(delta);
+			stage.draw();
+
+			Request.getInstance().requestQuitApp(UserInfo.phone,
+					new HttpResponseListener() {
+
+						@Override
+						public void handleHttpResponse(HttpResponse httpResponse) {
+							Gdx.app.exit();
+						}
+
+						@Override
+						public void failed(Throwable t) {
+						}
+
+						@Override
+						public void cancelled() {
+						}
+					});
 		}
 	}
 

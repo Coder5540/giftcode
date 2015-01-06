@@ -41,7 +41,7 @@ public class View extends Table implements IViews {
 
 	@Override
 	public String getLabel() {
-		return "Bài 69 Giftcode";
+		return StringSystem.APP_NAME;
 	}
 
 	@Override

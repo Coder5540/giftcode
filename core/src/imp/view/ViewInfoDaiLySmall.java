@@ -103,7 +103,7 @@ public class ViewInfoDaiLySmall extends View {
 
 		Label lbTitle = new Label("Thông tin đại lý", new LabelStyle(
 				Assets.instance.fontFactory.getFont(30, FontType.Medium),
-				new Color(0, 191 / 255f, 1, 1)));
+				Constants.COLOR_ACTIONBAR));
 		content.add(lbTitle).padTop(10).padBottom(10).row();
 		content.add(scroll).width(content.getWidth()).row();
 		content.add(btn).padTop(5).padBottom(5);
@@ -205,7 +205,7 @@ public class ViewInfoDaiLySmall extends View {
 			padBottom(10);
 			Label lbTitle = new Label(title, new LabelStyle(
 					Assets.instance.fontFactory.getFont(17, FontType.Regular),
-					new Color(207 / 255f, 207 / 255f, 207 / 255f, 1)));
+					new Color(100 / 255f, 100 / 255f, 100 / 255f, 1)));
 			lbInfo = new Label(info, new LabelStyle(
 					Assets.instance.fontFactory.getFont(25, FontType.Regular),
 					Constants.COLOR_ACTIONBAR));

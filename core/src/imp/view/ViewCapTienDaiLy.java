@@ -51,15 +51,15 @@ import com.coder5560.game.views.View;
 
 public class ViewCapTienDaiLy extends View {
 
-	private ViewDetail viewDetail;
-	private CustomTextField tfPerson;
+	private ViewDetail		viewDetail;
+	private CustomTextField	tfPerson;
 
-	ListDetail listDailyLower;
-	private PageV2 page;
+	ListDetail				listDailyLower;
+	private PageV2			page;
 
-	private JsonValue responeGetDaily;
-	private JsonValue responeGetDailyLower;
-	private JsonValue responeCheck;
+	private JsonValue		responeGetDaily;
+	private JsonValue		responeGetDailyLower;
+	private JsonValue		responeCheck;
 
 	@Override
 	public String getLabel() {
@@ -72,9 +72,10 @@ public class ViewCapTienDaiLy extends View {
 				Assets.instance.ui.reg_ninepatch)));
 
 		Table tbTop = new Table();
-//		tbTop.setBackground(new NinePatchDrawable(new NinePatch(new NinePatch(
-//				Assets.instance.ui.reg_ninepatch3, 6, 6, 6, 6), new Color(
-//				245 / 255f, 245 / 255f, 245 / 255f, 1))));
+		// tbTop.setBackground(new NinePatchDrawable(new NinePatch(new
+		// NinePatch(
+		// Assets.instance.ui.reg_ninepatch3, 6, 6, 6, 6), new Color(
+		// 245 / 255f, 245 / 255f, 245 / 255f, 1))));
 
 		Label lbPerson = new Label("Người nhận tiền", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, FontType.Regular),
@@ -356,7 +357,7 @@ public class ViewCapTienDaiLy extends View {
 							data.get(8), data.get(9), data.get(10),
 							data.get(11), data.get(12) };
 					viewDetail.money = Long.valueOf(data.get(5));
-					viewDetail.agencyReceive = data.get(1);
+					viewDetail.agencyReceive = data.get(3);
 					viewDetail.setInfo(info);
 					viewDetail.show(null);
 				}
@@ -439,15 +440,15 @@ public class ViewCapTienDaiLy extends View {
 
 	class ViewDetail extends View {
 
-		String agencyReceive;
-		long money;
-		boolean isSend = false;
+		String			agencyReceive;
+		long			money;
+		boolean			isSend	= false;
 
-		ScrollPane scroll;
-		Table content;
+		ScrollPane		scroll;
+		Table			content;
 
-		ViewSendMoney viewSendMoney;
-		RowInfo[] rowInfo;
+		ViewSendMoney	viewSendMoney;
+		RowInfo[]		rowInfo;
 
 		public ViewDetail() {
 			setVisible(false);
@@ -565,7 +566,7 @@ public class ViewCapTienDaiLy extends View {
 
 		class RowInfo extends Table {
 
-			Label lbInfo;
+			Label	lbInfo;
 
 			public RowInfo(String title, String info) {
 				left();
@@ -574,7 +575,7 @@ public class ViewCapTienDaiLy extends View {
 				Label lbTitle = new Label(title, new LabelStyle(
 						Assets.instance.fontFactory.getFont(18,
 								FontType.Regular), new Color(100 / 255f,
-										100 / 255f, 100 / 255f, 1)));
+								100 / 255f, 100 / 255f, 1)));
 				lbInfo = new Label(info, new LabelStyle(
 						Assets.instance.fontFactory.getFont(24,
 								FontType.Regular), Constants.COLOR_ACTIONBAR));
@@ -588,10 +589,10 @@ public class ViewCapTienDaiLy extends View {
 		}
 
 		class ViewSendMoney extends View {
-			JsonValue responeSendMoney;
-			TextfieldStatic tfSMoney;
-			CustomTextField tfMoney;
-			TextArea taNote;
+			JsonValue		responeSendMoney;
+			TextfieldStatic	tfSMoney;
+			CustomTextField	tfMoney;
+			TextArea		taNote;
 
 			public ViewSendMoney() {
 				this.top();

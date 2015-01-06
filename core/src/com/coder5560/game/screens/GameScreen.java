@@ -1,16 +1,25 @@
 package com.coder5560.game.screens;
 
+import imp.view.MainMenuView;
+import updatehandler.MemoryManager;
+import utils.factory.AppPreference;
+import utils.factory.IUpdateHandler;
 import utils.factory.Log;
 import utils.factory.StringSystem;
 import utils.factory.UpdateHandlerList;
+import utils.networks.Request;
+import utils.networks.UserInfo;
 import utils.screen.AbstractGameScreen;
 import utils.screen.GameCore;
-import alphabethame.updatehandler.MemoryManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.GameEvent;
@@ -30,6 +39,7 @@ public class GameScreen extends AbstractGameScreen {
 		updateHandlerList = new UpdateHandlerList();
 		MemoryManager memoryManager = new MemoryManager();
 		updateHandlerList.add(memoryManager);
+		updateHandlerList.add(onPingHandler);
 	}
 
 	@Override
@@ -45,7 +55,27 @@ public class GameScreen extends AbstractGameScreen {
 			Log.d("Device_id=" + Constants.DEVICE_ID);
 			Log.d("Device_name=" + Constants.DEVICE_NAME);
 		} catch (Exception e) {
+			Request.getInstance().killAllProcess();
+			Request.getInstance().requestQuitApp(UserInfo.phone,
+					new HttpResponseListener() {
 
+						@Override
+						public void handleHttpResponse(HttpResponse httpResponse) {
+						}
+
+						@Override
+						public void failed(Throwable t) {
+							Log.d("PING : " + "Fail ");
+							((MainMenuView) controller
+									.getView(StringSystem.VIEW_MAIN_MENU)).onLogoutListener
+									.onClick(0, 0);
+						}
+
+						@Override
+						public void cancelled() {
+							Log.d("PING : " + "Cancel !");
+						}
+					});
 		}
 		Gdx.input.setCatchBackKey(true);
 		System.gc();
@@ -71,6 +101,16 @@ public class GameScreen extends AbstractGameScreen {
 		}
 	}
 
+	@Override
+	public void pause() {
+		super.pause();
+	}
+
+	@Override
+	public void resume() {
+		super.resume();
+	}
+
 	boolean	isExit		= false;
 	float	timeExit	= 0;
 
@@ -80,7 +120,7 @@ public class GameScreen extends AbstractGameScreen {
 			if (controller.getCurrentView().getName()
 					.equalsIgnoreCase(StringSystem.VIEW_LOGIN)) {
 				controller.getView(StringSystem.VIEW_LOGIN).back();
-				return true ;
+				return true;
 			}
 
 			if (controller.getView(StringSystem.VIEW_MAIN_MENU) != null
@@ -109,6 +149,64 @@ public class GameScreen extends AbstractGameScreen {
 				this, stage);
 		Gdx.input.setInputProcessor(parent.inputMultiplexer);
 	}
+
+	IUpdateHandler		onPingHandler	= new IUpdateHandler() {
+											Actor	actor	= new Actor();
+											boolean	create	= false;
+
+											@Override
+											public void reset() {
+
+											}
+
+											@Override
+											public void onUpdate(float delta) {
+												if (AppPreference.instance.isLogin) {
+													if (!create) {
+														actor.clearActions();
+														actor.addAction(Actions
+																.forever(Actions
+																		.sequence(
+																				Actions.delay(1f),
+																				Actions.run(new Runnable() {
+
+																					@Override
+																					public void run() {
+																						Request.getInstance()
+																								.requestPing(
+																										UserInfo.phone,
+																										parent.getPlatformResolver()
+																												.getDeviceName(),
+																										new HttpResponseListener() {
+
+																											@Override
+																											public void handleHttpResponse(
+																													HttpResponse httpResponse) {
+
+																											}
+
+																											@Override
+																											public void failed(
+																													Throwable t) {
+
+																											}
+
+																											@Override
+																											public void cancelled() {
+
+																											}
+																										});
+																					}
+																				}))));
+														create = true;
+													}
+													actor.act(delta);
+												} else {
+													if (create)
+														create = false;
+												}
+											}
+										};
 
 	OnSelectListener	selectListener	= new OnSelectListener() {
 

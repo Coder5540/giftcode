@@ -43,4 +43,9 @@ public class CommandRequest {
 	public static final String	CHANGE_AGENCY_ROLE			= "change_agency_role";
 	public static final String	TOTAL_MONEY_OVERVIEW		= "total_money_overview";
 	public static final String	TRANSFER_MONEY_FROM_ADMIN	= "transfer_money_from_admin";
+	public static final String	LOG_OUT						= "logout";
+	public static final String	PING						= "ping";
+	public static final String	GET_LIST_MONEY_CASH_OUT		= "get_list_money_cash_out";
+	public static final String	GENERATE_CODE_CASH_OUT		= "generate_code_cash_out";
+	public static final String	GET_CODE_CASH_OUT_LOG		= "get_code_cash_out_log";
 }

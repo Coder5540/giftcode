@@ -121,9 +121,10 @@ public class ViewAdminLock extends View {
 							.getLabelStyle(25, FontType.Regular, Color.WHITE)))
 					.left().padLeft(20);
 			header.add(
-					new Label("-" + data.getString(ExtParamsKey.ROLE_NAME)
-							+ "", Style.ins.getLabelStyle(20, FontType.Light,
-							Color.WHITE))).expandX().right().padRight(50);
+					new Label(data.getString(ExtParamsKey.ROLE_NAME) + "",
+							Style.ins.getLabelStyle(20, FontType.Light,
+									Color.WHITE))).expandX().right()
+					.padRight(50);
 			header.row();
 			header.add(
 					new Label(Factory.getDotMoney(Long.parseLong(data
@@ -228,8 +229,6 @@ public class ViewAdminLock extends View {
 			dia.button("Ok", new Runnable() {
 				@Override
 				public void run() {
-					getViewController().getView(
-							ViewInfoDaiLySmall.class.getName()).hide(null);
 					Loading.ins.show(ViewAdminLock.this);
 					Request.getInstance().chaneStateAdmin(
 							data.getString(ExtParamsKey.AGENCY_NAME),

@@ -338,13 +338,13 @@ public class ViewSellGiftCode extends View {
 
 	@Override
 	public void hide(OnCompleteListener listener) {
-		setVisible(false);
+		super.hide(null);
+		getViewController().removeView(getName());
 	}
 
 	@Override
 	public void back() {
 		super.back();
-		getViewController().removeView(getName());
 	}
 
 	class ReturnGiftCode implements HttpResponseListener {

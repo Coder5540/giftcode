@@ -1,6 +1,5 @@
 package com.coder5560.game.ui;
 
-import utils.factory.Log;
 import utils.factory.Style;
 
 import com.badlogic.gdx.graphics.Color;

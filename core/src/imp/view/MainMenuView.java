@@ -102,7 +102,9 @@ public class MainMenuView extends View {
 		menu.setOnSellGiftCode(onSellGiftCode);
 		menu.setOnListGiftcodeClicked(onGiftcodeClicked);
 		menu.setOnHistoryGiftcodeClicked(onHistoryGiftcodeClicked);
-
+		menu.setOnNewCodeClicked(onNewCodeClicked);
+		menu.setOnHistoryCodeClicked(onHistoryCodeClicked);
+		
 		groupLogout = new Table();
 		groupLogout.setTouchable(Touchable.enabled);
 		groupLogout.setBackground(new NinePatchDrawable(new NinePatch(
@@ -143,11 +145,6 @@ public class MainMenuView extends View {
 							public void run() {
 								if (onLogoutListener != null) {
 									onLogoutListener.onClick(0, 0);
-									groupLogout.addAction(Actions.sequence(
-											Actions.touchable(Touchable.disabled),
-											Actions.delay(
-													.1f,
-													Actions.touchable(Touchable.enabled))));
 								}
 							}
 						})));
@@ -198,7 +195,6 @@ public class MainMenuView extends View {
 	}
 
 	public void getUserData() {
-		// if (!isLoadUserData)
 		Request.getInstance().getInfoDaily(AppPreference.instance.getName(),
 				new GetInfoDaily());
 	}
@@ -208,7 +204,6 @@ public class MainMenuView extends View {
 		super.hide(listener);
 		tranBg.setVisible(false);
 		setIgnoreUpdateMove(false);
-
 		content.addAction(Actions.sequence(Actions.moveTo(-content.getWidth(),
 				0, 0.5f, Interpolation.pow5Out), Actions.run(new Runnable() {
 			@Override
@@ -217,7 +212,6 @@ public class MainMenuView extends View {
 					listener.done();
 				setIgnoreUpdateMove(false);
 				setViewState(ViewState.HIDE);
-
 			}
 		})));
 	}
@@ -258,7 +252,6 @@ public class MainMenuView extends View {
 			}
 			responeInfoDaily = null;
 		}
-
 	};
 
 	Actor	bar, currentView;
@@ -813,6 +806,32 @@ public class MainMenuView extends View {
 
 																							@Override
 																							public void done() {
+																								AppPreference.instance
+																										.setLogin(
+																												false,
+																												true);
+																								Request.getInstance()
+																										.requestQuitApp(
+																												UserInfo.phone,
+																												new HttpResponseListener() {
+
+																													@Override
+																													public void handleHttpResponse(
+																															HttpResponse httpResponse) {
+
+																													}
+
+																													@Override
+																													public void failed(
+																															Throwable t) {
+
+																													}
+
+																													@Override
+																													public void cancelled() {
+
+																													}
+																												});
 																								getViewController()
 																										.resetAll();
 																							}
@@ -1003,6 +1022,107 @@ public class MainMenuView extends View {
 																						.hide();
 																				getViewController()
 																						.resetHome();
+																			}
+																		});
+															}
+														};
+
+	OnClickListener			onNewCodeClicked			= new OnClickListener() {
+															@Override
+															public void onClick(
+																	float x,
+																	float y) {
+
+																Loading.ins
+																		.show((Group) getViewController()
+																				.getCurrentView());
+																getViewController()
+																		.getView(
+																				StringSystem.VIEW_MAIN_MENU)
+																		.hide(new OnCompleteListener() {
+
+																			@Override
+																			public void onError() {
+
+																			}
+
+																			@Override
+																			public void done() {
+																				Loading.ins
+																						.hide();
+																				if (getViewController()
+																						.isContainView(
+																								StringSystem.VIEW_NEW_CODE)) {
+																					getViewController()
+																							.getView(
+																									StringSystem.VIEW_NEW_CODE)
+																							.show(null);
+																				} else {
+																					ViewNewCode viewNewCode = new ViewNewCode();
+																					viewNewCode
+																							.build(getStage(),
+																									getViewController(),
+																									StringSystem.VIEW_NEW_CODE,
+																									new Rectangle(
+																											0,
+																											0,
+																											Constants.WIDTH_SCREEN,
+																											Constants.HEIGHT_SCREEN
+																													- Constants.HEIGHT_ACTIONBAR));
+																					viewNewCode
+																							.buildComponent();
+																					viewNewCode
+																							.show(null);
+																				}
+																			}
+																		});
+															}
+														};
+	OnClickListener			onHistoryCodeClicked		= new OnClickListener() {
+															@Override
+															public void onClick(
+																	float x,
+																	float y) {
+
+																Loading.ins
+																		.show((Group) getViewController()
+																				.getCurrentView());
+																getViewController()
+																		.getView(
+																				StringSystem.VIEW_MAIN_MENU)
+																		.hide(new OnCompleteListener() {
+
+																			@Override
+																			public void onError() {
+
+																			}
+
+																			@Override
+																			public void done() {
+																				Loading.ins
+																						.hide();
+																				if (getViewController()
+																						.isContainView(
+																								StringSystem.VIEW_HISTORY_CODE)) {
+																					getViewController()
+																							.getView(
+																									StringSystem.VIEW_HISTORY_CODE)
+																							.show(null);
+																				} else {
+																					ViewHistoryCode viewHistoryCode = new ViewHistoryCode();
+																					viewHistoryCode.build(
+																							getStage(),
+																							getViewController(),
+																							StringSystem.VIEW_HISTORY_CODE,
+																							new Rectangle(
+																									0,
+																									0,
+																									Constants.WIDTH_SCREEN,
+																									Constants.HEIGHT_SCREEN
+																											- Constants.HEIGHT_ACTIONBAR));
+																					viewHistoryCode.buildComponent();
+																					viewHistoryCode.show(null);
+																				}
 																			}
 																		});
 															}

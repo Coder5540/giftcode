@@ -2,7 +2,7 @@ package utils.factory;
 
 public class StringSystem {
 	// public static final String VIEW_LOADING = "loading";
-	public static final String	APP_NAME							= "HiChef";
+	public static final String	APP_NAME							= "8B8 Giftcode";
 
 	public static final String	VIEW_MAIN_MENU						= "mainmenu";
 	public static final String	VIEW_ACTION_BAR						= "actionbar";
@@ -64,6 +64,10 @@ public class StringSystem {
 	public static final String	VIEW_LOG_MONEY_GIFTCODE_CHART		= "VIEW_LOG_MONEY_GIFTCODE_CHART";
 
 	public static final String	VIEW_HOME_V2						= "VIEW_HOME_V2";
+
+	public static final String	VIEW_NEW_CODE						= "VIEW_NEW_CODE";
+
+	public static final String	VIEW_HISTORY_CODE					= "VIEW_NEW_CODE";
 
 	// ====================== Variable for View Trace===========================
 	public static String		APP_ID								= "394360317378935";

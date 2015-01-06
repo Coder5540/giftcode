@@ -86,7 +86,7 @@ public class ViewLogGiftCodeDetail extends View {
 	int roldId = -1;
 	String username = "";
 
-	Color color_text = new Color(0 / 255f, 191 / 255f, 255 / 255f, 1);
+	Color color_text = Constants.COLOR_ACTIONBAR;
 	Color color_white = Color.WHITE;
 			
 

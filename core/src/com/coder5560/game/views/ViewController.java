@@ -1,7 +1,6 @@
 package com.coder5560.game.views;
 
 import imp.view.ViewLogin;
-import imp.view.ViewTestList;
 import utils.factory.AppPreference;
 import utils.factory.PlatformResolver;
 import utils.factory.StringSystem;
@@ -59,14 +58,14 @@ public class ViewController implements IViewController {
 	}
 
 	public void buidTest(Stage stage) {
-		this.stage = stage;
-		views = new Array<IViews>();
-		ViewTestList viewTestList = new ViewTestList();
-		viewTestList.build(getStage(), this, StringSystem.VIEW_HOME,
-				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
-						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
-		viewTestList.buildComponent();
-		viewTestList.show(null);
+//		this.stage = stage;
+//		views = new Array<IViews>();
+//		ViewTestList viewTestList = new ViewTestList();
+//		viewTestList.build(getStage(), this, StringSystem.VIEW_HOME,
+//				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+//						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
+//		viewTestList.buildComponent();
+//		viewTestList.show(null);
 	}
 
 	@Override

@@ -20,7 +20,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -38,6 +37,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.LoginCode;
 import com.coder5560.game.enums.RoleID;
 import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
@@ -60,6 +60,26 @@ public class ViewLogin extends View {
 	int						id							= -1;
 
 	public View buildComponent() {
+		Request.getInstance().requestQuitApp(AppPreference.instance.getName(),
+				new HttpResponseListener() {
+
+					@Override
+					public void handleHttpResponse(HttpResponse httpResponse) {
+
+					}
+
+					@Override
+					public void failed(Throwable t) {
+
+					}
+
+					@Override
+					public void cancelled() {
+
+					}
+				});
+
+		AppPreference.instance.setLogin(false, true);
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
 		bg.setSize(getWidth(), getHeight());
 		addActor(bg);
@@ -72,7 +92,7 @@ public class ViewLogin extends View {
 			}
 		});
 
-		Image titleLogin = new Image(Assets.instance.getRegion("8B8 GIFT CODE"));
+		Image titleLogin = new Image(Assets.instance.ui.getLogo());
 		titleLogin.setSize(400, 40);
 		titleLogin.setPosition(getWidth() / 2 - titleLogin.getWidth() / 2,
 				4 * getHeight() / 5);
@@ -262,7 +282,6 @@ public class ViewLogin extends View {
 					viewWaitAccept.buildComponent();
 					viewWaitAccept.show(null);
 				}
-
 			}
 
 			@Override
@@ -288,18 +307,7 @@ public class ViewLogin extends View {
 		addActor(btnRegister);
 		addActor(btnActive);
 		addActor(btnForgotPass);
-
-		// buildViewTest();
 		return this;
-	}
-
-	private void buildViewTest() {
-		view = new ViewUserManager();
-		view.build(getStage(), getViewController(), "aa", new Rectangle(0, 0,
-				Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN));
-		((ViewUserManager) view).buildComponent();
-		view.hide(null);
-
 	}
 
 	public void registerKeyboard(final TextField tf, String tfname, int config) {
@@ -321,7 +329,6 @@ public class ViewLogin extends View {
 			// Loading.ins.hide();
 			Boolean isSuccess = respone.getBoolean(ExtParamsKey.RESULT);
 			String mess = respone.getString(ExtParamsKey.MESSAGE);
-			Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
 			if (isSuccess) {
 				JsonValue per = respone.get(ExtParamsKey.PERMISSION);
 				UserInfo.phone = tfName.getText();
@@ -339,25 +346,78 @@ public class ViewLogin extends View {
 						AppPreference.instance.getName(), onGetinfoListener);
 
 			} else {
+
 				Loading.ins.hide();
 				setTouchable(Touchable.enabled);
-				final DialogCustom dia = new DialogCustom("");
-				dia.text(mess);
-				dia.button("Ok", new Runnable() {
-					@Override
-					public void run() {
-						Loading.ins.show(ViewLogin.this);
-						String username = AppPreference.instance.name;
-						String pass = AppPreference.instance.pass;
-						String deviceID = getViewController().getGameParent()
-								.getPlatformResolver().getDeviceID();
-						String deviceName = getViewController().getGameParent()
-								.getPlatformResolver().getDeviceName();
-						Request.getInstance().registerDevice(username, pass,
-								deviceID, deviceName, _registerDeviceListener);
+				if (respone.has(ExtParamsKey.LOGIN_CODE)) {
+					int code = respone.getInt(ExtParamsKey.LOGIN_CODE);
+					if (code != LoginCode.DEVICE_NOT_IN_LIST_CAN_REGISTER
+							.ordinal()) {
+						final DialogCustom dia = new DialogCustom("");
+						dia.text(mess);
+						dia.button("Ok", new Runnable() {
+							@Override
+							public void run() {
+								Loading.ins.hide();
+								dia.hide();
+							}
+						});
+						dia.show(getStage());
+					} else {
+						final DialogCustom dia = new DialogCustom("");
+						dia.text(mess);
+						dia.button("Ok", new Runnable() {
+							@Override
+							public void run() {
+								Loading.ins.show(ViewLogin.this);
+								String username = AppPreference.instance.name;
+								String pass = AppPreference.instance.pass;
+								String deviceID = getViewController()
+										.getGameParent().getPlatformResolver()
+										.getDeviceID();
+								String deviceName = getViewController()
+										.getGameParent().getPlatformResolver()
+										.getDeviceName();
+								respone = null;
+								Request.getInstance().registerDevice(username,
+										pass, deviceID, deviceName,
+										_registerDeviceListener);
+								Loading.ins.show(ViewLogin.this);
+							}
+						});
+						dia.button("Cancel", new Runnable() {
+							@Override
+							public void run() {
+								dia.hide();
+							}
+						});
+						dia.show(getStage());
+
 					}
-				});
-				dia.show(getStage());
+
+				} else {
+					final DialogCustom dia = new DialogCustom("");
+					dia.text(mess);
+					dia.button("Ok", new Runnable() {
+						@Override
+						public void run() {
+							Loading.ins.show(ViewLogin.this);
+							String username = AppPreference.instance.name;
+							String pass = AppPreference.instance.pass;
+							String deviceID = getViewController()
+									.getGameParent().getPlatformResolver()
+									.getDeviceID();
+							String deviceName = getViewController()
+									.getGameParent().getPlatformResolver()
+									.getDeviceName();
+							Request.getInstance().registerDevice(username,
+									pass, deviceID, deviceName,
+									_registerDeviceListener);
+						}
+					});
+					dia.show(getStage());
+				}
+
 			}
 			isHandlerResponseLogin = true;
 			respone = null;
@@ -402,6 +462,7 @@ public class ViewLogin extends View {
 	}
 
 	private void handlerCreatView() {
+		AppPreference.instance.setLogin(true, true);
 		TopBarView topBarView = new TopBarView();
 		topBarView.build(getStage(), getViewController(),
 				StringSystem.VIEW_ACTION_BAR, new Rectangle(0,
@@ -467,7 +528,6 @@ public class ViewLogin extends View {
 	}
 
 	public void back() {
-		Log.d("Call back on Login View");
 		if (Loading.ins.isLoading) {
 			Loading.ins.hide();
 			return;
@@ -501,24 +561,31 @@ public class ViewLogin extends View {
 														@Override
 														public void handleHttpResponse(
 																HttpResponse httpResponse) {
-															Loading.ins.hide();
 															JsonValue value = (new JsonReader())
 																	.parse(httpResponse
 																			.getResultAsString());
 															if (value
-																	.getBoolean(ExtParamsKey.RESULT))
+																	.getBoolean(ExtParamsKey.RESULT)) {
 																switchView();
+															} else {
+																Toast.makeText(
+																		getStage(),
+																		value.getString(ExtParamsKey.MESSAGE),
+																		Toast.LENGTH_SHORT);
+																Loading.ins
+																		.hide();
+															}
 														}
 
 														@Override
 														public void failed(
 																Throwable t) {
-
+															Loading.ins.hide();
 														}
 
 														@Override
 														public void cancelled() {
-
+															Loading.ins.hide();
 														}
 													};
 
@@ -530,21 +597,15 @@ public class ViewLogin extends View {
 															respone = (new JsonReader())
 																	.parse(httpResponse
 																			.getResultAsString());
-															Log.d("OnLogin result",
-																	respone.toString());
 														}
 
 														@Override
 														public void failed(
 																Throwable t) {
-															Log.d("On Login Fail :",
-																	t.getMessage());
 														}
 
 														@Override
 														public void cancelled() {
-															Log.d("On Login Cancel :",
-																	"Login is cancel");
 														}
 													};
 

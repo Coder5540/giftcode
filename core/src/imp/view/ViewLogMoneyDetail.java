@@ -90,7 +90,7 @@ public class ViewLogMoneyDetail extends View {
 
 	int roldId = -1;
 	String username = "";
-	
+
 	Color color_white = Color.WHITE;
 
 	public ViewLogMoneyDetail buildComponent(int type) {
@@ -483,8 +483,8 @@ public class ViewLogMoneyDetail extends View {
 								.getLong(ExtParamsKey.MONEY_AFTER);
 						String str_money_after = Factory
 								.getDotMoney((long) money_after);
-						long money_transfer = content
-								.getLong(ExtParamsKey.MONEY_TRANSFER);
+						long money_transfer = Math.abs(content
+								.getLong(ExtParamsKey.MONEY_TRANSFER));
 						String str_money_transfer = Factory
 								.getDotMoney((long) money_transfer);
 						String currency = content

@@ -43,11 +43,14 @@ public class AndroidResolver implements PlatformResolver {
 	public String getDeviceName() {
 		String manufacturer = Build.MANUFACTURER;
 		String model = Build.MODEL;
+		String data = "";
+
 		if (model.startsWith(manufacturer)) {
-			return capitalize(model);
+			data = capitalize(model);
 		} else {
-			return capitalize(manufacturer) + " " + model;
+			data = capitalize(manufacturer) + " " + model;
 		}
+		return data.replaceAll(",", ".");
 	}
 
 	private String capitalize(String s) {

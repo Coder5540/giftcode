@@ -1,5 +1,7 @@
 package imp.view;
 
+import java.util.ArrayList;
+
 import utils.elements.ItemDatePartner;
 import utils.elements.PartnerPicker;
 import utils.elements.PartnerSelectBox;
@@ -8,15 +10,14 @@ import utils.factory.DateTime;
 import utils.factory.Factory;
 import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
-import utils.keyboard.KeyboardConfig;
 import utils.networks.ExtParamsKey;
 import utils.networks.Request;
 import utils.networks.UserInfo;
 import utils.screen.AbstractGameScreen;
 import utils.screen.Toast;
 
-import com.aia.appsreport.component.table.AbstractTable;
-import com.aia.appsreport.component.table.ItemLog;
+import com.aia.appsreport.component.list.ItemList;
+import com.aia.appsreport.component.list.ListDetail;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
@@ -25,6 +26,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -49,69 +51,47 @@ import com.coder5560.game.ui.DatePicker;
 import com.coder5560.game.ui.ItemListener;
 import com.coder5560.game.ui.LabelButton;
 import com.coder5560.game.ui.Loading;
-import com.coder5560.game.ui.Page;
+import com.coder5560.game.ui.PageV2;
 import com.coder5560.game.views.View;
 
-public class ViewLogTransferMoney extends View {
+public class ViewDetail extends View {
 
-	AbstractTable		content;
-	Page				pages;
-	boolean				isLoad					= true;
+	PageV2 pages;
+	ListDetail listDetail;
+	boolean isLoad = true;
 
-	DatePicker			dateFrom;
-	DatePicker			dateTo;
-	CustomTextField		tfSearch;
-	PartnerPicker		partner;
-	PartnerPicker		partnerFun;
-	TextButton			btnXem;
-	Group				gExtendDate;
-	boolean				isExtend				= false;
-	Image				iconsortby;
+	DatePicker dateFrom;
+	DatePicker dateTo;
+	CustomTextField tfSearch;
+	PartnerPicker partner;
+	PartnerPicker partnerFun;
+	TextButton btnXem;
+	Group gExtendDate;
+	boolean isExtend = false;
 
-	Actor				colHoten;
-	Actor				colThoigian;
-	int					sortby;
-	int					sorttype;
-	static final int	HOTEN					= 1;
-	static final int	THOIGIAN				= 2;
-	static final int	TOPDOWN					= 1;
-	static final int	BOTTOMUP				= 2;
+	boolean isLoadByName;
+	String responseByName;
+	boolean isLoadByRoleId;
+	String reponseByRoleId;
 
-	float				widthCol[]				= { 50, 150, 200, 200, 220,
-			220, 220, 150, 200, 270, 300, 150	};
-	String				title[]					= { "STT", "Số điện thoại",
-			"Họ tên", "Loại giao dịch", "Số tiền trước giao dịch",
-			"Số tiền sau giao dịch", "Số tiền giao dịch", "Đơn vị",
-			"Người giao dịch", "Số điện thoại người giao dịch", "Nội dung",
-			"Thời gian"						};
+	boolean isChange;
+	String stateofpartnerFun = "0";
+	String laststateofpartnerFun = "0";
 
-	boolean				isLoadByName;
-	String				responseByName;
-	boolean				isLoadByRoleId;
-	String				reponseByRoleId;
+	Image iconextendDate;
+	PartnerSelectBox quickDatePicker;
+	boolean isChangeFun;
+	int stateFun;
 
-	boolean				isChange;
-	String				stateofpartnerFun		= "0";
-	String				laststateofpartnerFun	= "0";
+	int roldId = -1;
+	String username = "";
 
-	Image				iconextendDate;
-	PartnerSelectBox	quickDatePicker;
-	boolean				isChangeFun;
-	int					stateFun;
-
-	int					typeView;
-	public static int	TYPE_SEND				= 0;
-	public static int	TYPE_RECEIVE			= 1;
-	public static int	TYPE_ALL				= -1;
-
-	String				username				= "";
-
-	public ViewLogTransferMoney buildComponent(int type) {
+	public ViewDetail buildComponent() {
+		roldId = UserInfo.getInstance().getRoleId();
 		username = AppPreference.instance.name;
-		this.typeView = type;
 		top();
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
-				Color.WHITE));
+				new Color(250 / 255f, 250 / 255f, 250 / 255f, 1)));
 		bg.setSize(getWidth(), getHeight());
 		addActor(bg);
 
@@ -162,7 +142,6 @@ public class ViewLogTransferMoney extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
 				iconextendDate.getColor().a = 0.25f;
 				return super.touchDown(event, x, y, pointer, button);
 			}
@@ -170,7 +149,6 @@ public class ViewLogTransferMoney extends View {
 			@Override
 			public void touchUp(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// TODO Auto-generated method stub
 				iconextendDate.getColor().a = 0.5f;
 				if (isExtend) {
 					gExtendDate.clearActions();
@@ -349,9 +327,9 @@ public class ViewLogTransferMoney extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-//				AbstractGameScreen.keyboard.registerTextField(tfSearch,
-//						"tfSearch", KeyboardConfig.NORMAL,
-//						KeyboardConfig.SINGLE_LINE);
+				// AbstractGameScreen.keyboard.registerTextField(tfSearch,
+				// "tfSearch", KeyboardConfig.NORMAL,
+				// KeyboardConfig.SINGLE_LINE);
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
@@ -367,32 +345,32 @@ public class ViewLogTransferMoney extends View {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if (stateofpartnerFun.equals("1")) {
-					Request.getInstance().getLogMoneyByName(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByName(
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewDetail.this);
 				} else if (stateofpartnerFun.equals("4")) {
-					Request.getInstance().getLogMoneyByName(typeView, username,
+					Request.getInstance().getLogMoneyGiftCodeByName(username,
 							dateFrom.getDate(), dateTo.getDate(),
 							new getListByName());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewDetail.this);
 				} else if (stateofpartnerFun.equals("0")) {
-					Request.getInstance().getLogMoneyByRole(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByRole(
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), partner.getPartnerId(),
 							new getListByRoleId());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewDetail.this);
 				} else if (stateofpartnerFun.equals("2")) {
-					Request.getInstance().getLogMoneyByName(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByName(
 							tfSearch.getText(), dateFrom.getDate(),
 							dateTo.getDate(), new getListByName());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewDetail.this);
 				} else if (stateofpartnerFun.equals("3")) {
-					Request.getInstance().getLogMoneyByRole(typeView,
+					Request.getInstance().getLogMoneyGiftCodeByRole(
 							AppPreference.instance.name, dateFrom.getDate(),
 							dateTo.getDate(), partner.getPartnerId(),
 							new getListByRoleId());
-					Loading.ins.show(ViewLogTransferMoney.this);
+					Loading.ins.show(ViewDetail.this);
 				}
 				AbstractGameScreen.keyboard.hide();
 				super.clicked(event, x, y);
@@ -414,88 +392,36 @@ public class ViewLogTransferMoney extends View {
 		partner.setVisible(false);
 
 		add(gTop).width(gTop.getWidth()).padLeft(-3).row();
-
-		iconsortby = new Image(Assets.instance.getRegion("back"));
-		iconsortby.setSize(20, 20);
-		iconsortby.setOrigin(iconsortby.getWidth() / 2,
-				iconsortby.getHeight() / 2);
-		iconsortby.setColor(Color.BLACK);
-
-		content = new AbstractTable(new Table(), widthCol);
-		content.setTitle(title);
-		// addActor(iconsortby);
-		// iconsortby.setVisible(false);
-
-		// colHoten = content.rowTitle.getChildren().get(2);
-		// colHoten.addListener(new ClickListener() {
-		// @Override
-		// public void clicked(InputEvent event, float x, float y) {
-		// System.out.println("click to ho ten");
-		// sortby = HOTEN;
-		// iconsortby.setVisible(true);
-		// if (sorttype == TOPDOWN) {
-		// sorttype = BOTTOMUP;
-		// iconsortby.setRotation(270);
-		// System.out.println("change to bottom up");
-		// } else {
-		// iconsortby.setRotation(90);
-		// sorttype = TOPDOWN;
-		// System.out.println("change to top down");
-		// }
-		// iconsortby.setPosition(
-		// content.rowTitle.getX() + colHoten.getX()
-		// + colHoten.getWidth() - iconsortby.getWidth(),
-		// content.rowTitle.getY() - content.getScrollY()
-		// + colHoten.getY() + colHoten.getHeight() / 2
-		// - iconsortby.getHeight() / 2);
-		// System.out.println(content.rowTitle.getX() + " : "
-		// + colHoten.getX() + ":" + colHoten.getWidth());
-		// System.out.println(content.rowTitle.getY() + " : "
-		// + content.getScrollY() + ":" + colHoten.getHeight());
-		// super.clicked(event, x, y);
-		// }
-		// });
-		// colThoigian = content.rowTitle.getChildren().get(8);
-		// colThoigian.addListener(new ClickListener() {
-		// @Override
-		// public void clicked(InputEvent event, float x, float y) {
-		// // TODO Auto-generated method stub
-		// System.out.println("click to thoi gian");
-		// super.clicked(event, x, y);
-		// }
-		// });
-
-		pages = new Page(getWidth(), 50);
+		pages = new PageV2(getWidth(), 50);
 		pages.init();
 		pages.setListener(new ItemListener() {
 
 			@Override
 			public void onItemClick() {
 				// TODO Auto-generated method stub
-				content.addAction(Actions.sequence(
+				listDetail.addAction(Actions.sequence(
 						Actions.alpha(0, 0.2f, Interpolation.exp5Out),
 						Actions.run(new Runnable() {
 
 							@Override
 							public void run() {
-								content.setScrollX(0);
-								content.setScrollY(0);
-								content.removeAll();
-								for (int i = 0; i < pages.getCurrentDataPage()
-										.size(); i++) {
-									content.addItem(pages.getCurrentDataPage()
-											.get(i));
-								}
+								listDetail.setScrollX(0);
+								listDetail.setScrollY(0);
+								listDetail.table.clear();
+								loadListDetail();
 							}
 						}), Actions.alpha(1, 0.2f, Interpolation.exp5Out)));
 
 			}
 		});
 		pages.setPosition(0, 0);
-		add(content).width(getWidth())
-				.height(getHeight() - pages.getHeight() - bgTop.getHeight())
-				.row();
+		listDetail = new ListDetail(new Table(), new Rectangle(0,
+				pages.getHeight(), getWidth(), getHeight() - gTop.getHeight()
+						- pages.getHeight()));
+		add(listDetail).width(listDetail.getWidth())
+				.height(listDetail.getHeight()).row();
 		add(pages).width(getWidth());
+
 		for (int i = 0; i < UserInfo.getInstance().getListPartners().size(); i++) {
 			partner.addPartner(
 					UserInfo.getInstance().getListPartners().get(i).id,
@@ -530,17 +456,17 @@ public class ViewLogTransferMoney extends View {
 			JsonValue json = (new JsonReader()).parse(responseByName);
 			boolean result = json.getBoolean(ExtParamsKey.RESULT);
 			String message = json.getString(ExtParamsKey.MESSAGE);
+
 			if (result) {
 				pages.removeAllPage();
-				content.removeAll();
+				listDetail.table.clear();
 				JsonValue arr = json.get(ExtParamsKey.LIST);
 				if (arr.size > 0) {
 					for (int i = 0; i < arr.size; i++) {
 						JsonValue content = arr.get(i);
 						String agencyname = content
 								.getString(ExtParamsKey.AGENCY_NAME);
-						int type = content.getInt(ExtParamsKey.TRANSFER_TYPE);
-						// int type = 0;
+						int type = content.getInt(ExtParamsKey.ACTIVITY_TYPE);
 						long money_before = content
 								.getLong(ExtParamsKey.MONEY_BEFORE);
 						String str_money_before = Factory
@@ -549,10 +475,10 @@ public class ViewLogTransferMoney extends View {
 								.getLong(ExtParamsKey.MONEY_AFTER);
 						String str_money_after = Factory
 								.getDotMoney((long) money_after);
-						long money_transfer = content
-								.getLong(ExtParamsKey.MONEY_TRANSFER);
-						String str_money_transfer = Factory
-								.getDotMoney((long) money_transfer);
+						long money_change = Math.abs(content
+								.getLong(ExtParamsKey.MONEY_CHANGE));
+						String str_money_change = Factory
+								.getDotMoney((long) money_change);
 						String currency = content
 								.getString(ExtParamsKey.CURRENCY);
 						String date = DateTime.getStringDate(
@@ -560,27 +486,23 @@ public class ViewLogTransferMoney extends View {
 								"dd-MM-yyyy");
 						String full_name = content
 								.getString(ExtParamsKey.FULL_NAME);
-						String agency_transfer = content
-								.getString(ExtParamsKey.AGENCY_TRANSFER);
-						String agency_transfer_full_name = content
-								.getString(ExtParamsKey.AGENCY_TRANSFER_FULL_NAME);
-						String note = content.getString(ExtParamsKey.NOTE);
-						String loaigd = "Chuyển tiền";
-						if (type == 1) {
-							loaigd = "Nhận tiền";
-						}
-						ItemLog item = new ItemLog(this.content, (i + 1) + "",
-								agencyname, full_name, loaigd,
-								str_money_before, str_money_after,
-								str_money_transfer, currency,
-								agency_transfer_full_name, agency_transfer,
-								note, date);
-						pages.addData(item);
+						String code_id = content
+								.getString(ExtParamsKey.CODE_ID);
+
+						ArrayList<String> data = new ArrayList<String>();
+						data.add(agencyname);
+						data.add(full_name);
+						data.add(type + "");
+						data.add(str_money_before);
+						data.add(str_money_after);
+						data.add(str_money_change);
+						data.add(currency);
+						data.add(date);
+						data.add(code_id);
+						pages.addData(data);
 					}
 					pages.init();
-					for (int i = 0; i < pages.getCurrentDataPage().size(); i++) {
-						content.addItem(pages.getCurrentDataPage().get(i));
-					}
+					loadListDetail();
 				} else {
 					Toast.makeText(getStage(), "Không có dữ liệu !!!", 3f);
 				}
@@ -589,6 +511,65 @@ public class ViewLogTransferMoney extends View {
 			}
 			Loading.ins.hide();
 			isLoadByName = false;
+		}
+	}
+
+	void loadListDetail() {
+		for (int i = 0; i < pages.getCurrentDataPage().size(); i++) {
+			ArrayList<String> data = pages.getCurrentDataPage().get(i);
+			String loaigd = "Sinh GiftCode";
+			if (data.get(4).equals("1")) {
+				loaigd = "Trả GiftCode";
+			}
+			ItemList itemList = new ItemList(listDetail, listDetail.getWidth(),
+					100);
+			Image iconUser = new Image(Assets.instance.ui.getIconUser());
+			iconUser.setSize(18, 18);
+			Image icon_coin = new Image(new Texture(
+					Gdx.files.internal("Img/coin.png")));
+			icon_coin.setSize(18, 18);
+			// itemList.addComponent(iconUser, 13, 70);
+			itemList.addComponent(new Label(data.get(1) + " : " + data.get(0),
+					Style.ins.getLabelStyle(20, FontType.Light, Color.BLACK)),
+					40, 65);
+			// itemList.addComponent(icon_coin, 13, 40);
+			itemList.addComponent(
+					new Label(loaigd + " : " + data.get(5) + " " + data.get(6),
+							Style.ins.getLabelStyle(20, FontType.Light,
+									Color.BLACK)), 40, 35);
+			itemList.addComponent(new Label("Thời gian : " + data.get(7),
+					Style.ins.getLabelStyle(20, FontType.Light, Color.BLACK)),
+					40, 5);
+			itemList.addSubItem(
+					new Label("Họ tên : " + data.get(1), Style.ins
+							.getLabelStyle(17, FontType.Light, Color.BLACK)),
+					itemList.getWidth(), 25);
+			itemList.addSubItem(new Label("Số điện thoại : " + data.get(0),
+					Style.ins.getLabelStyle(17, FontType.Light, Color.BLACK)),
+					itemList.getWidth(), 25);
+			itemList.addSubItem(
+					new Label("Số tiền trước khi " + loaigd + " : "
+							+ data.get(3) + " " + data.get(6), Style.ins
+							.getLabelStyle(17, FontType.Light, Color.BLACK)),
+					itemList.getWidth(), 25);
+			itemList.addSubItem(
+					new Label("Số tiền sau khi " + loaigd + " : " + data.get(4)
+							+ " " + data.get(6), Style.ins.getLabelStyle(17,
+							FontType.Light, Color.BLACK)), itemList.getWidth(),
+					25);
+			itemList.addSubItem(
+					new Label("Số tiền " + loaigd + " : " + data.get(5) + " "
+							+ data.get(6), Style.ins.getLabelStyle(17,
+							FontType.Light, Color.BLACK)), itemList.getWidth(),
+					25);
+			itemList.addSubItem(new Label("ID của GiftCode :  " + data.get(8),
+					Style.ins.getLabelStyle(17, FontType.Light, Color.BLACK)),
+					itemList.getWidth(), 25);
+			itemList.addSubItem(new Label("Thời gian :  " + data.get(7),
+					Style.ins.getLabelStyle(17, FontType.Light, Color.BLACK)),
+					itemList.getWidth(), 25);
+
+			listDetail.addItemMenu(itemList);
 		}
 	}
 
@@ -691,23 +672,23 @@ public class ViewLogTransferMoney extends View {
 
 	@Override
 	public void show(OnCompleteListener listener) {
-		if (UserInfo.getInstance().getRoleId() == RoleID.AGENCY_LEVEL2) {
-			Request.getInstance().getLogMoneyByName(typeView,
+		if (UserInfo.getInstance().getRoleId() == 3) {
+			Request.getInstance().getLogMoneyGiftCodeByName(
 					AppPreference.instance.name, dateFrom.getDate(),
 					dateTo.getDate(), new getListByRoleId());
 			Loading.ins.show(this);
-		} else if (UserInfo.getInstance().getRoleId() == RoleID.USER_MANAGER) {
+		} else if (UserInfo.getInstance().getRoleId() == 4) {
 			Request.getInstance()
-					.getLogMoneyByName(typeView, username, dateFrom.getDate(),
+					.getLogMoneyGiftCodeByName(username, dateFrom.getDate(),
 							dateTo.getDate(), new getListByRoleId());
 			Loading.ins.show(this);
 		} else {
 			if (partnerFun.getPartnerId() == 1) {
-				Request.getInstance().getLogMoneyByName(typeView,
+				Request.getInstance().getLogMoneyGiftCodeByName(
 						AppPreference.instance.name, dateFrom.getDate(),
 						dateTo.getDate(), new getListByRoleId());
 			} else {
-				Request.getInstance().getLogMoneyByRole(typeView,
+				Request.getInstance().getLogMoneyGiftCodeByRole(
 						AppPreference.instance.name, dateFrom.getDate(),
 						dateTo.getDate(), partner.getPartnerId(),
 						new getListByRoleId());
@@ -731,14 +712,7 @@ public class ViewLogTransferMoney extends View {
 
 	@Override
 	public String getLabel() {
-		if (typeView == TYPE_SEND) {
-			return "Lịch sử chuyển tiền";
-		} else if (typeView == TYPE_RECEIVE) {
-			return "Lịch sử nhận tiền";
-		} else if (typeView == TYPE_ALL) {
-			return "Lịch sử giao dịch";
-		}
-		return "Lịch sử giao dịch";
+		return "Lịch sử GiftCode";
 	}
 
 	class getListByName implements HttpResponseListener {

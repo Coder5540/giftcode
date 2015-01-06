@@ -13,6 +13,7 @@ public class AppPreference {
 	public String				name, pass;
 	public int					type;
 	public boolean				isWaitActiveCode	= false;
+	public boolean				isLogin				= false;
 
 	private AppPreference() {
 		preferences = Gdx.app.getPreferences(Constants.APP_NAME);
@@ -23,12 +24,14 @@ public class AppPreference {
 		name = preferences.getString("name");
 		type = preferences.getInteger("type");
 		isWaitActiveCode = preferences.getBoolean("waitactivecode");
+		isLogin = preferences.getBoolean("islogin", false);
 	}
 
 	public void save() {
 		preferences.putString("name", name);
 		preferences.putInteger("type", type);
 		preferences.putBoolean("waitactivecode", isWaitActiveCode);
+		preferences.putBoolean("islogin", isLogin);
 		preferences.flush();
 	}
 
@@ -54,28 +57,35 @@ public class AppPreference {
 			flush();
 	}
 
-//	public String getDeviceId() {
-//		return deviceId;
-//	}
+	public void setLogin(boolean isLogin, boolean flush) {
+		this.isLogin = isLogin;
+		preferences.putBoolean("islogin", isLogin);
+		if (flush)
+			flush();
+	}
 
-//	public void setDeviceId(String deviceId, boolean flush) {
-//		this.deviceId = deviceId;
-//		preferences.putString("deviceID", deviceId);
-//		if (flush)
-//			flush();
-//	}
-//
-//	public String getDeviceName() {
-//		return deviceName;
-//	}
-//
-//	public void setDeviceName(String deviceName, boolean flush) {
-//		this.deviceName = deviceName;
-//		preferences.putString("deviceName", deviceName);
-//		if (flush)
-//			flush();
-//	}
-//
+	// public String getDeviceId() {
+	// return deviceId;
+	// }
+
+	// public void setDeviceId(String deviceId, boolean flush) {
+	// this.deviceId = deviceId;
+	// preferences.putString("deviceID", deviceId);
+	// if (flush)
+	// flush();
+	// }
+	//
+	// public String getDeviceName() {
+	// return deviceName;
+	// }
+	//
+	// public void setDeviceName(String deviceName, boolean flush) {
+	// this.deviceName = deviceName;
+	// preferences.putString("deviceName", deviceName);
+	// if (flush)
+	// flush();
+	// }
+	//
 	public void flush() {
 		preferences.flush();
 	}

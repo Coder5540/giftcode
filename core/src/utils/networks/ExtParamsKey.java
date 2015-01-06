@@ -78,6 +78,7 @@ public class ExtParamsKey {
 	public final static String	TIME_EXPIRE					= "time_expire";
 	public static final String	PERMISSION					= "permission";
 	public final static String	GIFT_CODE					= "gift_code";
+	public final static String	CODE						= "code";
 	public final static String	DATE_EXPIRE					= "date_expire";
 	public final static String	GIFT_CODE_ID				= "gift_code_id";
 	public final static String	UPDATE_MONEY				= "update_money";
@@ -96,5 +97,7 @@ public class ExtParamsKey {
 	public static final String	MONEY_CHANGE				= "money_change";
 	public static final String	MONEY_RECEIVE				= "money_receive";
 	public static final String	MONEY_REMAIN				= "money_remain";
-	public static final String	CODE_ID	= "code_id";
+	public static final String	CODE_ID						= "code_id";
+	public static final String	LOGIN_CODE					= "code";
+	public static final String	MONEY_CASH_OUT				= "money_cash_out";
 }

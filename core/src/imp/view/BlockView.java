@@ -34,7 +34,7 @@ public class BlockView extends View {
 	public static final int LOCK_DEVICE_3 = 2;
 
 	Image bg;
-	Table content;
+	public Table content;
 	String phone;
 	Array<String> imeis;
 	OnSelectListener onSelectListener;
@@ -111,12 +111,12 @@ public class BlockView extends View {
 
 		LabelStyle styleContent = Style.ins.getLabelStyle(16, FontType.Medium,
 				Color.WHITE);
-		
+
 		for (int i = 0; i < imeis.size; i++) {
 			final int index = i;
 			CustomTextButton customTextImei = getTextButton(imeis.get(i),
-					styleContent, Style.ins.np2, Constants.COLOR_ACTIONBAR, Color.WHITE,
-					new OnClickListener() {
+					styleContent, Style.ins.np2, Constants.COLOR_ACTIONBAR,
+					Color.WHITE, new OnClickListener() {
 						@Override
 						public void onClick(float x, float y) {
 							if (onSelectListener != null) {
@@ -191,6 +191,7 @@ public class BlockView extends View {
 	public void back() {
 
 		super.back();
+		getViewController().removeView(getName());
 	}
 
 	public void setOnSelectListener(OnSelectListener onSelectListener) {

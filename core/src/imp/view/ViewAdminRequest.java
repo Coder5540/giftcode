@@ -38,12 +38,12 @@ import com.coder5560.game.views.View;
 
 public class ViewAdminRequest extends View {
 
-	private JsonValue	respone, responeGetActiveCode;
-	String				activeCode	= "";
-	String				phone		= "";
-	boolean				isSend		= false, isFailGetActive = false;
-	PageV3				pages;
-	ListDetail			listDetail;
+	private JsonValue respone, responeGetActiveCode;
+	String activeCode = "";
+	String phone = "";
+	boolean isSend = false, isFailGetActive = false;
+	PageV3 pages;
+	ListDetail listDetail;
 
 	@Override
 	public String getLabel() {
@@ -124,8 +124,7 @@ public class ViewAdminRequest extends View {
 							.getLabelStyle(25, FontType.Regular, Color.WHITE)))
 					.left().padLeft(20);
 			header.add(
-					new Label(
-							"-" + data.getString(ExtParamsKey.ROLE_NAME) + "",
+					new Label(data.getString(ExtParamsKey.ROLE_NAME) + "",
 							Style.ins.getLabelStyle(20, FontType.Light,
 									Color.WHITE))).expandX().right()
 					.padRight(50);
@@ -180,7 +179,6 @@ public class ViewAdminRequest extends View {
 					new Label("Tên thiết bị", Style.ins.getLabelStyle(15,
 							FontType.Light, Color.BLACK)), itemList.getWidth(),
 					25);
-			String is = Factory.getDeviceName(data);
 			id = Factory.getDeviceName(data).split(",");
 			for (String text : id) {
 				if (text != "") {

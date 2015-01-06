@@ -23,14 +23,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.listener.OnClickListener;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.listener.OnSelectListener;
+import com.coder5560.game.ui.CustomTextButton;
 import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.ui.ItemListener;
 import com.coder5560.game.ui.Loading;
@@ -125,8 +129,7 @@ public class ViewAdminActive extends View {
 							.getLabelStyle(25, FontType.Regular, Color.WHITE)))
 					.left().padLeft(20);
 			header.add(
-					new Label(
-							"-" + data.getString(ExtParamsKey.ROLE_NAME) + "",
+					new Label(data.getString(ExtParamsKey.ROLE_NAME) + "",
 							Style.ins.getLabelStyle(20, FontType.Light,
 									Color.WHITE))).expandX().right()
 					.padRight(50);
@@ -263,21 +266,6 @@ public class ViewAdminActive extends View {
 		updateLock();
 		if (respone != null) {
 			loadListByName();
-			// Loading.ins.hide();
-			// Log.d("" + respone.toString());
-			// Boolean isSuccess = respone.getBoolean(ExtParamsKey.RESULT);
-			// String mess = respone.getString(ExtParamsKey.MESSAGE);
-			// Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
-			// if (isSuccess) {
-			// tableContent.removeAll();
-			// JsonValue content = respone.get(ExtParamsKey.LIST);
-			// if (content.size > 0) {
-			//
-			// } else {
-			// Toast.makeText(getStage(), "Không tìm thấy tài khoản nào",
-			// Toast.LENGTH_SHORT);
-			// }
-			// }
 			respone = null;
 		}
 	}
@@ -351,7 +339,7 @@ public class ViewAdminActive extends View {
 	Array<String> IDs = new Array<String>();
 	Array<String> Names = new Array<String>();
 
-	void onBtnLockClicked(String phone, JsonValue infoUser) {
+	void onBtnLockClicked(final String phone, final JsonValue infoUser) {
 		Array<String> imeis = new Array<String>();
 		JsonValue deviceIDs = infoUser.get(ExtParamsKey.DEVICE_ID);
 		JsonValue deviceNames = infoUser.get(ExtParamsKey.DEVICE_NAME);
@@ -372,11 +360,54 @@ public class ViewAdminActive extends View {
 			Names.add(deviceNames.getString(i));
 		}
 
-		BlockView blockView = new BlockView(1, phone, imeis);
+		final BlockView blockView = new BlockView(1, phone, imeis);
 		blockView.build(getStage(), getViewController(), "block",
 				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
 						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
 		blockView.buildComponent();
+
+		LabelStyle style = Style.ins.getLabelStyle(20, FontType.Medium,
+				Constants.COLOR_ACTIONBAR);
+		Label lbBlockDevice = new Label("Khóa tài khoản", style);
+		lbBlockDevice.setAlignment(Align.left);
+		blockView.content.add(lbBlockDevice).padLeft(10).height(60).left()
+				.row().padBottom(10);
+
+		LabelStyle styleContent = Style.ins.getLabelStyle(16, FontType.Medium,
+				Color.WHITE);
+		CustomTextButton customTextImei = blockView.getTextButton(phone,
+				styleContent, Style.ins.np2, Constants.COLOR_ACTIONBAR,
+				Color.WHITE, new OnClickListener() {
+					@Override
+					public void onClick(float x, float y) {
+						DialogCustom dia = new DialogCustom("");
+						dia.text("Bạn có chắc chắn khóa tài khoản " + phone);
+						dia.button("Khóa", new Runnable() {
+							@Override
+							public void run() {
+								Request.getInstance()
+										.chaneStateAdmin(
+												infoUser.getString(ExtParamsKey.AGENCY_NAME),
+												UserInfo.phone,
+												AppPreference.instance.pass,
+												Constants.agency_type_lock,
+												new LockListener());
+								Loading.ins.show(ViewAdminActive.this);
+								blockView.back();
+							}
+						});
+						dia.button("Hủy");
+						dia.show(getStage());
+					}
+				});
+		customTextImei.setSize(getWidth(), 60);
+		customTextImei.setColor(Constants.COLOR_ACTIONBAR);
+		blockView.content.add(customTextImei).padLeft(10).height(60).row()
+				.padBottom(10);
+		blockView.content.setSize(2 * getWidth() / 3, 60 * (4 + imeis.size));
+		blockView.content.setPosition(blockView.getWidth() / 2,
+				blockView.getHeight() / 2, Align.center);
+
 		blockView.show(null);
 		blockView.setOnSelectListener(onSelectLock);
 	}

@@ -135,26 +135,25 @@ public class Factory {
 		return false;
 	}
 
-//	public static String getStrMoney(int money) {
-//		String str = money + "";
-//		if (money < 10000) {
-//			str = money + "";
-//		} else if (money < 1000000) {
-//			int firstNumber = money / 1000;
-//			int secondNumber = (money - firstNumber * 1000) / 100;
-//			str = firstNumber + "." + secondNumber + "K";
-//		} else if (money < 1000000000) {
-//			int firstNumber = money / 1000000;
-//			int secondNumber = (money - firstNumber * 1000000) / 100000;
-//			str = firstNumber + "." + secondNumber + "M";
-//		} else {
-//			int firstNumber = money / 1000000000;
-//			int secondNumber = (money - firstNumber * 1000000000) / 100000000;
-//			str = firstNumber + "." + secondNumber + "B";
-//		}
-//		return str;
-//	}
-	
+	// public static String getStrMoney(int money) {
+	// String str = money + "";
+	// if (money < 10000) {
+	// str = money + "";
+	// } else if (money < 1000000) {
+	// int firstNumber = money / 1000;
+	// int secondNumber = (money - firstNumber * 1000) / 100;
+	// str = firstNumber + "." + secondNumber + "K";
+	// } else if (money < 1000000000) {
+	// int firstNumber = money / 1000000;
+	// int secondNumber = (money - firstNumber * 1000000) / 100000;
+	// str = firstNumber + "." + secondNumber + "M";
+	// } else {
+	// int firstNumber = money / 1000000000;
+	// int secondNumber = (money - firstNumber * 1000000000) / 100000000;
+	// str = firstNumber + "." + secondNumber + "B";
+	// }
+	// return str;
+	// }
 
 	public static String getDotMoney(long money) {
 		long tmpMoney = Math.abs(money);
@@ -174,11 +173,7 @@ public class Factory {
 
 		return ((money >= 0) ? "" : "-") + tmpMoney + str;
 	}
-	
-	public static void main(String[] args) {
-		Log.d(""+ Factory.getDotMoney(1000000000l));
-	}
-	
+
 	public static int round(float a) {
 		int result = Math.round(a);
 		if (result < a) {
@@ -209,27 +204,25 @@ public class Factory {
 
 	@SuppressWarnings("deprecation")
 	public static String getTime(long time) {
-		long minute = (time / (1000 * 60)) % 60;
-		long hour = (time / (1000 * 60 * 60)) % 24;
 
-		Date d = new Date(time * 1000);
+		Date d = new Date(time);
 		int date = d.getDate();
 		int month = d.getMonth();
+		int hours = d.getHours();
+		int mn = d.getMinutes();
 
-		return String.format("%02d:%02d", hour, minute) + "  "
+		return String.format("%02d:%02d", hours, mn) + "  "
 				+ monthNames[month] + " " + date;
 	}
 
 	@SuppressWarnings("deprecation")
 	public static String getTimeContainSecond(long time) {
-		long second = (time / 1000) % 60;
-		long minute = (time / (1000 * 60)) % 60;
-		long hour = (time / (1000 * 60 * 60)) % 24;
-
-		Date d = new Date(time * 1000);
+		Date d = new Date(time);
 		int date = d.getDate();
 		int month = d.getMonth();
-
+		int hour = d.getHours();
+		int minute = d.getMinutes();
+		int second = d.getSeconds(); 
 		return String.format("%02d:%02d:%02d", hour, minute, second) + "  "
 				+ monthNames[month] + " " + date;
 	}

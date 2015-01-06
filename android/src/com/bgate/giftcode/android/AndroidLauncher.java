@@ -3,7 +3,6 @@ package com.bgate.giftcode.android;
 
 import java.util.ArrayList;
 
-import utils.factory.Factory;
 import utils.factory.PlatformResolver.OnResultListener;
 import utils.screen.GameCore;
 import android.annotation.SuppressLint;
@@ -16,16 +15,12 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.telephony.SmsManager;
 import android.util.Log;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.coder5560.game.enums.NetworkState;
 import com.coder5560.game.enums.PlatformType;
 import com.coder5560.game.listener.NetworkManager;
 import com.coder5560.game.screens.FlashScreen;
@@ -64,7 +59,7 @@ public class AndroidLauncher extends AndroidApplication implements NetworkManage
 //				.permitAll().build();
 //		StrictMode.setThreadPolicy(policy);
 	}
-
+	
 	public void sendSMS(String phoneNumber, String message,
 			final OnResultListener listener) {
 		SmsManager smsManager = SmsManager.getDefault();
@@ -80,7 +75,7 @@ public class AndroidLauncher extends AndroidApplication implements NetworkManage
 
 		ArrayList<PendingIntent> deliveryIntents = new ArrayList<PendingIntent>();
 		ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
-
+		
 		PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent(
 				SENT), 0);
 		PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,

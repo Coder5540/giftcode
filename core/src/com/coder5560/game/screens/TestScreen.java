@@ -1,10 +1,10 @@
 package com.coder5560.game.screens;
 
+import updatehandler.MemoryManager;
 import utils.factory.StringSystem;
 import utils.factory.UpdateHandlerList;
 import utils.screen.AbstractGameScreen;
 import utils.screen.GameCore;
-import alphabethame.updatehandler.MemoryManager;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;

@@ -36,13 +36,14 @@ import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
+import com.sun.corba.se.pept.transport.ContactInfo;
 
 public class ViewWaitAccept extends View {
 
-	private CustomTextField	tfPhone;
-	private CustomTextField	tfActiveCode;
-	private JsonValue		respone;
-	Label					btnRegister, btnLogin;
+	private CustomTextField tfPhone;
+	private CustomTextField tfActiveCode;
+	private JsonValue respone;
+	Label btnRegister, btnLogin;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -57,7 +58,7 @@ public class ViewWaitAccept extends View {
 			}
 		});
 
-		Image titleLogin = new Image(Assets.instance.getRegion("8B8 GIFT CODE"));
+		Image titleLogin = new Image(Assets.instance.ui.getLogo());
 		titleLogin.setSize(400, 40);
 		titleLogin.setPosition(getWidth() / 2 - titleLogin.getWidth() / 2,
 				getHeight() - titleLogin.getHeight() - 80);
@@ -113,14 +114,7 @@ public class ViewWaitAccept extends View {
 			}
 		});
 
-		TextButtonStyle btStyle = new TextButtonStyle();
-		btStyle.up = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 1)));
-		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 0.5f)));
-		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
-		btStyle.fontColor = Color.WHITE;
-		TextButton btOk = new TextButton("Kích hoạt", btStyle);
+		TextButton btOk = new TextButton("Kích hoạt", Style.ins.textButtonStyle);
 		btOk.setSize(370, 55);
 		btOk.setPosition(tfPhone.getX(),
 				tfActiveCode.getY() - tfActiveCode.getHeight() - 20);
@@ -148,7 +142,7 @@ public class ViewWaitAccept extends View {
 
 		btnRegister = new Label("Đăng ký mới", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, FontType.Light),
-				new Color(0, 191 / 255f, 1, 1))) {
+				Constants.COLOR_ACTIONBAR)) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {
 				if (x < btnRegister.getWidth() + 10 && x > -10
@@ -187,7 +181,7 @@ public class ViewWaitAccept extends View {
 
 		btnLogin = new Label("Đăng nhập", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, FontType.Light),
-				new Color(0, 191 / 255f, 1, 1))) {
+				Constants.COLOR_ACTIONBAR)) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {
 				if (x < btnLogin.getWidth() + 10 && x > -10
@@ -228,8 +222,8 @@ public class ViewWaitAccept extends View {
 	}
 
 	public void registerKeyboard(TextField tf, int config) {
-//		AbstractGameScreen.keyboard.registerTextField(tf, config,
-//				KeyboardConfig.SINGLE_LINE);
+		// AbstractGameScreen.keyboard.registerTextField(tf, config,
+		// KeyboardConfig.SINGLE_LINE);
 	}
 
 	@Override

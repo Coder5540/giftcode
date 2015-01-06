@@ -19,7 +19,8 @@ public class Img extends Image {
 	private boolean			ignoreUpdate		= false;
 	private OnClickListener	onClickListener;
 	private Vector2			offsetBoundClick	= new Vector2(0, 0);
-	private float tapScale = 1.2f;
+	private float			tapScale			= 1.2f;
+
 	public Img(Texture texture) {
 		super(texture);
 		setup();
@@ -38,7 +39,8 @@ public class Img extends Image {
 				super.clicked(event, x, y);
 				final float px = x;
 				final float py = y;
-				addAction(Actions.sequence(Actions.scaleTo(tapScale, tapScale, .05f),
+				addAction(Actions.sequence(
+						Actions.scaleTo(tapScale, tapScale, .05f),
 						Actions.scaleTo(1f, 1f, .1f, Interpolation.swingOut),
 						Actions.run(new Runnable() {
 							@Override

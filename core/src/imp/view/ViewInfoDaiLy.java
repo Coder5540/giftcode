@@ -3,6 +3,7 @@ package imp.view;
 import utils.factory.FontFactory.FontType;
 import utils.networks.UserInfo;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -15,8 +16,8 @@ import com.coder5560.game.views.View;
 
 public class ViewInfoDaiLy extends View {
 
-	ScrollPane scroll;
-	Table content;
+	ScrollPane	scroll;
+	Table		content;
 
 	@Override
 	public String getLabel() {
@@ -25,10 +26,10 @@ public class ViewInfoDaiLy extends View {
 
 	public void buildComponent() {
 		this.top();
-		
+
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch)));
-		
+
 		content = new Table();
 		content.left();
 		scroll = new ScrollPane(content);
@@ -71,7 +72,7 @@ public class ViewInfoDaiLy extends View {
 		table.padBottom(10);
 		Label lbTitle = new Label(title, new LabelStyle(
 				Assets.instance.fontFactory.getFont(17, FontType.Regular),
-				Constants.COLOR_ACTIONBAR));
+				new Color(100 / 255f, 100 / 255f, 100 / 255f, 1)));
 		Label lbInfo = new Label(info, new LabelStyle(
 				Assets.instance.fontFactory.getFont(25, FontType.Regular),
 				Constants.COLOR_ACTIONBAR));

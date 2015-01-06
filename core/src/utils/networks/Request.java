@@ -110,6 +110,10 @@ public class Request {
 
 	public void login(String userName, String pass, String deviceID,
 			String deviceName, HttpResponseListener listener) {
+		System.out.println("Login Detail : " + "username " + userName + " + "
+				+ "pass " + pass + " + " + "device id " + deviceID + " + "
+				+ "deviceName " + deviceName);
+
 		post(CommandRequest.LOGIN,
 				ParamsBuilder
 						.builder()
@@ -121,6 +125,7 @@ public class Request {
 								hash(userName + pass
 										+ ConnectionConfig.CLIENT_KEY)).build(),
 				listener);
+
 	}
 
 	public void active(String phone, String activeCode,
@@ -205,6 +210,7 @@ public class Request {
 						.add(ExtParamsKey.EMAIL, email)
 						.add(ExtParamsKey.DEVICE_ID, Constants.DEVICE_ID)
 						.add(ExtParamsKey.DEVICE_NAME, Constants.DEVICE_NAME)
+						.add(ExtParamsKey.CURRENCY, UserInfo.currency)
 						.add(ExtParamsKey.SIGNATURE,
 								hash(phoneNumber + pass + Constants.DEVICE_ID
 										+ ConnectionConfig.CLIENT_KEY)).build(),
@@ -624,7 +630,62 @@ public class Request {
 				listener);
 	}
 
-	public void requestQuitApp(String fullName) {
-		
+	public void requestQuitApp(String agencyName, HttpResponseListener listener) {
+		post(CommandRequest.LOG_OUT,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void requestPing(String agencyName, String deviceName,
+			HttpResponseListener listener) {
+		post(CommandRequest.PING,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + ConnectionConfig.CLIENT_KEY))
+						.add(ExtParamsKey.DEVICE_NAME, deviceName).build(),
+				listener);
+	}
+
+	public void getListMoneyCashOut(String agencyName, String currency,
+			HttpResponseListener listener) {
+		post(CommandRequest.GET_LIST_MONEY_CASH_OUT,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.CURRENCY, currency)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void generateCodeCashOut(String agencyName, int money_cash_out,
+			HttpResponseListener listener) {
+		post(CommandRequest.GENERATE_CODE_CASH_OUT,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.MONEY_CASH_OUT, money_cash_out)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
+	}
+
+	public void getCodeCashOutLog(String agencyName, String dateFrom,
+			String dateTo, HttpResponseListener listener) {
+		post(CommandRequest.GET_CODE_CASH_OUT_LOG,
+				ParamsBuilder
+						.builder()
+						.add(ExtParamsKey.AGENCY_NAME, agencyName)
+						.add(ExtParamsKey.DATE_FROM, dateFrom)
+						.add(ExtParamsKey.DATE_TO, dateTo)
+						.add(ExtParamsKey.SIGNATURE,
+								hash(agencyName + ConnectionConfig.CLIENT_KEY))
+						.build(), listener);
 	}
 }

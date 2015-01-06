@@ -1,9 +1,9 @@
 package utils.screen;
 
+import utils.factory.Log;
 import utils.factory.PlatformResolver;
 import utils.networks.FacebookConnector;
 import utils.networks.ImageDownloader;
-import utils.networks.Request;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -139,11 +139,7 @@ public abstract class GameCore implements ApplicationListener {
 			this.batch.dispose();
 			this.init = false;
 		}
-		
-		Request.getInstance().killAllProcess();
-//		Request.getInstance().requestQuitApp(UserInfo.getInstance().);
 		Assets.instance.assetManager.dispose();
-
 	}
 
 	public void setPlatformResolver(PlatformResolver resolver) {
@@ -165,5 +161,4 @@ public abstract class GameCore implements ApplicationListener {
 	public void setNetworkManager(NetworkManager networkManager) {
 		this.networkManager = networkManager;
 	}
-
 }

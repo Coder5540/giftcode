@@ -55,44 +55,44 @@ import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
 public class ViewLogChart extends View {
-	int						typeView;
-	public static final int	TYPE_SEND_MONEY			= 0;
-	public static final int	TYPE_RECEIVE_MONEY		= 1;
-	public static final int	TYPE_GIFTCODE			= 2;
+	int typeView;
+	public static final int TYPE_SEND_MONEY = 0;
+	public static final int TYPE_RECEIVE_MONEY = 1;
+	public static final int TYPE_GIFTCODE = 2;
 
-	String					response				= "";
-	boolean					isLoadTotal				= false;
-	String					responese				= "";
-	boolean					isLoad					= false;
-	ScrollPane				scroll;
-	Table					content;
-	Group					gTop;
-	DatePicker				dateFrom;
-	DatePicker				dateTo;
-	CustomTextField			tfSearch;
-	PartnerPicker			partner;
-	PartnerPicker			partnerFun;
-	TextButton				btnXem;
-	Group					gExtendDate;
-	boolean					isExtend				= false;
-	boolean					isChange;
-	String					stateofpartnerFun		= "0";
-	String					laststateofpartnerFun	= "0";
+	String response = "";
+	boolean isLoadTotal = false;
+	String responese = "";
+	boolean isLoad = false;
+	ScrollPane scroll;
+	Table content;
+	Group gTop;
+	DatePicker dateFrom;
+	DatePicker dateTo;
+	CustomTextField tfSearch;
+	PartnerPicker partner;
+	PartnerPicker partnerFun;
+	TextButton btnXem;
+	Group gExtendDate;
+	boolean isExtend = false;
+	boolean isChange;
+	String stateofpartnerFun = "0";
+	String laststateofpartnerFun = "0";
 
-	Image					iconextendDate;
-	PartnerSelectBox		quickDatePicker;
-	boolean					isChangeFun;
-	int						stateFun;
+	Image iconextendDate;
+	PartnerSelectBox quickDatePicker;
+	boolean isChangeFun;
+	int stateFun;
 
-	Label					titleView;
+	Label titleView;
 
-	Table					gBottom;
-	Image					icon;
-	Label					lbTitle;
-	Label					lbContent;
+	Table gBottom;
+	Image icon;
+	Label lbTitle;
+	Label lbContent;
 
-	long					totalMoney				= 0;
-	String					username				= "";
+	long totalMoney = 0;
+	String username = "";
 
 	public ViewLogChart buildComponent(int type) {
 		username = AppPreference.instance.name;
@@ -398,7 +398,7 @@ public class ViewLogChart extends View {
 			String message = json.getString(ExtParamsKey.MESSAGE);
 			if (result) {
 				if (typeView == TYPE_RECEIVE_MONEY) {
-					totalMoney = json.getLong(ExtParamsKey.MONEY_RECEIVE);
+					totalMoney = Math.abs(json.getLong(ExtParamsKey.MONEY_RECEIVE));
 				} else if (typeView == TYPE_SEND_MONEY) {
 					totalMoney = json.getLong(ExtParamsKey.MONEY_TRANSFER);
 				} else if (typeView == TYPE_GIFTCODE) {
@@ -537,7 +537,7 @@ public class ViewLogChart extends View {
 																Constants.HEIGHT_SCREEN
 																		- Constants.HEIGHT_ACTIONBAR));
 										viewLogTransferMoney
-												.buildComponent(ViewLogTransferMoney.TYPE_RECEIVE);
+												.buildComponent(ViewLogMoneyDetail.TYPE_RECEIVE);
 										viewLogTransferMoney.setDate(date);
 										viewLogTransferMoney.setFun(1);
 									}

@@ -33,6 +33,7 @@ public class UserInfo {
 	public UserInfo() {
 		this.listPartners = new ArrayList<UserInfo.Partner>();
 		this.permission = new Permission();
+		currency = "PLN";
 	}
 
 	public static UserInfo getInstance() {

@@ -1,5 +1,6 @@
 package com.coder5560.game.assets;
 
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -20,6 +21,7 @@ public class AssetUI {
 
 	private TextureRegion	reg_ninepathKnob;
 	private TextureRegion	reg_logout;
+	private TextureRegion	reg_logo;
 
 	public TextureRegion	reg_userManagements;
 	private TextureRegion	reg_icon_transition;
@@ -138,6 +140,12 @@ public class AssetUI {
 		if (reg_icon_home == null)
 			reg_icon_home = textureAtlas.findRegion("home");
 		return reg_icon_home;
+	}
+
+	public TextureRegion getLogo() {
+		if (reg_logo == null)
+			reg_logo = textureAtlas.findRegion("logo");
+		return reg_logo;
 	}
 
 }

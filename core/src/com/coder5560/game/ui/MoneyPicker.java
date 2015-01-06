@@ -2,6 +2,7 @@ package com.coder5560.game.ui;
 
 import java.util.ArrayList;
 
+import utils.factory.Factory;
 import utils.factory.FontFactory.FontType;
 import utils.networks.UserInfo;
 
@@ -15,16 +16,23 @@ import com.coder5560.game.ui.MoneyPicker.MyPartner;
 
 public class MoneyPicker extends SelectBox<MyPartner> {
 
-	ArrayList<MyPartner> list;
+	ArrayList<MyPartner>	list;
 
-	public static int ALL = -1;
-	protected LabelStyle style = new LabelStyle(
-			Assets.instance.fontFactory.getFont(20, FontType.Regular),
-			Color.BLACK);
+	public static int		ALL				= -1;
+	protected LabelStyle	style			= new LabelStyle(
+													Assets.instance.fontFactory.getFont(
+															20,
+															FontType.Regular),
+													Color.BLACK);
+	private String			customCurrency	= "";
 
 	public MoneyPicker(SelectBoxStyle style) {
 		super(style);
 		init();
+	}
+
+	public void setCustomCurrency(String customCurrency) {
+		this.customCurrency = customCurrency;
 	}
 
 	public MoneyPicker(Skin skin) {
@@ -58,7 +66,7 @@ public class MoneyPicker extends SelectBox<MyPartner> {
 	}
 
 	public class MyPartner {
-		public int value;
+		public int	value;
 
 		public MyPartner(int code) {
 			this.value = code;
@@ -66,7 +74,10 @@ public class MoneyPicker extends SelectBox<MyPartner> {
 
 		@Override
 		public String toString() {
-			return value + " " + UserInfo.currency;
+			return Factory.getDotMoney(value)
+					+ " "
+					+ (customCurrency.equalsIgnoreCase("") ? UserInfo.currency
+							: customCurrency);
 		}
 	}
 

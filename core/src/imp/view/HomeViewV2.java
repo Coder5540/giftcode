@@ -39,20 +39,19 @@ import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
 public class HomeViewV2 extends View {
-	String		response		= "";
-	boolean		isLoad			= false;
+	String response = "";
+	boolean isLoad = false;
 
-	Table		content;
-	String		username		= "";
-	int			role_id;
-	Color		colorItem		= new Color(255 / 255f, 255 / 255f, 255 / 255f,
-										.4f);
-	Color		colorTextTitle	= new Color(0.2f, 0.2f, 0.2f, 1f);
-	Color		colorText		= Constants.COLOR_ACTIONBAR;
+	Table content;
+	String username = "";
+	int role_id;
+	Color colorItem = new Color(255 / 255f, 255 / 255f, 255 / 255f, .4f);
+	Color colorTextTitle = new Color(0.2f, 0.2f, 0.2f, 1f);
+	Color colorText = Constants.COLOR_ACTIONBAR;
 
-	public long	tongtiendacap;
-	public long	tongtiendanhan;
-	public long	tongtiengiftcode;
+	public long tongtiendacap;
+	public long tongtiendanhan;
+	public long tongtiengiftcode;
 
 	public HomeViewV2 buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
@@ -96,7 +95,7 @@ public class HomeViewV2 extends View {
 				.padBottom(2).row();
 	}
 
-	Actor	actorExit	= new Actor();
+	Actor actorExit = new Actor();
 
 	@Override
 	public void update(float delta) {
@@ -109,7 +108,8 @@ public class HomeViewV2 extends View {
 			String message = json.getString(ExtParamsKey.MESSAGE);
 			if (result) {
 				tongtiendanhan = json.getLong(ExtParamsKey.MONEY_RECEIVE);
-				tongtiendacap = json.getLong(ExtParamsKey.MONEY_TRANSFER);
+				tongtiendacap = Math.abs(json
+						.getLong(ExtParamsKey.MONEY_TRANSFER));
 				tongtiengiftcode = json.getLong(ExtParamsKey.MONEY_GIFT_CODE);
 				long tiencon = json.getLong(ExtParamsKey.MONEY_REMAIN);
 				if (role_id != 0) {
@@ -287,7 +287,7 @@ public class HomeViewV2 extends View {
 	}
 
 	class ItemTotal extends Group {
-		Image	bg;
+		Image bg;
 
 		public ItemTotal(String title, String content, float width, float height) {
 			setSize(width, height);

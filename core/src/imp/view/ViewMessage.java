@@ -6,7 +6,6 @@ import utils.factory.StringSystem;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeType.Face;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -55,18 +54,19 @@ public class ViewMessage extends View {
 				.getFont(18, FontType.Light);
 		styleTime.fontColor = Constants.COLOR_ACTIONBAR;
 
-		time = new Label(Factory.getTime(_time), styleTime);
+		time = new Label(Factory.getTimeContainSecond(_time), styleTime);
 		time.setTouchable(Touchable.disabled);
 		time.setWidth(getWidth() / 2);
 		time.setWrap(true);
+		time.setAlignment(Align.topRight);
 
 		setBackground(new NinePatchDrawable(new NinePatch(
 				Assets.instance.ui.reg_ninepatch, Color.WHITE)));
 		top();
-		add(lbShortDescription).expand().fill().align(Align.top).padLeft(20)
-				.padTop(20).padRight(20);
-		row();
-		add(time).padRight(20).padTop(100).right();
+		add(lbShortDescription).expandX().fillX().align(Align.top).padLeft(20)
+				.padTop(20).padRight(20).row();
+		add(time).expandY().fillY().padRight(20).padTop(10)
+				.align(Align.topRight);
 		setTouchable(Touchable.enabled);
 	}
 

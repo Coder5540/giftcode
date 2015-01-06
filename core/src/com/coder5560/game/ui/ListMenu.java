@@ -58,6 +58,8 @@ public class ListMenu extends ScrollPane {
 	private OnClickListener	listGiftcodeClicked;
 	private OnClickListener	onHistoryGiftcodeClicked;
 	private OnClickListener	onHomeViewClicked;
+	private OnClickListener	onNewCodeClicked;
+	private OnClickListener	onHistoryCodeClicked;
 
 	LabelStyle				lbStyle;
 	private IconMail		iconMail;
@@ -79,9 +81,8 @@ public class ListMenu extends ScrollPane {
 		Color colorItemMenu = Constants.COLOR_ACTIONBAR;
 		Color colorText = Color.WHITE;
 
-		ItemMenu itemHomeView = new ItemMenu(
-				Assets.instance.ui.getIconHome(), "TRANG CHỦ",
-				getWidth(), 50, colorItemMenu, colorText, false);
+		ItemMenu itemHomeView = new ItemMenu(Assets.instance.ui.getIconHome(),
+				"TRANG CHỦ", getWidth(), 50, colorItemMenu, colorText, false);
 		addLine(table, 2, colorItemMenu);
 		addItem(itemHomeView, 0);
 
@@ -119,6 +120,53 @@ public class ListMenu extends ScrollPane {
 			addLine(table, 2, colorItemMenu);
 			addItem(itemGiftCode, 3);
 		}
+
+		ItemMenu itemCode = new ItemMenu(Assets.instance.ui.getIconGiftcode(),
+				"GIFT CODE", getWidth(), 50, colorItemMenu, colorText);
+		createItemcode(itemCode);
+		if (itemCode.getChirldenSize() > 0) {
+			addLine(table, 2, colorItemMenu);
+			addItem(itemCode, 4);
+		}
+	}
+
+	private void createItemcode(ItemMenu itemGiftCode) {
+		LabelButton newCode = new LabelButton("Sinh Code", lbStyle, getWidth(),
+				45);
+		newCode.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(float x, float y) {
+				if (onNewCodeClicked != null) {
+					onNewCodeClicked.onClick(x, y);
+				}
+			}
+		});
+
+		LabelButton historyCode = new LabelButton("lịch sử code", lbStyle,
+				getWidth(), 45);
+		historyCode.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(float x, float y) {
+				if (onHistoryCodeClicked != null) {
+					onHistoryCodeClicked.onClick(x, y);
+				}
+			}
+		});
+
+//		if (UserInfo
+//				.getInstance()
+//				.getPermission()
+//				.isHasPermission(PermissionConfig.PERMISSION_NEW_CODE.ordinal()))
+			itemGiftCode.addComponent(newCode);
+//		if (UserInfo
+//				.getInstance()
+//				.getPermission()
+//				.isHasPermission(
+//						PermissionConfig.PERMISSION_HISTORY_CODE.ordinal()))
+			itemGiftCode.addComponent(historyCode);
+		
+		
 	}
 
 	private void createItemGiftcode(ItemMenu itemGiftCode) {
@@ -532,7 +580,7 @@ public class ListMenu extends ScrollPane {
 									Interpolation.exp10));
 							isExpand = true;
 						} else {
-							setHeight(minheight);
+
 							hideSubButton();
 							isExpand = false;
 						}
@@ -773,6 +821,7 @@ public class ListMenu extends ScrollPane {
 					Actions.run(new Runnable() {
 						@Override
 						public void run() {
+							setHeight(minheight);
 							item.setY(getHeight() - item.getHeight());
 							setHeightForCell(ItemMenu.this, minheight);
 							for (int i = 0; i < subButton.size(); i++) {
@@ -1010,6 +1059,14 @@ public class ListMenu extends ScrollPane {
 
 	public void setOnHomeViewClicked(OnClickListener onHomeViewClicked) {
 		this.onHomeViewClicked = onHomeViewClicked;
+	}
+
+	public void setOnNewCodeClicked(OnClickListener onNewCodeClicked) {
+		this.onNewCodeClicked = onNewCodeClicked;
+	}
+
+	public void setOnHistoryCodeClicked(OnClickListener onHistoryCodeClicked) {
+		this.onHistoryCodeClicked = onHistoryCodeClicked;
 	}
 
 }

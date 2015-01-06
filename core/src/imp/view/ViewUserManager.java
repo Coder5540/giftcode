@@ -59,27 +59,20 @@ public class ViewUserManager extends View {
 	Array<User>				listAgency1			= new Array<ViewUserManager.User>();
 	Array<User>				listAgency2			= new Array<ViewUserManager.User>();
 
-	Color					bgItemColor			= new Color(0 / 255f,
-														191 / 255f, 255 / 255f,
-														0f);
-	Color					textItemColor		= new Color(0 / 255f,
-														191 / 255f, 255 / 255f,
-														1f);
-	Color					dataItemColor		= new Color(0 / 255f,
-														191 / 255f, 255 / 255f,
-														0f);
-	Color					iconItemColor		= new Color(0 / 255f,
-														191 / 255f, 255 / 255f,
-														1f);
+	Color					bgItemColor			= new Color(
+														Constants.COLOR_ACTIONBAR);
+	Color					textItemColor		= new Color(
+														Constants.COLOR_ACTIONBAR);
+	Color					dataItemColor		= new Color(
+														Constants.COLOR_ACTIONBAR);
+	Color					iconItemColor		= new Color(
+														Constants.COLOR_ACTIONBAR);
 
 	public ViewUserManager() {
 		super();
+		dataItemColor.a = 0;
+		bgItemColor.a = 0;
 
-	}
-
-	@Override
-	public String getLabel() {
-		return super.getLabel();
 	}
 
 	public void buildComponent() {
@@ -624,14 +617,6 @@ public class ViewUserManager extends View {
 		Group				parent;
 		ItemState			itemUserState	= ItemState.COLLAPSE;
 		Array<SubItemUser>	listSubItem;
-		Color				bgItemColor		= new Color(0 / 255f, 191 / 255f,
-													255 / 255f, 0f);
-		Color				textItemColor	= new Color(0 / 255f, 191 / 255f,
-													255 / 255f, 1f);
-		Color				dataItemColor	= new Color(0 / 255f, 191 / 255f,
-													255 / 255f, 1f);
-		Color				iconItemColor	= new Color(0 / 255f, 191 / 255f,
-													255 / 255f, 1f);
 
 		public SubItemUser(Group parent, int id, float width, float height,
 				TextureRegion reg_icon, String text, String textnumber,

@@ -41,13 +41,13 @@ import com.coder5560.game.views.View;
 
 public class ViewRegister extends View {
 
-	private CustomTextField	tfPhone, tfphoneIntro, tfFullName, tfAddress,
+	private CustomTextField tfPhone, tfphoneIntro, tfFullName, tfAddress,
 			tfEmail;
-	private CustomTextField	tfPass, tfRePass;
-	private JsonValue		respone;
-	Table					content	= new Table();
-	ScrollPane				scrTextField;
-	Label					btnRegister;
+	private CustomTextField tfPass, tfRePass;
+	private JsonValue respone;
+	Table content = new Table();
+	ScrollPane scrTextField;
+	Label btnRegister;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -62,7 +62,7 @@ public class ViewRegister extends View {
 			}
 		});
 
-		Image titleLogin = new Image(Assets.instance.getRegion("8B8 GIFT CODE"));
+		Image titleLogin = new Image(Assets.instance.ui.getLogo());
 		titleLogin.setSize(400, 40);
 		titleLogin.setPosition(getWidth() / 2 - titleLogin.getWidth() / 2,
 				getHeight() - titleLogin.getHeight() - 50);
@@ -121,14 +121,7 @@ public class ViewRegister extends View {
 		registerKeyboard(tfPass, KeyboardConfig.PASSWORD);
 		registerKeyboard(tfRePass, KeyboardConfig.PASSWORD);
 
-		TextButtonStyle btStyle = new TextButtonStyle();
-		btStyle.up = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 1)));
-		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
-				new Color(0, 191 / 255f, 1, 0.5f)));
-		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
-		btStyle.fontColor = Color.WHITE;
-		TextButton btOk = new TextButton("Đăng ký", btStyle);
+		TextButton btOk = new TextButton("Đăng ký", Style.ins.textButtonStyle);
 		btOk.setSize(370, 55);
 		btOk.setPosition(content.getX(), content.getY() - btOk.getHeight() - 20);
 		btOk.addListener(new ClickListener() {
@@ -220,7 +213,7 @@ public class ViewRegister extends View {
 
 		btnRegister = new Label("Đăng nhập", new LabelStyle(
 				Assets.instance.fontFactory.getFont(20, FontType.Light),
-				new Color(0, 191 / 255f, 1, 1))) {
+				Constants.COLOR_ACTIONBAR)) {
 			@Override
 			public Actor hit(float x, float y, boolean touchable) {
 				if (x < btnRegister.getWidth() + 10 && x > -10
@@ -276,8 +269,8 @@ public class ViewRegister extends View {
 					scrTextField.setScrollY(Constants.HEIGHT_SCREEN / 2 + 50
 							- yDef);
 				}
-//				AbstractGameScreen.keyboard.registerTextField(tf, config,
-//						KeyboardConfig.SINGLE_LINE);
+				// AbstractGameScreen.keyboard.registerTextField(tf, config,
+				// KeyboardConfig.SINGLE_LINE);
 				return true;
 			}
 		});
