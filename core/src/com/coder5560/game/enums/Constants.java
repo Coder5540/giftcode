@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 
 public class Constants {
 
-	public static final int		HEIGHT_SCREEN			= 800;
-	public static final int		WIDTH_SCREEN			= 480;
+	public static int			HEIGHT_SCREEN			= 800;
+	public static int			WIDTH_SCREEN			= 480;
 	public static final int		HEIGHT_ACTIONBAR		= 75;
 	public static final int		WIDTH_MAINMENU			= 300;
 	public static final String	APP_NAME				= "8b8gifcode";
@@ -18,9 +18,9 @@ public class Constants {
 	// public static final Color COLOR_ACTIONBAR = new Color(0,
 	// 191 / 255f, 1,
 	// 1f);
-	public static final Color	COLOR_ACTIONBAR			= new Color(37 / 255f,
-																101 / 255f,
-																200 / 255f, 1f);
+	public static final Color	COLOR_ACTIONBAR			= new Color(199 / 255f,
+																10 / 255f,
+																20 / 255f, 1f);
 	public static Density		density					= Density.mdpi;
 
 	public static String[]		stateAccount			= { "Chưa kích hoạt",

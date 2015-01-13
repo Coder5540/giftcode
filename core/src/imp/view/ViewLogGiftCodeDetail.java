@@ -45,6 +45,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.RoleID;
+import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.DatePicker;
@@ -742,6 +743,7 @@ public class ViewLogGiftCodeDetail extends View {
 	@Override
 	public void hide(OnCompleteListener listener) {
 		super.hide(listener);
+		setViewState(ViewState.DISPOSE);
 	}
 
 	@Override

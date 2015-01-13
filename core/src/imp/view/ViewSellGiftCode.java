@@ -45,17 +45,20 @@ import com.coder5560.game.views.View;
 
 public class ViewSellGiftCode extends View {
 
-	MoneyPicker pkAmount;
-	private JsonValue respone;
-	Table tbGenerate = new Table(), tbGiftCode = new Table();
-	Label lbMoneyInGame;
-	float rateMoney = 1;
-	Label lbAdminMoney;
-	TextfieldStatic lbNewGiftCode;
-	TextButton btCopy, btReturn;
-	private JsonValue responeReturn;
+	MoneyPicker			pkAmount;
+	Table				tbGenerate		= new Table(),
+			tbGiftCode = new Table();
+	Label				lbMoneyInGame;
+	float				rateMoney		= 1;
+	Label				lbAdminMoney;
+	TextfieldStatic		lbNewGiftCode;
+	TextButton			btCopy, btReturn;
 
-	GiftCode currentGiftCode = new GiftCode("", "");
+	private JsonValue	responeReturn;
+	private JsonValue	responeGetListMoney;
+	private JsonValue	responeExchange;
+
+	GiftCode			currentGiftCode	= new GiftCode("", "");
 
 	@Override
 	public String getLabel() {
@@ -97,7 +100,7 @@ public class ViewSellGiftCode extends View {
 				Constants.COLOR_ACTIONBAR));
 		Color colorDown = new Color(Constants.COLOR_ACTIONBAR);
 		colorDown.a = 0.5f;
-		
+
 		btStyle.down = new NinePatchDrawable(new NinePatch(Style.ins.np1,
 				colorDown));
 		btStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Medium);
@@ -109,7 +112,7 @@ public class ViewSellGiftCode extends View {
 		btGetGiftCode.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (pkAmount.getListData().size == 0) {
+				if (pkAmount.getSize() == 0) {
 					return;
 				}
 				Loading.ins.show(ViewSellGiftCode.this);
@@ -245,8 +248,8 @@ public class ViewSellGiftCode extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-//				AbstractGameScreen.keyboard.registerTextField(tf, config,
-//						KeyboardConfig.SINGLE_LINE);
+				// AbstractGameScreen.keyboard.registerTextField(tf, config,
+				// KeyboardConfig.SINGLE_LINE);
 				return true;
 			}
 		});
@@ -258,7 +261,31 @@ public class ViewSellGiftCode extends View {
 			lbAdminMoney.setText("/" + Factory.getDotMoney(UserInfo.money)
 					+ " " + UserInfo.currency);
 		}
+		updateGetExchange(deltaTime);
+		updateReturnCode(deltaTime);
+		updateListMoney(deltaTime);
 
+	}
+
+	private void updateGetExchange(float deltaTime) {
+		if (responeExchange != null) {
+			if (responeExchange.getBoolean(ExtParamsKey.RESULT)) {
+				rateMoney = responeExchange
+						.getFloat(ExtParamsKey.MONEY_IN_GAME) / 1000;
+				lbMoneyInGame.setText(Factory.getDotMoney((int) rateMoney
+						* pkAmount.getMoney())
+						+ "");
+				Loading.ins.hide();
+			} else {
+				Toast.makeText(getStage(),
+						responeExchange.getString(ExtParamsKey.MESSAGE),
+						Toast.LENGTH_SHORT);
+			}
+			responeExchange = null;
+		}
+	}
+
+	private void updateReturnCode(float deltaTime) {
 		if (responeReturn != null) {
 			boolean resut = responeReturn.getBoolean(ExtParamsKey.RESULT);
 			Loading.ins.hide();
@@ -270,28 +297,30 @@ public class ViewSellGiftCode extends View {
 				updateInfo();
 				hideButton();
 			} else {
+				// do nothing
 			}
 			responeReturn = null;
 		}
-
 	}
 
-	class LoginListener implements HttpResponseListener {
+	private void updateListMoney(float delta) {
+		if (responeGetListMoney != null) {
+			if (responeGetListMoney.getBoolean(ExtParamsKey.RESULT)) {
+				JsonValue list = responeGetListMoney.get(ExtParamsKey.LIST);
+				pkAmount.reset();
+				for (int i = 0; i < list.size; i++) {
+					pkAmount.addPartner(list.getInt(i));
+				}
+				lbMoneyInGame.setText(Factory.getDotMoney((int) rateMoney
+						* pkAmount.getMoney())
+						+ "");
 
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			respone = (new JsonReader())
-					.parse(httpResponse.getResultAsString());
-		}
-
-		@Override
-		public void failed(Throwable t) {
-
-		}
-
-		@Override
-		public void cancelled() {
-
+			} else {
+				Toast.makeText(getStage(),
+						responeGetListMoney.getString(ExtParamsKey.MESSAGE),
+						Toast.LENGTH_SHORT);
+			}
+			responeGetListMoney = null;
 		}
 	}
 
@@ -301,38 +330,7 @@ public class ViewSellGiftCode extends View {
 		Loading.ins.show(this);
 		lbAdminMoney.setText("/" + Factory.getDotMoney(UserInfo.money) + " "
 				+ UserInfo.currency);
-		Request.getInstance().getExchangeInGame(1000, UserInfo.currency,
-				new HttpResponseListener() {
-					@Override
-					public void handleHttpResponse(HttpResponse httpResponse) {
-						JsonValue respone = (new JsonReader())
-								.parse(httpResponse.getResultAsString());
-						if (respone.getBoolean(ExtParamsKey.RESULT)) {
-							Log.d(respone.toString());
-							rateMoney = respone
-									.getFloat(ExtParamsKey.MONEY_IN_GAME) / 1000;
-							lbMoneyInGame.setText(Factory
-									.getDotMoney((int) rateMoney
-											* pkAmount.getMoney())
-									+ "");
-							Loading.ins.hide();
-						} else {
-							Toast.makeText(getStage(),
-									respone.getString(ExtParamsKey.MESSAGE),
-									Toast.LENGTH_SHORT);
-						}
-					}
 
-					@Override
-					public void failed(Throwable t) {
-						Loading.ins.hide();
-					}
-
-					@Override
-					public void cancelled() {
-						Loading.ins.hide();
-					}
-				});
 		Request.getInstance().getListMoney(UserInfo.phone, new GetListMoney());
 	}
 
@@ -443,24 +441,27 @@ public class ViewSellGiftCode extends View {
 
 		@Override
 		public void handleHttpResponse(HttpResponse httpResponse) {
-			JsonValue responeReturn = (new JsonReader()).parse(httpResponse
+			responeGetListMoney = (new JsonReader()).parse(httpResponse
 					.getResultAsString());
-			Log.d(responeReturn.toString());
-			if (responeReturn.getBoolean(ExtParamsKey.RESULT)) {
-				JsonValue list = responeReturn.get(ExtParamsKey.LIST);
-				for (int i = 0; i < list.size; i++) {
-					pkAmount.addPartner(list.getInt(i));
-				}
-				lbMoneyInGame.setText(Factory.getDotMoney((int) rateMoney
-						* pkAmount.getMoney())
-						+ "");
+			Log.d(responeGetListMoney.toString());
+			Request.getInstance().getExchangeInGame(1000, UserInfo.currency,
+					new HttpResponseListener() {
+						@Override
+						public void handleHttpResponse(HttpResponse httpResponse) {
+							responeExchange = (new JsonReader())
+									.parse(httpResponse.getResultAsString());
+						}
 
-			} else {
-				Toast.makeText(getStage(),
-						responeReturn.getString(ExtParamsKey.MESSAGE),
-						Toast.LENGTH_SHORT);
+						@Override
+						public void failed(Throwable t) {
+							Loading.ins.hide();
+						}
 
-			}
+						@Override
+						public void cancelled() {
+							Loading.ins.hide();
+						}
+					});
 		}
 
 		@Override

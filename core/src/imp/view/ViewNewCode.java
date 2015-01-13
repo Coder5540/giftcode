@@ -1,7 +1,6 @@
 package imp.view;
 
 import utils.elements.GiftCode;
-import utils.factory.AppPreference;
 import utils.factory.Factory;
 import utils.factory.FontFactory.FontType;
 import utils.factory.Log;
@@ -37,7 +36,6 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnCompleteListener;
-import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.ui.MoneyPicker;
 import com.coder5560.game.ui.TextfieldStatic;
@@ -46,14 +44,15 @@ import com.coder5560.game.views.View;
 public class ViewNewCode extends View {
 
 	MoneyPicker			pkAmount;
-	private JsonValue	responeNewCode;
-	Table				tbGenerate		= new Table(),
-			tbGiftCode = new Table();
+	Table				tbGenerate		= new Table();
+	Table				tbGiftCode		= new Table();
 	Label				lbMoneyRealMoney;
 	float				rateMoney		= 1;
 	TextfieldStatic		lbNewCode;
-	TextButton			btCopy, btReturn;
-	private JsonValue	responeReturn;
+	TextButton			btCopy;
+	private JsonValue	responeNewCode;
+	private JsonValue	responseListMoney;
+	private JsonValue	responeExchange;
 
 	GiftCode			currentGiftCode	= new GiftCode("", "");
 
@@ -86,6 +85,8 @@ public class ViewNewCode extends View {
 		pkAmount.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
+				if (pkAmount.getSize() == 0)
+					return;
 				lbMoneyRealMoney.setText(Factory
 						.getDotMoney((long) (1 / rateMoney * pkAmount
 								.getMoney()))
@@ -110,7 +111,7 @@ public class ViewNewCode extends View {
 		btGetGiftCode.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if (pkAmount.getListData().size == 0) {
+				if (pkAmount.getSize() == 0) {
 					return;
 				}
 				Loading.ins.show(ViewNewCode.this);
@@ -148,31 +149,6 @@ public class ViewNewCode extends View {
 				tbGiftCode.getWidth() - 10);
 		lbNewCode.setContent("Chưa sinh code mới", Align.center);
 
-		btReturn = new TextButton("Hủy", btStyle);
-		btReturn.setSize(370, 55);
-		btReturn.setOrigin(Align.center);
-		btReturn.setTransform(true);
-		btReturn.setPosition(tbGenerate.getX(),
-				tbGenerate.getY() - btReturn.getHeight() - 20);
-		btReturn.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				DialogCustom dl = new DialogCustom("");
-				dl.text("Bạn có chắc chắn muốn trả lại Gift Code này");
-				dl.button("Ok", new Runnable() {
-					@Override
-					public void run() {
-						Loading.ins.show(ViewNewCode.this);
-						Request.getInstance().returnGiftCode(
-								AppPreference.instance.name,
-								currentGiftCode.id, new ReturnGiftCode());
-						lbNewCode.setContent("...", Align.center);
-					}
-				});
-				dl.button("Cancel");
-				dl.show(getStage());
-			}
-		});
 		btCopy = new TextButton("Copy", btStyle);
 		btCopy.setOrigin(Align.center);
 		btCopy.setSize(370, 55);
@@ -206,32 +182,22 @@ public class ViewNewCode extends View {
 	}
 
 	public void showButton() {
-		btCopy.setVisible(true);
-		btReturn.setVisible(true);
+		btCopy.setVisible(false);
 		btCopy.clearActions();
-		btReturn.clearActions();
-		btReturn.getColor().a = 0.8f;
 		btCopy.getColor().a = 0.8f;
-		btCopy.setScale(0.8f);
-		btReturn.setScale(0.8f);
-		btCopy.addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.fade));
-		btCopy.addAction(Actions.fadeIn(0.2f, Interpolation.fade));
-		btReturn.addAction(Actions.scaleTo(1, 1, 0.2f, Interpolation.fade));
-		btReturn.addAction(Actions.fadeIn(0.2f, Interpolation.fade));
+		btCopy.setScale(0f);
+		btCopy.addAction(Actions.parallel(
+				Actions.sequence(Actions.visible(true),
+						Actions.scaleTo(1, 1, 0.2f, Interpolation.fade)),
+				Actions.fadeIn(0.2f, Interpolation.fade)));
 	}
 
 	public void hideButton() {
 		btCopy.clearActions();
-		btReturn.clearActions();
-
 		btCopy.addAction(Actions.sequence(
 				Actions.scaleTo(0.5f, 0.5f, 0.2f, Interpolation.fade),
 				Actions.hide()));
 		btCopy.addAction(Actions.fadeOut(0.2f, Interpolation.fade));
-		btReturn.addAction(Actions.sequence(
-				Actions.scaleTo(0.5f, 0.5f, 0.2f, Interpolation.fade),
-				Actions.hide()));
-		btReturn.addAction(Actions.fadeOut(0.2f, Interpolation.fade));
 	}
 
 	public void registerKeyboard(final TextField tf, final int config) {
@@ -240,8 +206,6 @@ public class ViewNewCode extends View {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y,
 					int pointer, int button) {
-				// AbstractGameScreen.keyboard.registerTextField(tf, config,
-				// KeyboardConfig.SINGLE_LINE);
 				return true;
 			}
 		});
@@ -260,19 +224,44 @@ public class ViewNewCode extends View {
 			}
 			responeNewCode = null;
 		}
-
-		if (responeReturn != null) {
-			boolean resut = responeReturn.getBoolean(ExtParamsKey.RESULT);
+		if (responseListMoney != null) {
+			Log.d("Response return is catch");
 			Loading.ins.hide();
-			String mess = responeReturn.getString(ExtParamsKey.MESSAGE);
-			Toast.makeText(_stage, mess, Toast.LENGTH_SHORT);
-			if (resut) {
-				UserInfo.money = responeReturn
-						.getInt(ExtParamsKey.UPDATE_MONEY);
-				hideButton();
+			boolean result = responseListMoney.getBoolean(ExtParamsKey.RESULT);
+			String mess = responseListMoney.getString(ExtParamsKey.MESSAGE);
+			if (result) {
+				JsonValue list = responseListMoney.get(ExtParamsKey.LIST);
+				pkAmount.reset();
+				for (int i = 0; i < list.size; i++) {
+					pkAmount.addPartner(list.getInt(i));
+				}
+				lbMoneyRealMoney.setText(Factory
+						.getDotMoney((long) (1 / rateMoney * pkAmount
+								.getMoney()))
+						+ " " + UserInfo.currency);
 			} else {
+				Toast.makeText(getStage(), mess, Toast.LENGTH_SHORT);
 			}
-			responeReturn = null;
+
+			responseListMoney = null;
+		}
+
+		if (responeExchange != null) {
+			if (responeExchange.getBoolean(ExtParamsKey.RESULT)) {
+				Log.d(responeExchange.toString());
+				rateMoney = responeExchange
+						.getFloat(ExtParamsKey.MONEY_IN_GAME) / 1000;
+				lbMoneyRealMoney.setText(Factory
+						.getDotMoney((long) (1 / rateMoney * pkAmount
+								.getMoney()))
+						+ " " + UserInfo.currency);
+				Loading.ins.hide();
+			} else {
+				Toast.makeText(getStage(),
+						responeExchange.getString(ExtParamsKey.MESSAGE),
+						Toast.LENGTH_SHORT);
+			}
+			responeExchange = null;
 		}
 
 	}
@@ -281,38 +270,7 @@ public class ViewNewCode extends View {
 	public void show(OnCompleteListener listener) {
 		super.show(listener);
 		Loading.ins.show(this);
-		Request.getInstance().getExchangeInGame(1000, UserInfo.currency,
-				new HttpResponseListener() {
-					@Override
-					public void handleHttpResponse(HttpResponse httpResponse) {
-						JsonValue respone = (new JsonReader())
-								.parse(httpResponse.getResultAsString());
-						if (respone.getBoolean(ExtParamsKey.RESULT)) {
-							Log.d(respone.toString());
-							rateMoney = respone
-									.getFloat(ExtParamsKey.MONEY_IN_GAME) / 1000;
-							lbMoneyRealMoney.setText(Factory
-									.getDotMoney((long) (1 / rateMoney * pkAmount
-											.getMoney()))
-									+ " " + UserInfo.currency);
-							Loading.ins.hide();
-						} else {
-							Toast.makeText(getStage(),
-									respone.getString(ExtParamsKey.MESSAGE),
-									Toast.LENGTH_SHORT);
-						}
-					}
 
-					@Override
-					public void failed(Throwable t) {
-						Loading.ins.hide();
-					}
-
-					@Override
-					public void cancelled() {
-						Loading.ins.hide();
-					}
-				});
 		Request.getInstance().getListMoneyCashOut(UserInfo.phone,
 				UserInfo.currency, new GetListMoney());
 	}
@@ -326,26 +284,6 @@ public class ViewNewCode extends View {
 	@Override
 	public void back() {
 		super.back();
-	}
-
-	class ReturnGiftCode implements HttpResponseListener {
-
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			responeReturn = (new JsonReader()).parse(httpResponse
-					.getResultAsString());
-		}
-
-		@Override
-		public void failed(Throwable t) {
-
-		}
-
-		@Override
-		public void cancelled() {
-
-		}
-
 	}
 
 	class GetNewCode implements HttpResponseListener {
@@ -372,61 +310,32 @@ public class ViewNewCode extends View {
 		}
 	}
 
-	class SoldGiftCode implements HttpResponseListener {
-
-		@Override
-		public void handleHttpResponse(HttpResponse httpResponse) {
-			Loading.ins.hide();
-			JsonValue responeReturn = (new JsonReader()).parse(httpResponse
-					.getResultAsString());
-			Log.d(responeReturn.toString());
-
-			if (responeReturn.getBoolean(ExtParamsKey.RESULT)) {
-				hideButton();
-				lbNewCode.setContent("Vui lòng sinh code mới", Align.center);
-			} else {
-				Toast.makeText(getStage(),
-						responeReturn.getString(ExtParamsKey.MESSAGE),
-						Toast.LENGTH_SHORT);
-				showButton();
-			}
-		}
-
-		@Override
-		public void failed(Throwable t) {
-			Loading.ins.hide();
-			showButton();
-		}
-
-		@Override
-		public void cancelled() {
-			Loading.ins.hide();
-			showButton();
-		}
-	}
-
 	class GetListMoney implements HttpResponseListener {
 
 		@Override
 		public void handleHttpResponse(HttpResponse httpResponse) {
-			JsonValue responeReturn = (new JsonReader()).parse(httpResponse
+			responseListMoney = (new JsonReader()).parse(httpResponse
 					.getResultAsString());
-			Log.d(responeReturn.toString());
-			if (responeReturn.getBoolean(ExtParamsKey.RESULT)) {
-				JsonValue list = responeReturn.get(ExtParamsKey.LIST);
-				for (int i = 0; i < list.size; i++) {
-					pkAmount.addPartner(list.getInt(i));
-				}
-				lbMoneyRealMoney.setText(Factory
-						.getDotMoney((long) (1 / rateMoney * pkAmount
-								.getMoney()))
-						+ " " + UserInfo.currency);
+			Log.d(responseListMoney.toString());
+			Request.getInstance().getExchangeInGame(1000, UserInfo.currency,
+					new HttpResponseListener() {
+						@Override
+						public void handleHttpResponse(HttpResponse httpResponse) {
+							responeExchange = (new JsonReader())
+									.parse(httpResponse.getResultAsString());
+						}
 
-			} else {
-				Toast.makeText(getStage(),
-						responeReturn.getString(ExtParamsKey.MESSAGE),
-						Toast.LENGTH_SHORT);
-			}
+						@Override
+						public void failed(Throwable t) {
+							Loading.ins.hide();
+						}
+
+						@Override
+						public void cancelled() {
+							Loading.ins.hide();
+						}
+					});
+
 		}
 
 		@Override

@@ -123,13 +123,13 @@ public class ViewInfoDaiLySmall extends View {
 
 	public void setInfo(JsonValue infoUser) {
 		String[] a = new String[] {
-				infoUser.getString(ExtParamsKey.AGENCY_NAME),
 				infoUser.getString(ExtParamsKey.FULL_NAME),
+				infoUser.getString(ExtParamsKey.ADDRESS),
+				infoUser.getString(ExtParamsKey.ROLE_NAME),
+				infoUser.getString(ExtParamsKey.AGENCY_NAME),
+				infoUser.getString(ExtParamsKey.REF_CODE),
 				Factory.getDotMoney(infoUser.getLong(ExtParamsKey.AMOUNT))
 						+ " " + infoUser.getString(ExtParamsKey.CURRENCY),
-				infoUser.getString(ExtParamsKey.REF_CODE),
-				infoUser.getString(ExtParamsKey.ROLE_NAME),
-				infoUser.getString(ExtParamsKey.ADDRESS),
 				infoUser.getString(ExtParamsKey.EMAIL),
 				Factory.getDeviceName(infoUser).replaceAll(",", "\n"),
 				Factory.getDeviceID(infoUser).replaceAll(",", "\n"),
@@ -171,6 +171,17 @@ public class ViewInfoDaiLySmall extends View {
 		content.addAction(Actions.parallel(
 				Actions.scaleTo(1, 1, 0.2f, Interpolation.swingOut),
 				Actions.fadeIn(0.2f, Interpolation.fade)));
+	}
+
+	public void show(float duration, OnCompleteListener listener) {
+		super.show(listener);
+		setVisible(true);
+		content.clearActions();
+		content.setScale(0.5f);
+		content.getColor().a = 0.5f;
+		content.addAction(Actions.parallel(
+				Actions.scaleTo(1, 1, duration / 2, Interpolation.swingOut),
+				Actions.fadeIn(duration / 2, Interpolation.fade)));
 	}
 
 	@Override

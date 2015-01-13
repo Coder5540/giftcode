@@ -152,7 +152,6 @@ public class View extends Table implements IViews {
 
 	@Override
 	public void back() {
-		// TraceSystem.backView();
 		hide(null);
 	}
 

@@ -45,6 +45,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.RoleID;
+import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.DatePicker;
@@ -56,42 +57,42 @@ import com.coder5560.game.views.View;
 
 public class ViewLogMoneyDetail extends View {
 
-	PageV2 pages;
-	ListDetail listDetail;
-	boolean isLoad = true;
+	PageV2				pages;
+	ListDetail			listDetail;
+	boolean				isLoad					= true;
 
-	DatePicker dateFrom;
-	DatePicker dateTo;
-	CustomTextField tfSearch;
-	PartnerPicker partner;
-	PartnerPicker partnerFun;
-	TextButton btnXem;
-	Group gExtendDate;
-	boolean isExtend = false;
+	DatePicker			dateFrom;
+	DatePicker			dateTo;
+	CustomTextField		tfSearch;
+	PartnerPicker		partner;
+	PartnerPicker		partnerFun;
+	TextButton			btnXem;
+	Group				gExtendDate;
+	boolean				isExtend				= false;
 
-	boolean isLoadByName;
-	String responseByName;
-	boolean isLoadByRoleId;
-	String reponseByRoleId;
+	boolean				isLoadByName;
+	String				responseByName;
+	boolean				isLoadByRoleId;
+	String				reponseByRoleId;
 
-	boolean isChange;
-	String stateofpartnerFun = "0";
-	String laststateofpartnerFun = "0";
+	boolean				isChange;
+	String				stateofpartnerFun		= "0";
+	String				laststateofpartnerFun	= "0";
 
-	Image iconextendDate;
-	PartnerSelectBox quickDatePicker;
-	boolean isChangeFun;
-	int stateFun;
+	Image				iconextendDate;
+	PartnerSelectBox	quickDatePicker;
+	boolean				isChangeFun;
+	int					stateFun;
 
-	int typeView;
-	public static int TYPE_SEND = 0;
-	public static int TYPE_RECEIVE = 1;
-	public static int TYPE_ALL = -1;
+	int					typeView;
+	public static int	TYPE_SEND				= 0;
+	public static int	TYPE_RECEIVE			= 1;
+	public static int	TYPE_ALL				= -1;
 
-	int roldId = -1;
-	String username = "";
+	int					roldId					= -1;
+	String				username				= "";
 
-	Color color_white = Color.WHITE;
+	Color				color_white				= Color.WHITE;
 
 	public ViewLogMoneyDetail buildComponent(int type) {
 		roldId = UserInfo.getInstance().getRoleId();
@@ -760,11 +761,11 @@ public class ViewLogMoneyDetail extends View {
 	@Override
 	public void hide(OnCompleteListener listener) {
 		super.hide(listener);
+		setViewState(ViewState.DISPOSE);
 	}
 
 	@Override
 	public void back() {
-		// TODO Auto-generated method stub
 		super.back();
 		getViewController().removeView(getName());
 	}

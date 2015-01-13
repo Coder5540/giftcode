@@ -2,6 +2,7 @@ package imp.view;
 
 import utils.factory.AppPreference;
 import utils.factory.Factory;
+import utils.factory.StringSystem;
 import utils.factory.FontFactory.FontType;
 import utils.factory.Style;
 import utils.keyboard.KeyboardConfig;
@@ -41,13 +42,13 @@ import com.coder5560.game.views.View;
 
 public class ViewRegister extends View {
 
-	private CustomTextField tfPhone, tfphoneIntro, tfFullName, tfAddress,
+	private CustomTextField	tfPhone, tfphoneIntro, tfFullName, tfAddress,
 			tfEmail;
-	private CustomTextField tfPass, tfRePass;
-	private JsonValue respone;
-	Table content = new Table();
-	ScrollPane scrTextField;
-	Label btnRegister;
+	private CustomTextField	tfPass, tfRePass;
+	private JsonValue		respone;
+	Table					content	= new Table();
+	ScrollPane				scrTextField;
+	Label					btnRegister;
 
 	public View buildComponent() {
 		Image bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
@@ -227,7 +228,7 @@ public class ViewRegister extends View {
 		btnRegister.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				getViewController().getView("view_login").show(null);
+				getViewController().getView(StringSystem.VIEW_LOGIN).show(null);
 			}
 
 			@Override

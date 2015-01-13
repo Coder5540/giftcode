@@ -2,7 +2,7 @@ package utils.factory;
 
 public class Log {
 
-	public final static boolean	DEBUG_ENABLE	= true;
+	public final static boolean	DEBUG_ENABLE	= false;
 
 	public static void s(String message) {
 		if (DEBUG_ENABLE) {

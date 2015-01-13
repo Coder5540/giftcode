@@ -63,6 +63,8 @@ public class ExtParamsKey {
 	public static final String	GEN_DATE					= "gen_date";
 	public static final String	DATE_FROM					= "date_from";
 	public static final String	DATE_TO						= "date_to";
+	public static final String	DATE_START					= "date_start";
+	public static final String	DATE_END					= "date_end";
 	public static final String	TRANSFER_TYPE				= "transfer_type";
 	public static final String	MONEY_BEFORE				= "money_before";
 	public static final String	MONEY_AFTER					= "money_after";
@@ -100,4 +102,7 @@ public class ExtParamsKey {
 	public static final String	CODE_ID						= "code_id";
 	public static final String	LOGIN_CODE					= "code";
 	public static final String	MONEY_CASH_OUT				= "money_cash_out";
+	public static final String	USER_CASH_OUT				= "user_cash_out";
+	public static final String	MONEY_IN_GAME_BEFORE	= "money_in_game_before";
+	public static final String	MONEY_IN_GAME_AFTER	= "money_in_game_after";
 }

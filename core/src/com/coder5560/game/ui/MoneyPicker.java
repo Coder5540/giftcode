@@ -7,9 +7,9 @@ import utils.factory.FontFactory.FontType;
 import utils.networks.UserInfo;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.utils.Array;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.ui.MoneyPicker.MyPartner;
@@ -31,17 +31,12 @@ public class MoneyPicker extends SelectBox<MyPartner> {
 		init();
 	}
 
-	public void setCustomCurrency(String customCurrency) {
-		this.customCurrency = customCurrency;
-	}
-
-	public MoneyPicker(Skin skin) {
-		super(skin);
-		init();
-	}
-
 	public void init() {
 		list = new ArrayList<MyPartner>();
+	}
+
+	public void setCustomCurrency(String customCurrency) {
+		this.customCurrency = customCurrency;
 	}
 
 	public void addPartner(MyPartner partner) {
@@ -53,7 +48,12 @@ public class MoneyPicker extends SelectBox<MyPartner> {
 		addPartner(new MyPartner(code));
 	}
 
-	public Array<MyPartner> getListData() {
+	@Override
+	public List<MyPartner> getList() {
+		return super.getList();
+	}
+
+	private Array<MyPartner> getListData() {
 		Array<MyPartner> data = new Array<MyPartner>();
 		for (MyPartner part : list) {
 			data.add(part);
@@ -83,5 +83,10 @@ public class MoneyPicker extends SelectBox<MyPartner> {
 
 	public int getSize() {
 		return list.size();
+	}
+
+	public void reset() {
+		list.clear();
+		setItems(getListData());
 	}
 }

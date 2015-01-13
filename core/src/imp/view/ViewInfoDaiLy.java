@@ -1,5 +1,6 @@
 package imp.view;
 
+import utils.factory.Factory;
 import utils.factory.FontFactory.FontType;
 import utils.networks.UserInfo;
 
@@ -16,8 +17,8 @@ import com.coder5560.game.views.View;
 
 public class ViewInfoDaiLy extends View {
 
-	ScrollPane	scroll;
-	Table		content;
+	ScrollPane scroll;
+	Table content;
 
 	@Override
 	public String getLabel() {
@@ -42,8 +43,10 @@ public class ViewInfoDaiLy extends View {
 				.row();
 		content.add(getRow("Số điện thoại người giới thiệu", UserInfo.phoneNGT))
 				.left().row();
-		content.add(getRow("Số tiền trong tài khoản", "" + UserInfo.money))
-				.left().row();
+		content.add(
+				getRow("Số tiền trong tài khoản",
+						Factory.getDotMoney(UserInfo.money) + " "
+								+ UserInfo.currency)).left().row();
 		content.add(getRow("Email", UserInfo.email)).left().row();
 		String imei = UserInfo.imeiDevice.replaceAll(",", "\n");
 		content.add(getRow("Imei thiết bị", imei)).left().row();

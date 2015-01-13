@@ -78,8 +78,10 @@ public class Request {
 		httpRequest.setContent(params);
 		httpRequest.setHeader("Content-Type",
 				"application/x-www-form-urlencoded; charset=utf-8");
-		Log.d("url=" + serviceUrl);
-		Log.d("parrams=" + params);
+		if (!cmd.equalsIgnoreCase(CommandRequest.PING)) {
+			Log.d("url=" + serviceUrl);
+			Log.d("parrams=" + params);
+		}
 		lastestHttpRequest = httpRequest;
 		Gdx.net.sendHttpRequest(httpRequest, httpResponseListener);
 
@@ -87,7 +89,6 @@ public class Request {
 
 	public void loadConfig() {
 		Thread thread = new Thread(new Runnable() {
-
 			@Override
 			public void run() {
 				String response = DefaultHttpConnection.get(
@@ -676,14 +677,14 @@ public class Request {
 						.build(), listener);
 	}
 
-	public void getCodeCashOutLog(String agencyName, String dateFrom,
-			String dateTo, HttpResponseListener listener) {
+	public void getCodeCashOutLog(String agencyName, String dateStart,
+			String dateEnd, HttpResponseListener listener) {
 		post(CommandRequest.GET_CODE_CASH_OUT_LOG,
 				ParamsBuilder
 						.builder()
 						.add(ExtParamsKey.AGENCY_NAME, agencyName)
-						.add(ExtParamsKey.DATE_FROM, dateFrom)
-						.add(ExtParamsKey.DATE_TO, dateTo)
+						.add(ExtParamsKey.DATE_START, dateStart)
+						.add(ExtParamsKey.DATE_END, dateEnd)
 						.add(ExtParamsKey.SIGNATURE,
 								hash(agencyName + ConnectionConfig.CLIENT_KEY))
 						.build(), listener);

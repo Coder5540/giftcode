@@ -143,7 +143,7 @@ public class UserInfo {
 
 	public class Permission {
 		//
-		public final static int	MAX_PERMISSION					= 10;
+		public final static int	MAX_PERMISSION					= 11;
 		public final static int	PERMISSION_ADMIN_ACTIVE			= 0;
 		public final static int	PERMISSION_ADMIN_INACTIVE		= PERMISSION_ADMIN_ACTIVE + 1;
 		public final static int	PERMISSION_ADMIN_LOCK			= PERMISSION_ADMIN_INACTIVE + 1;
@@ -154,7 +154,6 @@ public class UserInfo {
 		public final static int	PERMISSION_BAN_GIFTCODE			= PERMISSION_LOG_NHANTIEN + 1;
 		public final static int	PERMISSION_GIFTCODE_CHUASUDUNG	= PERMISSION_BAN_GIFTCODE + 1;
 		public final static int	PERMISSION_GIFTCODE_DASUDUNG	= PERMISSION_GIFTCODE_CHUASUDUNG + 1;
-		//
 		public int[]			permission;
 
 		public Permission() {

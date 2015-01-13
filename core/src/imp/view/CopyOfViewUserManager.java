@@ -43,14 +43,13 @@ import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.GameEvent;
 import com.coder5560.game.enums.RoleID;
-import com.coder5560.game.enums.ViewState;
 import com.coder5560.game.listener.OnCompleteListener;
 import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.TraceView;
 import com.coder5560.game.views.View;
 
-public class ViewUserManager extends View {
+public class CopyOfViewUserManager extends View {
 
 	public static final int	ADMIN_CLICK			= 100;
 	public static final int	AGENCY_1_CLICK		= 101;
@@ -63,11 +62,11 @@ public class ViewUserManager extends View {
 	JsonValue				responseAllAgency;
 	JsonValue				responseCustomAgency;
 
-	Array<User>				listAdmin			= new Array<ViewUserManager.User>();
-	Array<User>				listMoneyManager	= new Array<ViewUserManager.User>();
-	Array<User>				listAgency1			= new Array<ViewUserManager.User>();
-	Array<User>				listAgency2			= new Array<ViewUserManager.User>();
-	Array<User>				listChildren		= new Array<ViewUserManager.User>();
+	Array<User>				listAdmin			= new Array<CopyOfViewUserManager.User>();
+	Array<User>				listMoneyManager	= new Array<CopyOfViewUserManager.User>();
+	Array<User>				listAgency1			= new Array<CopyOfViewUserManager.User>();
+	Array<User>				listAgency2			= new Array<CopyOfViewUserManager.User>();
+	Array<User>				listChildren		= new Array<CopyOfViewUserManager.User>();
 
 	Color					bgItemColor			= new Color(
 														Constants.COLOR_ACTIONBAR);
@@ -80,7 +79,7 @@ public class ViewUserManager extends View {
 	Tree					tree;
 	boolean					isClickExpand		= false;
 
-	public ViewUserManager() {
+	public CopyOfViewUserManager() {
 		super();
 		dataItemColor.a = 0;
 		bgItemColor.a = 0;
@@ -144,13 +143,6 @@ public class ViewUserManager extends View {
 	}
 
 	public void rebuildUI() {
-		if (nodeMoneyManager != null)
-			nodeMoneyManager.removeAll();
-		if (nodeAdminAll != null)
-			nodeAdminAll.removeAll();
-		if (nodeChildren != null)
-			nodeChildren.removeAll();
-
 		for (int i = 0; i < listMoneyManager.size; i++) {
 			SubItemUser subItemUser = new SubItemUser(MONEYMANAGE_CLICK * 100
 					+ i + 1, 440, 60,
@@ -268,6 +260,7 @@ public class ViewUserManager extends View {
 	UserNode	nodeMoneyManager, nodeAdminAll, nodeChildren;
 
 	private void buildRoot() {
+
 		final ItemUser itemMoneyManager = new ItemUser(0, 440, 60,
 				Assets.instance.ui.getRegUsermanagement(), "MoneyManager", " ("
 						+ 1 + ")", onClickListener, new Table());
@@ -278,7 +271,7 @@ public class ViewUserManager extends View {
 		nodeAdminAll = new UserNode(itemUserAdmin);
 
 		final ItemUser itemUserChildren = new ItemUser(CHILDREN_CLICK, 440, 60,
-				Assets.instance.ui.getRegUsermanagement(), "Agency", " (" + 1
+				Assets.instance.ui.getRegUsermanagement(), "Children", " (" + 1
 						+ ")", onClickListener, new Table());
 		nodeChildren = new UserNode(itemUserChildren);
 
@@ -357,21 +350,17 @@ public class ViewUserManager extends View {
 			String phone = userData.getString(ExtParamsKey.AGENCY_NAME);
 			int roleID = userData.getInt(ExtParamsKey.ROLE_ID);
 			User user = new User(userData, roleID, userName, phone);
-			String refrenceCode = userData.getString(ExtParamsKey.REF_CODE);
-
+			
+			
 			if (roleID == RoleID.ADMIN) {
 				listAdmin.add(user);
 			} else if (roleID == RoleID.MONEY_MANAGER) {
 				listMoneyManager.add(user);
 			} else if (roleID == RoleID.AGENCY_LEVEL1) {
-				if (refrenceCode.equalsIgnoreCase(UserInfo.phone)) {
-					listChildren.add(user);
-				} else {
-					listAgency1.add(user);
-				}
+				listAgency1.add(user);
 			} else if (roleID == RoleID.AGENCY_LEVEL2) {
-
-				if (refrenceCode.equalsIgnoreCase(UserInfo.phone)) {
+				String refrenceCode = userData.getString(ExtParamsKey.REF_CODE);
+				if (refrenceCode.equalsIgnoreCase(UserInfo.getInstance().phone)) {
 					listChildren.add(user);
 				} else {
 					listAgency2.add(user);
@@ -466,6 +455,18 @@ public class ViewUserManager extends View {
 			Request.getInstance().getAllAgency(UserInfo.phone, -1,
 					onAllAgencyListener);
 		}
+		// if (gameEvent == GameEvent.ONREFRESH
+		// && TraceView.instance.getLastView().equalsIgnoreCase(getName())) {
+		// getViewController().getView(StringSystem.VIEW_HOME).show(null);
+		// // if (getViewController().isContainView(
+		// // ViewInfoDaiLySmall.class.getName())) {
+		// // getViewController().removeView(
+		// // ViewInfoDaiLySmall.class.getName());
+		// // }
+		// // if (getViewController().isContainView("viewchangerole")) {
+		// // getViewController().removeView("viewchangerole");
+		// // }
+		// }
 	};
 
 	OnClickListener	onClickListener	= new OnClickListener() {
@@ -517,7 +518,7 @@ public class ViewUserManager extends View {
 			return;
 		}
 		Request.getInstance().getInfoDaily(user.phone, onCustomAgency);
-		Loading.ins.show(ViewUserManager.this);
+		Loading.ins.show(CopyOfViewUserManager.this);
 	}
 
 	private void onClickedChangeRole(final User user, int roleID) {
@@ -562,6 +563,8 @@ public class ViewUserManager extends View {
 						if (getViewController().isContainView("viewchangerole"))
 							getViewController().removeView("viewchangerole");
 
+						getViewController().getView(
+								ViewInfoDaiLySmall.class.getName()).back();
 						Request.getInstance().getAllAgency(UserInfo.phone, -1,
 								onAllAgencyListener);
 						Toast.makeText(getStage(),
@@ -866,6 +869,17 @@ public class ViewUserManager extends View {
 														responseAllAgency = new JsonReader()
 																.parse(httpResponse
 																		.getResultAsString());
+
+														boolean result = responseAllAgency
+																.getBoolean(ExtParamsKey.RESULT);
+														if (!result) {
+															String data = responseAllAgency
+																	.getString(ExtParamsKey.MESSAGE);
+															Toast.makeText(
+																	getStage(),
+																	data,
+																	Toast.LENGTH_SHORT);
+														}
 
 														Log.d("All Agency : "
 																+ responseAllAgency

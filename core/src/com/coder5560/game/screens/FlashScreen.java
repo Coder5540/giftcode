@@ -1,16 +1,26 @@
 package com.coder5560.game.screens;
 
+import utils.keyboard.VirtualKeyboard;
 import utils.screen.AbstractGameScreen;
 import utils.screen.GameCore;
 import utils.screen.Toast;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.enums.GameState;
 import com.coder5560.game.enums.PlatformType;
 
 public class FlashScreen extends AbstractGameScreen {
@@ -22,16 +32,23 @@ public class FlashScreen extends AbstractGameScreen {
 
 	public FlashScreen(GameCore game) {
 		super(game);
-		imgFlash = new Image(new Texture(Gdx.files.internal("Img/splash.png")));
-		imgFlash.setOrigin(Align.center);
-		imgFlash.setPosition(Constants.WIDTH_SCREEN / 2,
-				Constants.HEIGHT_SCREEN / 2, Align.center);
 	}
 
 	@Override
 	public void show() {
-		super.show();
-		gameScreen = new GameScreen(parent);
+		gameState = GameState.INITIAL;
+		camera = new OrthographicCamera(Constants.WIDTH_SCREEN,
+				Constants.HEIGHT_SCREEN);
+		viewport = new StretchViewport(Constants.WIDTH_SCREEN,
+				Constants.HEIGHT_SCREEN, camera);
+		batch = new SpriteBatch();
+
+		imgFlash = new Image(new Texture(Gdx.files.internal("Img/splash.png")));
+		imgFlash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		imgFlash.setOrigin(Align.center);
+		imgFlash.setPosition(Constants.WIDTH_SCREEN / 2,
+				Constants.HEIGHT_SCREEN / 2, Align.center);
+		viewport.update(Constants.WIDTH_SCREEN, Constants.HEIGHT_SCREEN, true);
 	}
 
 	@Override
@@ -70,6 +87,7 @@ public class FlashScreen extends AbstractGameScreen {
 		// }
 
 		if (!switchScreen) {
+			gameScreen = new GameScreen(parent);
 			parent.setScreen(gameScreen);
 			switchScreen = true;
 		}
@@ -77,8 +95,11 @@ public class FlashScreen extends AbstractGameScreen {
 
 	@Override
 	public void render(float delta) {
-		super.render(delta);
-		batch.setProjectionMatrix(camera.combined);
+
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.setProjectionMatrix(viewport.getCamera().combined);
+		update(delta);
 		batch.begin();
 		imgFlash.act(delta);
 		imgFlash.draw(batch, 1f);

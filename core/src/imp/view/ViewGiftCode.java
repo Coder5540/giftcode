@@ -15,7 +15,7 @@ import utils.screen.Toast;
 
 import com.aia.appsreport.component.list.ItemList;
 import com.aia.appsreport.component.list.ListDetail;
-import com.aia.appsreport.component.table.ItemGiftCodeNormal;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.graphics.Color;
@@ -24,17 +24,21 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
+import com.coder5560.game.ui.DialogCustom;
 import com.coder5560.game.ui.ItemListener;
 import com.coder5560.game.ui.Loading;
 import com.coder5560.game.ui.PageV2;
@@ -49,8 +53,6 @@ public class ViewGiftCode extends View {
 
 	private ListDetail listDetail;
 	private PageV2 page;
-
-	private ItemGiftCodeNormal currentItem;
 
 	private JsonValue responeNormal;
 	private JsonValue responeReturn;
@@ -183,85 +185,15 @@ public class ViewGiftCode extends View {
 								.getString(ExtParamsKey.CURRENCY);
 						long money_in_game = content
 								.getLong(ExtParamsKey.MONEY_IN_GAME);
+						long timeGen = content.getLong(ExtParamsKey.GEN_DATE);
 						long timeExpire = content
 								.getLong(ExtParamsKey.DATE_EXPIRE);
-						long timeGen = content.getLong(ExtParamsKey.GEN_DATE);
 						int isSold = content.getInt(ExtParamsKey.IS_SOLD);
-						// final ItemGiftCodeNormal item = new
-						// ItemGiftCodeNormal(
-						// tableNormal, isSold, new String[] {
-						// "" + (i + 1),
-						// id,
-						// giftCode,
-						// money + " " + currency,
-						// "" + money_in_game,
-						// DateTime.getStringDate(time,
-						// DateTime.FORMAT) });
-						// item.btCopy.addListener(new ClickListener() {
-						// @Override
-						// public void clicked(InputEvent event, float x,
-						// float y) {
-						// super.clicked(event, x, y);
-						// Gdx.app.getClipboard().setContents(
-						// "CODE : " + giftCode + " ID : " + id);
-						// Toast.makeText(getStage(),
-						// "Đã copy vào bộ nhớ đệm",
-						// Toast.LENGTH_SHORT);
-						// }
-						// });
-						// if (isSold == 0) {
-						// item.btSell.addListener(new ClickListener() {
-						// @Override
-						// public void clicked(InputEvent event, float x,
-						// float y) {
-						// super.clicked(event, x, y);
-						// DialogCustom dl = new DialogCustom("");
-						// dl.text("Bạn có chắc chắn muốn đã bán Gift Code này");
-						// dl.button("Ok", new Runnable() {
-						// @Override
-						// public void run() {
-						// Loading.ins.show(ViewGiftCode.this);
-						// currentItem = item;
-						// Request.getInstance()
-						// .setStateGiftCode(
-						// AppPreference.instance.name,
-						// giftCode,
-						// 1,
-						// new ChangeStateGiftCode());
-						// }
-						// });
-						// dl.button("Hủy");
-						// dl.show(getStage());
-						// }
-						// });
-						// }
-						//
-						// item.btReturn.addListener(new ClickListener() {
-						// @Override
-						// public void clicked(InputEvent event, float x,
-						// float y) {
-						// super.clicked(event, x, y);
-						// DialogCustom dl = new DialogCustom("");
-						// dl.text("Bạn có chắc chắn muốn trả lại Gift Code này");
-						// dl.button("Ok", new Runnable() {
-						//
-						// @Override
-						// public void run() {
-						// Loading.ins.show(ViewGiftCode.this);
-						// Request.getInstance().returnGiftCode(
-						// AppPreference.instance.name,
-						// id, new ReturnGiftCode());
-						// }
-						// });
-						// dl.button("Hủy");
-						// dl.show(getStage());
-						// }
-						// });
 						ArrayList<String> data = new ArrayList<String>();
 						data.add(id);
 						data.add(giftCode);
-						data.add(money + " " + currency);
-						data.add("" + money_in_game);
+						data.add(Factory.getDotMoney(money) + " " + currency);
+						data.add(Factory.getDotMoney(money_in_game));
 						data.add(DateTime.getStringDate(timeGen,
 								DateTime.FORMAT));
 						data.add(DateTime.getStringDate(timeExpire,
@@ -304,27 +236,15 @@ public class ViewGiftCode extends View {
 						long timeExpire = content
 								.getLong(ExtParamsKey.DATE_EXPIRE);
 						long timeUsed = content
-								.getLong(ExtParamsKey.DATE_EXPIRE);
+								.getLong(ExtParamsKey.REMOVE_DATE);
 						String user = content
 								.getString(ExtParamsKey.USER_RECHARGE);
 						int isUse = content.getInt(ExtParamsKey.IS_USE);
-						// ItemGiftCodeUsed item = new
-						// ItemGiftCodeUsed(tableUsed,
-						// new String[] {
-						// "" + (i + 1),
-						// id,
-						// giftCode,
-						// money + "" + currency,
-						// "" + money_in_game,
-						// DateTime.getStringDate(timeExpire,
-						// DateTime.FORMAT),
-						// DateTime.getStringDate(timeUsed,
-						// DateTime.FORMAT), user, state });
 						ArrayList<String> data = new ArrayList<String>();
 						data.add(id);
 						data.add(giftCode);
 						data.add(Factory.getDotMoney(money) + " " + currency);
-						data.add("" + money_in_game);
+						data.add(Factory.getDotMoney(money_in_game));
 						data.add(DateTime.getStringDate(timeExpire,
 								DateTime.FORMAT));
 						data.add(DateTime.getStringDate(timeUsed,
@@ -348,10 +268,13 @@ public class ViewGiftCode extends View {
 		}
 
 		if (responeChangeState != null) {
-			Loading.ins.hide();
 			boolean resut = responeChangeState.getBoolean(ExtParamsKey.RESULT);
 			if (resut) {
-				currentItem.changeStateSold();
+				Request.getInstance().getNormalGiftCode(
+						AppPreference.instance.name,
+						partnerState.getPartnerId(), new GetGiftCodeNormal());
+			} else {
+				Loading.ins.hide();
 			}
 			String mess = responeChangeState.getString(ExtParamsKey.MESSAGE);
 			Toast.makeText(_stage, mess, Toast.LENGTH_SHORT);
@@ -408,12 +331,78 @@ public class ViewGiftCode extends View {
 				itemList.addSubItem(getRow("NGÀY HẾT HẠN", data.get(5)));
 				int isSold = Integer.valueOf(data.get(6));
 				String state;
+				Table tbButton = new Table();
 				if (isSold == 0) {
 					state = "Chưa bán";
+					tbButton.setSize(310, 50);
 				} else {
 					state = "Đã bán";
+					tbButton.setSize(205, 50);
 				}
 				itemList.addSubItem(getRow("TRẠNG THÁI", state));
+
+				TextButton btCopy = new TextButton("Copy",
+						Style.ins.textButtonStyle);
+				TextButton btSold = new TextButton("Bán",
+						Style.ins.textButtonStyle);
+				TextButton btReturn = new TextButton("Trả lại",
+						Style.ins.textButtonStyle);
+				btCopy.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						super.clicked(event, x, y);
+						Gdx.app.getClipboard().setContents(
+								"CODE : " + data.get(1) + " ID : "
+										+ data.get(0));
+						Toast.makeText(getStage(), "Đã copy vào bộ nhớ đệm",
+								Toast.LENGTH_SHORT);
+					}
+				});
+				btReturn.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						super.clicked(event, x, y);
+						DialogCustom dl = new DialogCustom("");
+						dl.text("Bạn có chắc chắn muốn trả lại Gift Code này");
+						dl.button("Ok", new Runnable() {
+							@Override
+							public void run() {
+								Loading.ins.show(ViewGiftCode.this);
+								Request.getInstance().returnGiftCode(
+										AppPreference.instance.name,
+										data.get(0), new ReturnGiftCode());
+							}
+						});
+						dl.button("Hủy");
+						dl.show(getStage());
+					}
+				});
+				tbButton.add(btCopy).width(100).height(40);
+				if (isSold == 0) {
+					btSold.addListener(new ClickListener() {
+						@Override
+						public void clicked(InputEvent event, float x, float y) {
+							super.clicked(event, x, y);
+							DialogCustom dl = new DialogCustom("");
+							dl.text("Bạn có chắc chắn đã bán Gift Code này");
+							dl.button("Chắc chắn", new Runnable() {
+								@Override
+								public void run() {
+									Loading.ins.show(ViewGiftCode.this);
+									Request.getInstance().setStateGiftCode(
+											AppPreference.instance.name,
+											data.get(1), 1,
+											new ChangeStateGiftCode());
+								}
+							});
+							dl.button("Hủy");
+							dl.show(getStage());
+						}
+					});
+					tbButton.add(btSold).width(100).height(40).padLeft(5);
+				}
+				tbButton.add(btReturn).width(100).height(40).padLeft(5);
+				itemList.addSubItem(tbButton);
 			} else {
 				lbTitle.setText("DANH SÁCH GIFTCODE ĐÃ SỬ DỤNG");
 				itemList.addComponent(
@@ -442,7 +431,7 @@ public class ViewGiftCode extends View {
 				} else if (isUse == 1) {
 					state = "Đã được sử dụng";
 				} else {
-					state = "Trả lời";
+					state = "Trả lại";
 				}
 				itemList.addSubItem(getRow("TRẠNG THÁI", state));
 			}
@@ -460,8 +449,8 @@ public class ViewGiftCode extends View {
 		Label lbInfo = new Label(info, new LabelStyle(
 				Assets.instance.fontFactory.getFont(25, FontType.Regular),
 				Constants.COLOR_ACTIONBAR));
-		table.add(lbTitle).left().padLeft(20).row();
-		table.add(lbInfo).left().padLeft(20);
+		table.add(lbTitle).left().row();
+		table.add(lbInfo).left();
 		return table;
 	}
 

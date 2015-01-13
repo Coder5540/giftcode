@@ -20,7 +20,7 @@ public class StringSystem {
 
 	public static final String	VIEW_REGISTER						= "view_register";
 
-	public static final String	VIEW_LOGIN							= "view_login";
+	public static final String	VIEW_LOGIN							= "VIEW_LOGIN";
 
 	public static final String	VIEW_HOST_INFO						= "info_daily";
 
@@ -51,9 +51,9 @@ public class StringSystem {
 	public static final String	FUNCTION_GIFT_CODE_SELL_GIFTCODE	= "Bán Giftcode";
 	public static final String	FUNCTION_GIFT_CODE_LIST_GIFTCODE	= "Danh sách Giftcode";
 
-	public static final String	VIEW_GIFTCODE						= "view_giftcode";
+	public static final String	VIEW_GIFTCODE						= "VIEW_GIFTCODE";
 
-	public static final String	VIEW_LOG_MONEY_GIFTCODE				= "view_log_money_giftcode";
+	public static final String	VIEW_LOG_MONEY_GIFTCODE				= "VIEW_LOG_MONEY_GIFTCODE";
 
 	public static final String	VIEW_LOG_SEND_MONEY_CHART			= "VIEW_LOG_SEND_MONEY_CHART";
 
@@ -67,7 +67,7 @@ public class StringSystem {
 
 	public static final String	VIEW_NEW_CODE						= "VIEW_NEW_CODE";
 
-	public static final String	VIEW_HISTORY_CODE					= "VIEW_NEW_CODE";
+	public static final String	VIEW_HISTORY_CODE					= "VIEW_HISTORY_CODE";
 
 	// ====================== Variable for View Trace===========================
 	public static String		APP_ID								= "394360317378935";

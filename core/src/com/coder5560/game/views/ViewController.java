@@ -58,24 +58,28 @@ public class ViewController implements IViewController {
 	}
 
 	public void buidTest(Stage stage) {
-//		this.stage = stage;
-//		views = new Array<IViews>();
-//		ViewTestList viewTestList = new ViewTestList();
-//		viewTestList.build(getStage(), this, StringSystem.VIEW_HOME,
-//				new Rectangle(0, 0, Constants.WIDTH_SCREEN,
-//						Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
-//		viewTestList.buildComponent();
-//		viewTestList.show(null);
+		// this.stage = stage;
+		// views = new Array<IViews>();
+		// ViewTestList viewTestList = new ViewTestList();
+		// viewTestList.build(getStage(), this, StringSystem.VIEW_HOME,
+		// new Rectangle(0, 0, Constants.WIDTH_SCREEN,
+		// Constants.HEIGHT_SCREEN - Constants.HEIGHT_ACTIONBAR));
+		// viewTestList.buildComponent();
+		// viewTestList.show(null);
 	}
 
 	@Override
 	public void update(float delta) {
 		updateDataThread(delta);
-		for (int i = 0; i < views.size; i++) {
-			views.get(i).update(delta);
-			if (views.get(i).getViewState() == ViewState.DISPOSE) {
-				removeView(views.get(i).getName());
+		try {
+			for (int i = 0; i < views.size; i++) {
+				views.get(i).update(delta);
+				if (views.get(i).getViewState() == ViewState.DISPOSE) {
+					removeView(views.get(i).getName());
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		if (reset) {
@@ -109,17 +113,7 @@ public class ViewController implements IViewController {
 	}
 
 	public void updateDataThread(float delta) {
-		try {
-			timeToReload += delta;
-			float maxTime = getView(TraceView.instance.getLastView())
-					.getTimeReload();
-			if (timeToReload >= maxTime) {
-				getView(TraceView.instance.getLastView()).onReload();
-				timeToReload = 0;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 	}
 
 	@Override
@@ -146,6 +140,8 @@ public class ViewController implements IViewController {
 	@Override
 	public void removeView(String name) {
 		if (!avaiable())
+			return;
+		if (!isContainView(name))
 			return;
 		IViews view = getView(name);
 		if (view == null)

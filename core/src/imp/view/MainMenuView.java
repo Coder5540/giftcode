@@ -104,7 +104,7 @@ public class MainMenuView extends View {
 		menu.setOnHistoryGiftcodeClicked(onHistoryGiftcodeClicked);
 		menu.setOnNewCodeClicked(onNewCodeClicked);
 		menu.setOnHistoryCodeClicked(onHistoryCodeClicked);
-		
+
 		groupLogout = new Table();
 		groupLogout.setTouchable(Touchable.enabled);
 		groupLogout.setBackground(new NinePatchDrawable(new NinePatch(
@@ -175,7 +175,6 @@ public class MainMenuView extends View {
 		super.show(listener);
 		setIgnoreUpdateMove(false);
 		tranBg.setVisible(true);
-		tranBg.setTouchable(Touchable.enabled);
 		menu.updateMail();
 		content.addAction(Actions.sequence(
 				Actions.moveTo(0, 0, 0.5f, Interpolation.pow5Out),
@@ -203,6 +202,7 @@ public class MainMenuView extends View {
 	public void hide(final OnCompleteListener listener) {
 		super.hide(listener);
 		tranBg.setVisible(false);
+
 		setIgnoreUpdateMove(false);
 		content.addAction(Actions.sequence(Actions.moveTo(-content.getWidth(),
 				0, 0.5f, Interpolation.pow5Out), Actions.run(new Runnable() {
@@ -231,7 +231,7 @@ public class MainMenuView extends View {
 				UserInfo.phone = AppPreference.instance.getName();
 				UserInfo.phoneNGT = responeInfoDaily
 						.getString(ExtParamsKey.REF_CODE);
-				UserInfo.money = responeInfoDaily.getInt(ExtParamsKey.AMOUNT);
+				UserInfo.money = responeInfoDaily.getLong(ExtParamsKey.AMOUNT);
 				UserInfo.currency = responeInfoDaily
 						.getString(ExtParamsKey.CURRENCY);
 				UserInfo.email = responeInfoDaily.getString(ExtParamsKey.EMAIL);
@@ -1110,18 +1110,20 @@ public class MainMenuView extends View {
 																							.show(null);
 																				} else {
 																					ViewHistoryCode viewHistoryCode = new ViewHistoryCode();
-																					viewHistoryCode.build(
-																							getStage(),
-																							getViewController(),
-																							StringSystem.VIEW_HISTORY_CODE,
-																							new Rectangle(
-																									0,
-																									0,
-																									Constants.WIDTH_SCREEN,
-																									Constants.HEIGHT_SCREEN
-																											- Constants.HEIGHT_ACTIONBAR));
-																					viewHistoryCode.buildComponent();
-																					viewHistoryCode.show(null);
+																					viewHistoryCode
+																							.build(getStage(),
+																									getViewController(),
+																									StringSystem.VIEW_HISTORY_CODE,
+																									new Rectangle(
+																											0,
+																											0,
+																											Constants.WIDTH_SCREEN,
+																											Constants.HEIGHT_SCREEN
+																													- Constants.HEIGHT_ACTIONBAR));
+																					viewHistoryCode
+																							.buildComponent();
+																					viewHistoryCode
+																							.show(null);
 																				}
 																			}
 																		});

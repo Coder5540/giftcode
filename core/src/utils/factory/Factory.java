@@ -116,44 +116,32 @@ public class Factory {
 		return str.matches("\\d+");
 	}
 
+	// public static boolean validPhone(String phoneNumber) {
+	// if (!(phoneNumber.startsWith("0") || phoneNumber.startsWith("84") ||
+	// phoneNumber
+	// .startsWith("+84")))
+	// return false;
+	// String phone = "";
+	// if (phoneNumber.startsWith("+84"))
+	// phone = phoneNumber.substring(3);
+	// if (phoneNumber.startsWith("0"))
+	// phone = phoneNumber.substring(1);
+	// if (phoneNumber.startsWith("84"))
+	// phone = phoneNumber.substring(2);
+	//
+	// System.out.println("Phone : " + phone);
+	// if (phone.length() == 9 || phone.length() == 10) {
+	// return isNumeric(phone);
+	// }
+	// return false;
+	// }
 	public static boolean validPhone(String phoneNumber) {
-		if (!(phoneNumber.startsWith("0") || phoneNumber.startsWith("84") || phoneNumber
-				.startsWith("+84")))
-			return false;
-		String phone = "";
-		if (phoneNumber.startsWith("+84"))
-			phone = phoneNumber.substring(3);
-		if (phoneNumber.startsWith("0"))
-			phone = phoneNumber.substring(1);
-		if (phoneNumber.startsWith("84"))
-			phone = phoneNumber.substring(2);
-
-		System.out.println("Phone : " + phone);
-		if (phone.length() == 9 || phone.length() == 10) {
-			return isNumeric(phone);
+		String phone = phoneNumber;
+		if (phoneNumber.startsWith("+")) {
+			phone = phoneNumber.substring(1, phoneNumber.length() - 1);
 		}
-		return false;
+		return isNumeric(phone);
 	}
-
-	// public static String getStrMoney(int money) {
-	// String str = money + "";
-	// if (money < 10000) {
-	// str = money + "";
-	// } else if (money < 1000000) {
-	// int firstNumber = money / 1000;
-	// int secondNumber = (money - firstNumber * 1000) / 100;
-	// str = firstNumber + "." + secondNumber + "K";
-	// } else if (money < 1000000000) {
-	// int firstNumber = money / 1000000;
-	// int secondNumber = (money - firstNumber * 1000000) / 100000;
-	// str = firstNumber + "." + secondNumber + "M";
-	// } else {
-	// int firstNumber = money / 1000000000;
-	// int secondNumber = (money - firstNumber * 1000000000) / 100000000;
-	// str = firstNumber + "." + secondNumber + "B";
-	// }
-	// return str;
-	// }
 
 	public static String getDotMoney(long money) {
 		long tmpMoney = Math.abs(money);
@@ -170,7 +158,6 @@ public class Factory {
 				str = "." + tmpMoney % 1000 + str;
 			tmpMoney = tmpMoney / 1000;
 		}
-
 		return ((money >= 0) ? "" : "-") + tmpMoney + str;
 	}
 
@@ -211,8 +198,8 @@ public class Factory {
 		int hours = d.getHours();
 		int mn = d.getMinutes();
 
-		return String.format("%02d:%02d", hours, mn) + "  "
-				+ monthNames[month] + " " + date;
+		return String.format("%02d:%02d", hours, mn) + "  " + monthNames[month]
+				+ " " + date;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -222,7 +209,7 @@ public class Factory {
 		int month = d.getMonth();
 		int hour = d.getHours();
 		int minute = d.getMinutes();
-		int second = d.getSeconds(); 
+		int second = d.getSeconds();
 		return String.format("%02d:%02d:%02d", hour, minute, second) + "  "
 				+ monthNames[month] + " " + date;
 	}

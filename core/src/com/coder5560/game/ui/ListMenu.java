@@ -122,7 +122,7 @@ public class ListMenu extends ScrollPane {
 		}
 
 		ItemMenu itemCode = new ItemMenu(Assets.instance.ui.getIconGiftcode(),
-				"GIFT CODE", getWidth(), 50, colorItemMenu, colorText);
+				"CODE ĐỔI THƯỞNG", getWidth(), 50, colorItemMenu, colorText);
 		createItemcode(itemCode);
 		if (itemCode.getChirldenSize() > 0) {
 			addLine(table, 2, colorItemMenu);
@@ -142,7 +142,7 @@ public class ListMenu extends ScrollPane {
 			}
 		});
 
-		LabelButton historyCode = new LabelButton("lịch sử code", lbStyle,
+		LabelButton historyCode = new LabelButton("Lịch sử code", lbStyle,
 				getWidth(), 45);
 		historyCode.setOnClickListener(new OnClickListener() {
 
@@ -153,20 +153,11 @@ public class ListMenu extends ScrollPane {
 				}
 			}
 		});
-
-//		if (UserInfo
-//				.getInstance()
-//				.getPermission()
-//				.isHasPermission(PermissionConfig.PERMISSION_NEW_CODE.ordinal()))
+		if (UserInfo.getInstance().getRoleId() == RoleID.ADMIN) {
 			itemGiftCode.addComponent(newCode);
-//		if (UserInfo
-//				.getInstance()
-//				.getPermission()
-//				.isHasPermission(
-//						PermissionConfig.PERMISSION_HISTORY_CODE.ordinal()))
 			itemGiftCode.addComponent(historyCode);
-		
-		
+		}
+
 	}
 
 	private void createItemGiftcode(ItemMenu itemGiftCode) {
@@ -502,7 +493,6 @@ public class ListMenu extends ScrollPane {
 	class ItemMenu extends Group {
 		Group					item;
 		Image					bg;
-		Image					bgFocus;
 		Image					btnExpand;
 		ArrayList<LabelButton>	subButton;
 		boolean					isValidate;
@@ -521,12 +511,7 @@ public class ListMenu extends ScrollPane {
 			item.setSize(width, height);
 			bg = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch,
 					color));
-			bg.setColor(new Color(1f, 1f, 1, 1f));
 			bg.setSize(item.getWidth(), item.getHeight());
-
-			bgFocus = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
-			bgFocus.setColor(new Color(0, 191 / 255f, 1, 0));
-			bgFocus.setSize(item.getWidth(), item.getHeight());
 
 			Label lbtitle = new Label(title, new LabelStyle(
 					Assets.instance.fontFactory.getFont(16, FontType.Bold),
@@ -549,7 +534,6 @@ public class ListMenu extends ScrollPane {
 					bg.getY() + bg.getHeight() / 2 - btnExpand.getHeight() / 2);
 			item.addActor(bg);
 			// item.addActor(bg_content);
-			item.addActor(bgFocus);
 			item.addActor(icon);
 			item.addActor(lbtitle);
 			item.addActor(btnExpand);
@@ -563,14 +547,14 @@ public class ListMenu extends ScrollPane {
 				public boolean touchDown(InputEvent event, float x, float y,
 						int pointer, int button) {
 					touchPoint.set(x, y);
-					bgFocus.getColor().a = 1;
+					bg.getColor().a = .75f;
 					return true;
 				}
 
 				@Override
 				public void touchUp(InputEvent event, float x, float y,
 						int pointer, int button) {
-					bgFocus.getColor().a = 0;
+					bg.getColor().a = 1f;
 					if (touchPoint.epsilonEquals(x, y, 20)) {
 						if (!isExpand) {
 							setHeight(maxheight);
@@ -592,7 +576,7 @@ public class ListMenu extends ScrollPane {
 				public void touchDragged(InputEvent event, float x, float y,
 						int pointer) {
 					if (!touchPoint.epsilonEquals(x, y, 40)) {
-						bgFocus.getColor().a = 0f;
+						bg.getColor().a = 1f;
 						touchPoint.set(0, 0);
 					}
 					super.touchDragged(event, x, y, pointer);
@@ -645,7 +629,7 @@ public class ListMenu extends ScrollPane {
 				public boolean touchDown(InputEvent event, float x, float y,
 						int pointer, int button) {
 					touchPoint.set(x, y);
-					bg.setColor(new Color(0f, 191 / 255f, 1, 1f));
+					bg.getColor().a = 0.75f;
 					return true;
 				}
 
@@ -657,7 +641,7 @@ public class ListMenu extends ScrollPane {
 						onHomeViewClicked.onClick(x, y);
 						Log.d("bbb");
 					}
-					bg.setColor(new Color(1, 1, 1, 1f));
+					bg.getColor().a = 1f;
 					super.touchUp(event, x, y, pointer, button);
 				}
 
@@ -666,7 +650,7 @@ public class ListMenu extends ScrollPane {
 						int pointer) {
 					if (!touchPoint.epsilonEquals(x, y, 40)) {
 						touchPoint.set(0, 0);
-						bg.setColor(new Color(1, 1, 1, 1f));
+						bg.getColor().a = 1f;
 					}
 					super.touchDragged(event, x, y, pointer);
 				}
@@ -686,12 +670,6 @@ public class ListMenu extends ScrollPane {
 			bg.setColor(new Color(1, 1, 1, 1f));
 			bg.setSize(item.getWidth(), item.getHeight());
 
-			bgFocus = new Image(new NinePatch(Assets.instance.ui.reg_ninepatch));
-			Color color = new Color(Constants.COLOR_ACTIONBAR);
-			color.a = 0;
-			bgFocus.setColor(color);
-			bgFocus.setSize(item.getWidth(), item.getHeight());
-
 			Label lbtitle = new Label(title, new LabelStyle(
 					Assets.instance.fontFactory.getFont(16, FontType.Bold),
 					textColor));
@@ -710,7 +688,6 @@ public class ListMenu extends ScrollPane {
 					bg.getY() + bg.getHeight() / 2 - btnExpand.getHeight() / 2);
 			item.addActor(bg);
 			// item.addActor(bg_content);
-			item.addActor(bgFocus);
 			item.addActor(iconMail);
 			item.addActor(lbtitle);
 			item.addActor(btnExpand);
@@ -724,14 +701,14 @@ public class ListMenu extends ScrollPane {
 				public boolean touchDown(InputEvent event, float x, float y,
 						int pointer, int button) {
 					touchPoint.set(x, y);
-					bgFocus.getColor().a = 1;
+					bg.getColor().a = .75f;
 					return true;
 				}
 
 				@Override
 				public void touchUp(InputEvent event, float x, float y,
 						int pointer, int button) {
-					bgFocus.getColor().a = 0;
+					bg.getColor().a = 1;
 					if (touchPoint.epsilonEquals(x, y, 20)) {
 						if (!isExpand) {
 							setHeight(maxheight);
@@ -753,7 +730,7 @@ public class ListMenu extends ScrollPane {
 				public void touchDragged(InputEvent event, float x, float y,
 						int pointer) {
 					if (!touchPoint.epsilonEquals(x, y, 40)) {
-						bgFocus.getColor().a = 0f;
+						bg.getColor().a = 0.75f;
 						touchPoint.set(0, 0);
 					}
 					super.touchDragged(event, x, y, pointer);

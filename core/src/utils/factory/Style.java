@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Tree.TreeStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.coder5560.game.assets.Assets;
@@ -28,7 +29,7 @@ public class Style {
 	public WindowStyle			windowStyle;
 	public NinePatch			np1, np2, np3, np4, np5;
 	public TextFieldStyle		tfStyle;
-
+	public TreeStyle			treeStyle;
 	HashMap<String, LabelStyle>	styles	= new HashMap<String, LabelStyle>();
 
 	public Style() {
@@ -101,9 +102,20 @@ public class Style {
 				245 / 255f, 245 / 255f, 245 / 255f, 1)));
 		tfStyle.background.setLeftWidth(6);
 		tfStyle.cursor = new NinePatchDrawable(new NinePatch(
-				Assets.instance.getRegion("bg_white"), Constants.COLOR_ACTIONBAR));
+				Assets.instance.getRegion("bg_white"),
+				Constants.COLOR_ACTIONBAR));
 		tfStyle.font = Assets.instance.fontFactory.getFont(20, FontType.Light);
 		tfStyle.fontColor = Color.BLACK;
+
+		treeStyle = new TreeStyle(new NinePatchDrawable(new NinePatch(
+				new NinePatch(Assets.instance.getRegion("bg_white")),
+				new Color(245 / 255f, 245 / 255f, 245 / 255f, 0))),
+				new NinePatchDrawable(new NinePatch(new NinePatch(
+						Assets.instance.getRegion("bg_white")), new Color(
+						245 / 255f, 245 / 255f, 245 / 255f, 0))),
+				new NinePatchDrawable(new NinePatch(np1,
+						Constants.COLOR_ACTIONBAR)));
+
 	}
 
 	public LabelStyle getLabelStyle(int size, FontType type) {

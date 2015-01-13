@@ -1,6 +1,5 @@
 package utils.screen;
 
-import utils.factory.Log;
 import utils.factory.PlatformResolver;
 import utils.networks.FacebookConnector;
 import utils.networks.ImageDownloader;

@@ -1,17 +1,15 @@
 package imp.view;
 
-import java.util.ArrayList;
-
 import utils.elements.ItemDatePartner;
-import utils.elements.PartnerPicker;
 import utils.elements.PartnerSelectBox;
 import utils.factory.AppPreference;
 import utils.factory.DateTime;
+import utils.factory.Factory;
 import utils.factory.FontFactory.FontType;
 import utils.factory.Log;
 import utils.factory.Style;
+import utils.networks.ExtParamsKey;
 import utils.networks.Request;
-import utils.networks.UserInfo;
 import utils.screen.AbstractGameScreen;
 
 import com.aia.appsreport.component.list.ItemList;
@@ -32,12 +30,15 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 import com.coder5560.game.assets.Assets;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.listener.OnCompleteListener;
@@ -45,19 +46,16 @@ import com.coder5560.game.ui.CustomTextField;
 import com.coder5560.game.ui.DatePicker;
 import com.coder5560.game.ui.ItemListener;
 import com.coder5560.game.ui.LabelButton;
-import com.coder5560.game.ui.Loading;
 import com.coder5560.game.views.View;
 
 public class ViewHistoryCode extends View {
-
+	JsonValue			responeData;
 	AbstractTable		content;
 	boolean				isLoad					= true;
 
 	DatePicker			dateFrom;
 	DatePicker			dateTo;
 	CustomTextField		tfSearch;
-	PartnerPicker		partner;
-	PartnerPicker		partnerFun;
 	TextButton			btnXem;
 	Group				gExtendDate;
 	boolean				isExtend				= false;
@@ -300,24 +298,6 @@ public class ViewHistoryCode extends View {
 		gExtendDate.setPosition(0, dateFrom.getY());
 		gExtendDate.getColor().a = 0f;
 
-		partnerFun = new PartnerPicker(Style.ins.selectBoxStyle);
-		partnerFun.setSize(2 * getWidth() / 5, 38);
-		partnerFun.setPosition(getWidth() / 2 - partnerFun.getWidth() / 2,
-				dateFrom.getY() - 5 - partnerFun.getHeight());
-		if (UserInfo.getInstance().getRoleId() == 3) {
-			partnerFun.addPartner(0, "Cá nhân", "1");
-			stateofpartnerFun = "-1";
-		}
-		if (UserInfo.getInstance().getRoleId() == 4) {
-			partnerFun.addPartner(0, username, "4");
-			stateofpartnerFun = "4";
-		} else {
-			stateofpartnerFun = "0";
-			partnerFun.addPartner(0, "Tất cả", "0");
-			partnerFun.addPartner(1, "Cá nhân", "1");
-			partnerFun.addPartner(3, "Xem theo SDT", "2");
-			partnerFun.addPartner(2, "Xem theo cấp", "3");
-		}
 		TextFieldStyle style = new TextFieldStyle();
 		NinePatch ninepatch = new NinePatch(
 				Assets.instance.getRegion("ninepatch_stock"), 4, 4, 4, 4);
@@ -341,10 +321,6 @@ public class ViewHistoryCode extends View {
 				return super.touchDown(event, x, y, pointer, button);
 			}
 		});
-		partner = new PartnerPicker(Style.ins.selectBoxStyle);
-		partner.setSize(2 * getWidth() / 5, 38);
-		partner.setPosition(getWidth() / 2 - partner.getWidth() / 2,
-				dateTo.getY() - 5 - partner.getHeight());
 		btnXem = new TextButton("Xem", Style.ins.textButtonStyle);
 		btnXem.setSize(2 * getWidth() / 5, 40);
 		btnXem.setPosition(getWidth() / 2 - btnXem.getWidth() / 2,
@@ -352,65 +328,15 @@ public class ViewHistoryCode extends View {
 		btnXem.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// if (stateofpartnerFun.equals("1")) {
-				// Request.getInstance().getLogMoneyGiftCodeByName(
-				// AppPreference.instance.name, dateFrom.getDate(),
-				// dateTo.getDate(), new getListByName());
-				// Loading.ins.show(ViewHistoryCode.this);
-				// } else if (stateofpartnerFun.equals("4")) {
-				// Request.getInstance().getLogMoneyGiftCodeByName(username,
-				// dateFrom.getDate(), dateTo.getDate(),
-				// new getListByName());
-				// Loading.ins.show(ViewHistoryCode.this);
-				// } else if (stateofpartnerFun.equals("0")) {
-				// Request.getInstance().getLogMoneyGiftCodeByRole(
-				// AppPreference.instance.name, dateFrom.getDate(),
-				// dateTo.getDate(), partner.getPartnerId(),
-				// new getListByRoleId());
-				// Loading.ins.show(ViewHistoryCode.this);
-				// } else if (stateofpartnerFun.equals("2")) {
-				// Request.getInstance().getLogMoneyGiftCodeByName(
-				// tfSearch.getText(), dateFrom.getDate(),
-				// dateTo.getDate(), new getListByName());
-				// Loading.ins.show(ViewHistoryCode.this);
-				// } else if (stateofpartnerFun.equals("3")) {
-				// Request.getInstance().getLogMoneyGiftCodeByRole(
-				// AppPreference.instance.name, dateFrom.getDate(),
-				// dateTo.getDate(), partner.getPartnerId(),
-				// new getListByRoleId());
-				// Loading.ins.show(ViewHistoryCode.this);
-				// }
 				Request.getInstance().getCodeCashOutLog(
 						AppPreference.instance.name, dateFrom.getDate(),
-						dateTo.getDate(), new HttpResponseListener() {
-
-							@Override
-							public void handleHttpResponse(
-									HttpResponse httpResponse) {
-								Log.d("Response : ",
-										httpResponse.getResultAsString());
-							}
-
-							@Override
-							public void failed(Throwable t) {
-								// TODO Auto-generated method stub
-
-							}
-
-							@Override
-							public void cancelled() {
-								// TODO Auto-generated method stub
-
-							}
-						});
+						dateTo.getDate(), getLogCodeListener);
 				AbstractGameScreen.keyboard.hide();
 				super.clicked(event, x, y);
 			}
 		});
 		gTop.addActor(bgTop);
 		gTop.addActor(tfSearch);
-		gTop.addActor(partner);
-		gTop.addActor(partnerFun);
 		gTop.addActor(btnXem);
 		gTop.addActor(gExtendDate);
 		gTop.addActor(bgDatetime);
@@ -420,7 +346,6 @@ public class ViewHistoryCode extends View {
 		gTop.addActor(iconextendDate);
 
 		tfSearch.setVisible(false);
-		partner.setVisible(false);
 
 		iconsortby = new Image(Assets.instance.getRegion("back"));
 		iconsortby.setSize(20, 20);
@@ -431,28 +356,26 @@ public class ViewHistoryCode extends View {
 		content = new AbstractTable(new Table(), widthCol);
 		content.setTitle(title);
 
-		// page = new Table();
-		// page.setSize(getWidth(), 50);
-		// add(page).width(getWidth());
-		for (int i = 0; i < UserInfo.getInstance().getListPartners().size(); i++) {
-			partner.addPartner(
-					UserInfo.getInstance().getListPartners().get(i).id,
-					UserInfo.getInstance().getListPartners().get(i).title,
-					UserInfo.getInstance().getListPartners().get(i).code);
-		}
-
 		listDetail = new ListDetail(new Table(), new Rectangle(0, 0,
 				getWidth(), getHeight() - gTop.getHeight()));
 		add(gTop).width(gTop.getWidth()).padLeft(-3).row();
 		add(listDetail).width(listDetail.getWidth())
 				.height(listDetail.getHeight()).row();
-		listDetail.table.debug();
-		loadListDetail();
+		Request.getInstance().getCodeCashOutLog(
+				AppPreference.instance.name, dateFrom.getDate(),
+				dateTo.getDate(), getLogCodeListener);
 		return this;
 	}
 
-	void loadListDetail() {
-		for (int i = 0; i < 100; i++) {
+	LabelStyle	styleLabel			= Style.ins.getLabelStyle(16,
+											FontType.Light, Color.BLACK);
+	LabelStyle	styleDescription	= Style.ins.getLabelStyle(18,
+											FontType.Light,
+											Constants.COLOR_ACTIONBAR);
+
+	void loadListDetail(JsonValue data) {
+		for (int i = 0; i < data.size; i++) {
+			JsonValue dataElement = data.get(i);
 			ItemList itemList = new ItemList(listDetail, listDetail.getWidth(),
 					80);
 			itemList.btnExpand.setY(itemList.item.getY() + 15);
@@ -464,25 +387,67 @@ public class ViewHistoryCode extends View {
 			icon_coin.setSize(18, 18);
 			// itemList.addComponent(iconUser, 13, 70);
 			itemList.addComponent(
-					new Label("Code" + " - " + "sdadsadsad", Style.ins
-							.getLabelStyle(22, FontType.Regular, Color.WHITE)),
-					40, 45);
+					new Label("Code" + " - "
+							+ dataElement.getString(ExtParamsKey.CODE),
+							Style.ins.getLabelStyle(22, FontType.Regular,
+									Color.WHITE)), 40, 45);
 			// itemList.addComponent(icon_coin, 13, 40);
 			itemList.addComponent(
-					new Label("Text Title", Style.ins.getLabelStyle(18,
-							FontType.Regular, Color.WHITE)), 40, 15);
-			Label lbTime = new Label("Text Time", Style.ins.getLabelStyle(18,
-					FontType.Regular, Color.WHITE));
+					new Label(dataElement.getInt(ExtParamsKey.AMOUNT) + " "
+							+ dataElement.getString(ExtParamsKey.CURRENCY),
+							Style.ins.getLabelStyle(18, FontType.Regular,
+									Color.WHITE)), 40, 15);
+			Label lbTime = new Label(Factory.getTime(dataElement
+					.getLong(ExtParamsKey.GEN_DATE)), Style.ins.getLabelStyle(
+					18, FontType.Regular, Color.WHITE));
 			itemList.addComponent(lbTime,
 					itemList.getWidth() - lbTime.getWidth() - 10, 45);
 			itemList.addSubItem(
-					new Label("Họ tên", Style.ins.getLabelStyle(15,
-							FontType.Light, Color.BLACK)), itemList.getWidth(),
+					new Label("Người nạp", styleLabel), itemList.getWidth(),
 					25);
 			itemList.addSubItem(
-					new Label("Coder", Style.ins.getLabelStyle(18,
-							FontType.Light, Constants.COLOR_ACTIONBAR)),
+					new Label(
+							dataElement.getString(ExtParamsKey.USER_CASH_OUT),
+							styleDescription), itemList
+							.getWidth(), 25);
+			itemList.addSubItem(
+					new Label("ID code", styleLabel), itemList.getWidth(),
+					25);
+			itemList.addSubItem(
+					new Label(dataElement.getString(ExtParamsKey.ID), styleDescription), itemList
+							.getWidth(), 25);
+
+			itemList.addSubItem(
+					new Label("Tiền trong game", styleLabel), itemList.getWidth(),
+					25);
+			itemList.addSubItem(
+					new Label(""
+							+ Factory.getDotMoney(dataElement
+									.getInt(ExtParamsKey.MONEY_IN_GAME)),
+									styleDescription), itemList
+							.getWidth(), 25);
+
+			itemList.addSubItem(
+					new Label("Money Before", styleLabel), itemList.getWidth(),
+					25);
+			itemList.addSubItem(
+					new Label(
+							""
+									+ Factory
+											.getDotMoney(dataElement
+													.getLong(ExtParamsKey.MONEY_IN_GAME_BEFORE))
+									+ " Xu",styleDescription),
 					itemList.getWidth(), 25);
+			itemList.addSubItem(
+					new Label("Money After", styleLabel), itemList.getWidth(),
+					25);
+			itemList.addSubItem(
+					new Label(""
+							+ Factory.getDotMoney(dataElement
+									.getLong(ExtParamsKey.MONEY_IN_GAME_AFTER))
+							+ " Xu", styleDescription),
+					itemList.getWidth(), 25);
+
 			listDetail.addItemMenu(itemList);
 		}
 	}
@@ -492,109 +457,18 @@ public class ViewHistoryCode extends View {
 		dateTo.setDate(date);
 	}
 
-	public void setFun(int select) {
-		if (UserInfo.getInstance().getRoleId() == 3
-				|| UserInfo.getInstance().getRoleId() == 4) {
-			partnerFun.setSelectedIndex(0);
-		} else {
-			partnerFun.setSelectedIndex(1);
-		}
-	}
-
 	@Override
 	public void update(float delta) {
-		// if (!partnerFun.getPartnerCode().equals(stateofpartnerFun)) {
-		// isChange = true;
-		// stateofpartnerFun = partnerFun.getPartnerCode();
-		// }
-		// if (isChange) {
-		// if (partnerFun.getPartnerCode().equals("0")
-		// || partnerFun.getPartnerCode().equals("1")) {
-		// partnerFun.addAction(Actions.moveTo(
-		// getWidth() / 2 - partnerFun.getWidth() / 2,
-		// partnerFun.getY(), 0.2f));
-		// tfSearch.addAction(Actions.moveTo(
-		// getWidth() / 2 - tfSearch.getWidth() / 2,
-		// tfSearch.getY(), 0.2f));
-		// tfSearch.addAction(Actions.sequence(Actions.alpha(0, 0.2f),
-		// Actions.run(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// tfSearch.setVisible(false);
-		// }
-		// })));
-		// partner.addAction(Actions.moveTo(
-		// getWidth() / 2 - partner.getWidth() / 2,
-		// tfSearch.getY(), 0.2f));
-		// partner.addAction(Actions.sequence(Actions.alpha(0, 0.2f),
-		// Actions.run(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// partner.setVisible(false);
-		// }
-		// })));
-		// laststateofpartnerFun = partnerFun.getPartnerCode();
-		// } else if (partnerFun.getPartnerCode().equals("2")) {
-		// tfSearch.setVisible(true);
-		// tfSearch.getColor().a = 0;
-		// partnerFun
-		// .addAction(Actions.moveTo(30, partnerFun.getY(), 0.2f));
-		// if (laststateofpartnerFun.equals("0")
-		// || laststateofpartnerFun.equals("1")) {
-		// tfSearch.addAction(Actions.moveTo(
-		// getWidth() - tfSearch.getWidth() - 30,
-		// tfSearch.getY(), 0.2f));
-		// tfSearch.addAction(Actions.alpha(1, 0.2f));
-		// } else if (laststateofpartnerFun.equals("3")) {
-		// partner.addAction(Actions.moveTo(30, partner.getY(), 0.2f));
-		// partner.addAction(Actions.sequence(Actions.alpha(0, 0.1f),
-		// Actions.run(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// partner.setVisible(false);
-		// tfSearch.addAction(Actions.moveTo(
-		// getWidth() - tfSearch.getWidth()
-		// - 30, tfSearch.getY(), 0.2f));
-		// tfSearch.addAction(Actions.alpha(1, 0.2f));
-		// }
-		// })));
-		// }
-		// laststateofpartnerFun = partnerFun.getPartnerCode();
-		// } else if (partnerFun.getPartnerCode().equals("3")) {
-		// partner.setVisible(true);
-		// partner.getColor().a = 0;
-		// partnerFun
-		// .addAction(Actions.moveTo(30, partnerFun.getY(), 0.2f));
-		// if (laststateofpartnerFun.equals("0")
-		// || laststateofpartnerFun.equals("1")) {
-		// partner.addAction(Actions.moveTo(
-		// getWidth() - partner.getWidth() - 30,
-		// tfSearch.getY(), 0.2f));
-		// partner.addAction(Actions.alpha(1, 0.2f));
-		// } else if (laststateofpartnerFun.equals("2")) {
-		// tfSearch.addAction(Actions.moveTo(30, tfSearch.getY(), 0.2f));
-		// tfSearch.addAction(Actions.sequence(Actions.alpha(0, 0.1f),
-		// Actions.run(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		//
-		// tfSearch.setVisible(false);
-		// partner.addAction(Actions.moveTo(getWidth()
-		// - partner.getWidth() - 30,
-		// partner.getY(), 0.2f));
-		// partner.addAction(Actions.alpha(1, 0.2f));
-		// }
-		// })));
-		// }
-		// laststateofpartnerFun = partnerFun.getPartnerCode();
-		// }
-		// isChange = false;
-		// }
-		// super.update(delta);
+		if (responeData != null) {
+			JsonValue jsonList = responeData.get(ExtParamsKey.LIST);
+			listDetail.setScrollX(0);
+			listDetail.setScrollY(0);
+			listDetail.table.clear();
+			loadListDetail(jsonList);
+			responeData = null;
+		}
+
+		super.update(delta);
 	}
 
 	@Override
@@ -605,13 +479,12 @@ public class ViewHistoryCode extends View {
 	@Override
 	public void hide(OnCompleteListener listener) {
 		super.hide(listener);
+		getViewController().removeView(getName());
 	}
 
 	@Override
 	public void back() {
-
 		super.back();
-		getViewController().removeView(getName());
 	}
 
 	@Override
@@ -619,6 +492,8 @@ public class ViewHistoryCode extends View {
 		return "Lịch sử  Code";
 	}
 
+	
+	
 	class getListByName implements HttpResponseListener {
 
 		@Override
@@ -657,6 +532,27 @@ public class ViewHistoryCode extends View {
 
 	public void setUserName(String username) {
 		this.username = username;
-		partnerFun.getSelected().name = username;
 	}
+
+	HttpResponseListener getLogCodeListener = new HttpResponseListener() {
+
+		@Override
+		public void handleHttpResponse(
+				HttpResponse httpResponse) {
+			responeData = new JsonReader()
+					.parse(httpResponse.getResultAsString());
+			Log.d("Response", responeData.toString());
+		}
+
+		@Override
+		public void failed(Throwable t) {
+
+		}
+
+		@Override
+		public void cancelled() {
+
+		}
+	};
 }
+

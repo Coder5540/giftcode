@@ -17,7 +17,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.coder5560.game.enums.Constants;
 import com.coder5560.game.enums.GameState;
@@ -42,7 +42,9 @@ public abstract class AbstractGameScreen implements Screen, InputProcessor,
 		gameState = GameState.INITIAL;
 		camera = new OrthographicCamera(Constants.WIDTH_SCREEN,
 				Constants.HEIGHT_SCREEN);
-		viewport = new StretchViewport(Constants.WIDTH_SCREEN,
+		Constants.HEIGHT_SCREEN = (int) (Constants.WIDTH_SCREEN
+				* Gdx.graphics.getHeight() / Gdx.graphics.getWidth());
+		viewport = new ExtendViewport(Constants.WIDTH_SCREEN,
 				Constants.HEIGHT_SCREEN, camera);
 		stage = new Stage(viewport);
 		batch = new SpriteBatch();
