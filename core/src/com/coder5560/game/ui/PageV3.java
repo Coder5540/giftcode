@@ -59,8 +59,8 @@ public class PageV3 extends Table {
 					indexCurrentPage++;
 					currentPage = listItemPage.get(indexCurrentPage - 1);
 					currentPage.focus(true);
-					scrollPage.scrollToCenter(currentPage.getX(), 0,
-							scrollPage.getWidth() / 2, 50);
+					scrollPage.scrollTo(currentPage.getX(), 0,
+							scrollPage.getWidth() / 2, 50, true, true);
 					dataCurrentPage = getDataFromPage(indexCurrentPage);
 					listener.onItemClick();
 				}
@@ -80,8 +80,8 @@ public class PageV3 extends Table {
 					indexCurrentPage--;
 					currentPage = listItemPage.get(indexCurrentPage - 1);
 					currentPage.focus(true);
-					scrollPage.scrollToCenter(currentPage.getX(), 0,
-							scrollPage.getWidth() / 2, 50);
+					scrollPage.scrollTo(currentPage.getX(), 0,
+							scrollPage.getWidth() / 2, 50, true, true);
 					dataCurrentPage = getDataFromPage(indexCurrentPage);
 					listener.onItemClick();
 				}
@@ -130,8 +130,8 @@ public class PageV3 extends Table {
 						currentPage.focus(false);
 						currentPage = newPage;
 						currentPage.focus(true);
-						scrollPage.scrollToCenter(currentPage.getX(), 0,
-								scrollPage.getWidth() / 2, 50);
+						scrollPage.scrollTo(currentPage.getX(), 0,
+								scrollPage.getWidth() / 2, 50, true, true);
 						indexCurrentPage = newPage.index;
 						dataCurrentPage = getDataFromPage(indexCurrentPage);
 						listener.onItemClick();

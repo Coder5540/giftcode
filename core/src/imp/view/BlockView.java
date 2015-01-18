@@ -106,8 +106,8 @@ public class BlockView extends View {
 
 		// content.add(lbBlockAll).expand().padLeft(10).height(60).left().row();
 		// content.add(btnLockAccount).padLeft(10).height(60).row().padTop(10);
-		content.add(lbBlockDevice).padLeft(10).height(60).left().row()
-				.padBottom(10);
+		content.add(lbBlockDevice).padLeft(10).padBottom(10).height(60).left()
+				.row();
 
 		LabelStyle styleContent = Style.ins.getLabelStyle(16, FontType.Medium,
 				Color.WHITE);
@@ -126,8 +126,8 @@ public class BlockView extends View {
 					});
 			customTextImei.setSize(getWidth(), 60);
 			customTextImei.setColor(Constants.COLOR_ACTIONBAR);
-			content.add(customTextImei).padLeft(10).height(60).row()
-					.padBottom(10);
+			content.add(customTextImei).padLeft(10).padBottom(10).height(60)
+					.row();
 		}
 
 		bg.setPosition(0, 0);

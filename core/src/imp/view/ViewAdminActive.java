@@ -370,8 +370,8 @@ public class ViewAdminActive extends View {
 				Constants.COLOR_ACTIONBAR);
 		Label lbBlockDevice = new Label("Khóa tài khoản", style);
 		lbBlockDevice.setAlignment(Align.left);
-		blockView.content.add(lbBlockDevice).padLeft(10).height(60).left()
-				.row().padBottom(10);
+		blockView.content.add(lbBlockDevice).padLeft(10).padBottom(10)
+				.height(60).left().row();
 
 		LabelStyle styleContent = Style.ins.getLabelStyle(16, FontType.Medium,
 				Color.WHITE);
@@ -402,8 +402,8 @@ public class ViewAdminActive extends View {
 				});
 		customTextImei.setSize(getWidth(), 60);
 		customTextImei.setColor(Constants.COLOR_ACTIONBAR);
-		blockView.content.add(customTextImei).padLeft(10).height(60).row()
-				.padBottom(10);
+		blockView.content.add(customTextImei).padLeft(10).padBottom(10)
+				.height(60).row();
 		blockView.content.setSize(2 * getWidth() / 3, 60 * (4 + imeis.size));
 		blockView.content.setPosition(blockView.getWidth() / 2,
 				blockView.getHeight() / 2, Align.center);
