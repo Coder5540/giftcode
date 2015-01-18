@@ -5,15 +5,16 @@ import com.badlogic.gdx.Preferences;
 import com.coder5560.game.enums.Constants;
 
 public class AppPreference {
-	public static final String	TAG					= AppPreference.class
-															.getName();
-	public static AppPreference	instance			= new AppPreference();
+	public static final String TAG = AppPreference.class.getName();
+	public static AppPreference instance = new AppPreference();
 
-	private Preferences			preferences;
-	public String				name, pass;
-	public int					type;
-	public boolean				isWaitActiveCode	= false;
-	public boolean				isLogin				= false;
+	public int version = 1;
+
+	private Preferences preferences;
+	public String name, pass;
+	public int type;
+	public boolean isWaitActiveCode = false;
+	public boolean isLogin = false;
 
 	private AppPreference() {
 		preferences = Gdx.app.getPreferences(Constants.APP_NAME);
@@ -25,6 +26,7 @@ public class AppPreference {
 		type = preferences.getInteger("type");
 		isWaitActiveCode = preferences.getBoolean("waitactivecode");
 		isLogin = preferences.getBoolean("islogin", false);
+		version = preferences.getInteger("version", 1);
 	}
 
 	public void save() {
@@ -32,6 +34,7 @@ public class AppPreference {
 		preferences.putInteger("type", type);
 		preferences.putBoolean("waitactivecode", isWaitActiveCode);
 		preferences.putBoolean("islogin", isLogin);
+		preferences.putInteger("version", version);
 		preferences.flush();
 	}
 
@@ -55,6 +58,14 @@ public class AppPreference {
 		preferences.putString("pass", pass);
 		if (flush)
 			flush();
+	}
+
+	public void setVersion(int version, boolean flush) {
+		this.version = version;
+		preferences.putInteger("version", version);
+		if (flush) {
+			preferences.flush();
+		}
 	}
 
 	public void setLogin(boolean isLogin, boolean flush) {

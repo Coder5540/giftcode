@@ -15,18 +15,18 @@ import com.coder5560.game.listener.NetworkManager;
 
 public abstract class GameCore implements ApplicationListener {
 
-	private boolean				init;
-	private AbstractGameScreen	currScreen;
-	private AbstractGameScreen	nextScreen;
-	private FrameBuffer			currFbo;
-	private FrameBuffer			nextFbo;
-	private SpriteBatch			batch;
-	private float				t;
-	private ScreenTransition	screenTransition;
-	private PlatformResolver	platformResolver;
-	public FacebookConnector	facebookConnector;
-	public NetworkManager		networkManager;
-	public InputMultiplexer		inputMultiplexer;
+	private boolean init;
+	private AbstractGameScreen currScreen;
+	private AbstractGameScreen nextScreen;
+	private FrameBuffer currFbo;
+	private FrameBuffer nextFbo;
+	private SpriteBatch batch;
+	private float t;
+	private ScreenTransition screenTransition;
+	private PlatformResolver platformResolver;
+	public FacebookConnector facebookConnector;
+	public NetworkManager networkManager;
+	public InputMultiplexer inputMultiplexer;
 
 	@Override
 	public void create() {
@@ -115,6 +115,7 @@ public abstract class GameCore implements ApplicationListener {
 		if (this.currScreen != null) {
 			this.currScreen.pause();
 		}
+		Assets.instance.assetManager.update();
 	}
 
 	public void resume() {

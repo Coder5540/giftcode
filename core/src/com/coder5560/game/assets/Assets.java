@@ -26,9 +26,9 @@ public class Assets implements Disposable, AssetErrorListener {
 	private Assets() {
 		assetManager = new AssetManager();
 		assetManager.setErrorListener(this);
+		Texture.setAssetManager(assetManager);
 		load();
 		fontFactory = new FontFactory(assetManager);
-
 	}
 
 	public void load() {
